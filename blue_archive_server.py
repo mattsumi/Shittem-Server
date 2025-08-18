@@ -37,6 +37,14 @@ def is_admin():
 class HostsManager:
     BLUE_ARCHIVE_DOMAINS = [
         'public.api.nexon.com',
+    'prod-noticepool.game.nexon.com',
+    # Regional API domains used by Blue Archive
+    'nxm-eu-bagl.nexon.com',
+    'nxm-ios-bagl.nexon.com',
+    'nxm-kr-bagl.nexon.com',
+    'nxm-tw-bagl.nexon.com',
+    'nxm-th-bagl.nexon.com',
+    'nxm-or-bagl.nexon.com',
         'bolo7yechd.execute-api.ap-northeast-1.amazonaws.com',
         'nexon-sdk.nexon.com',
         'api-pub.nexon.com',
@@ -334,6 +342,11 @@ class BlueArchiveServer:
                 'x-ba-country': 'GB'
             })
 
+        # API-prefixed variants used when client applies ApiUrl base
+        @app.route('/api/toy/sdk/getCountry.nx', methods=['POST'])
+        def get_country_api():
+            return get_country()
+
         @app.route('/prod/crexception-prop', methods=['GET'])
         def crash_exception_prop():
             self.log_request('/prod/crexception-prop')
@@ -458,6 +471,10 @@ class BlueArchiveServer:
                 'date': datetime.now().strftime('%a, %d %b %Y %H:%M:%S GMT')
             })
 
+        @app.route('/api/toy/sdk/enterToy.nx', methods=['POST'])
+        def enter_toy_api():
+            return enter_toy()
+
         @app.route('/sdk/push/token', methods=['POST'])
         def push_token():
             self.log_request('/sdk/push/token')
@@ -495,6 +512,171 @@ class BlueArchiveServer:
                 'access-control-allow-origin': '*',
                 'cache-control': 'private'
             })
+
+        @app.route('/api/toy/sdk/getPromotion.nx', methods=['POST'])
+        def get_promotion_api():
+            return get_promotion()
+
+        # --- IAS v2 login/link -------------------------------------------------
+        @app.route('/ias/live/public/v2/login/link', methods=['POST'])
+        @app.route('/api/ias/live/public/v2/login/link', methods=['POST'])
+        def ias_login_link():
+            self.log_request('/ias/live/public/v2/login/link')
+            try:
+                body = request.get_json(silent=True) or {}
+            except Exception:
+                body = {}
+
+            platform = str(body.get('link_platform_type', 'STEAM'))
+            # Fabricate a plausible web_token similar to production shape
+            try:
+                import uuid
+                now_ms = int(time.time() * 1000)
+                web_token = f"ias:wt:{now_ms}:1247143115@{uuid.uuid4()}@{platform}:ANA"
+            except Exception:
+                web_token = "ias:wt:0:1247143115@00000000-0000-0000-0000-000000000000@STEAM:ANA"
+
+            # If we can infer a stable user id, keep it; else fallback
+            local_session_user_id = "76561198000000000"
+            lpt = body.get('link_platform_token')
+            if isinstance(lpt, str) and len(lpt) > 32:
+                # Derive a deterministic 17-digit number from token for stability
+                import hashlib
+                h = hashlib.sha256(lpt.encode('utf-8')).hexdigest()
+                # Map hex to 17-digit range resembling SteamID64
+                as_int = int(h[:16], 16)
+                base = 76561197960265728  # SteamID64 base
+                local_session_user_id = str(base + (as_int % 10**10))
+
+            resp = {
+                "web_token": web_token,
+                "local_session_type": "arena",
+                "local_session_user_id": local_session_user_id,
+            }
+            return jsonify(resp)
+
+        # --- IAS v3 ticket by web token ---------------------------------------
+        @app.route('/ias/live/public/v3/issue/ticket/by-web-token', methods=['POST'])
+        @app.route('/api/ias/live/public/v3/issue/ticket/by-web-token', methods=['POST'])
+        def ias_ticket_by_webtoken():
+            self.log_request('/ias/live/public/v3/issue/ticket/by-web-token')
+            try:
+                body = request.get_json(silent=True) or {}
+            except Exception:
+                body = {}
+
+            wt = body.get('web_token') or body.get('webToken') or ''
+            platform = 'STEAM'
+            try:
+                parts = wt.split('@')
+                if len(parts) >= 3:
+                    platform = parts[-1].split(':')[0] or 'STEAM'
+            except Exception:
+                pass
+
+            try:
+                now_ms = int(time.time() * 1000)
+                # Build a game token similar to production: ias:gt:TIMESTAMP:1247143115@<uuid>@PLATFORM:ANA
+                import uuid
+                game_token = f"ias:gt:{now_ms}:1247143115@{uuid.uuid4()}@{platform}:ANA"
+            except Exception:
+                game_token = "ias:gt:0:1247143115@00000000-0000-0000-0000-000000000000@STEAM:ANA"
+
+            user_id = "76561198000000000"
+            if wt:
+                import hashlib
+                h = hashlib.sha256(wt.encode('utf-8')).hexdigest()
+                base = 76561197960265728
+                user_id = str(base + (int(h[:16], 16) % 10**10))
+
+            resp = {
+                "game_token": game_token,
+                "local_session_type": "arena",
+                "local_session_user_id": user_id,
+                "expire_in": 3600,
+            }
+            return jsonify(resp)
+
+        # --- IAS WebToken stubs -------------------------------------------------
+        def _mint_dummy_webtoken(client_id: str = "364258", region: str = "global") -> str:
+            try:
+                header = {"alg": "none", "typ": "JWT"}
+                now = int(time.time())
+                payload = {
+                    "clientId": client_id,
+                    "region": region,
+                    "iat": now,
+                    "exp": now + 3600,
+                    "aud": "blue_archive",
+                }
+                import base64
+                def b64(x):
+                    s = json.dumps(x, separators=(',', ':')).encode('utf-8')
+                    return base64.urlsafe_b64encode(s).rstrip(b'=').decode('ascii')
+                return f"{b64(header)}.{b64(payload)}."  # no signature
+            except Exception:
+                return "dummy.token.no.sig"
+
+        def _webtoken_response(token: str):
+            body = {
+                "errorCode": 0,
+                "errorText": "Success",
+                "result": {
+                    "webToken": token,
+                    "expireIn": 3600
+                }
+            }
+            data = json.dumps(body).encode('utf-8')
+            return Response(data, status=200, headers={
+                'Content-Type': 'text/html; charset=UTF-8',
+                'Content-Length': str(len(data)),
+                'errorcode': '0',
+                'access-control-allow-origin': '*',
+                'cache-control': 'private'
+            })
+
+        def _extract_webtoken_from_request():
+            try:
+                # Prefer explicit IAS header if present
+                hdr = request.headers.get('ias-game-token') or request.headers.get('IAS-Game-Token')
+                if hdr and isinstance(hdr, str) and hdr.strip():
+                    return hdr.strip()
+                if request.is_json:
+                    j = request.get_json(silent=True) or {}
+                    if isinstance(j, dict):
+                        for k in ("token", "webToken", "webtoken"):
+                            if k in j and isinstance(j[k], str) and j[k]:
+                                return j[k]
+                raw = request.get_data() or b''
+                if raw:
+                    try:
+                        j = json.loads(raw.decode('utf-8', errors='ignore'))
+                        if isinstance(j, dict):
+                            return j.get('webToken') or j.get('token')
+                    except Exception:
+                        pass
+            except Exception:
+                pass
+            # Fall back to fixed token if configured
+            return self.fixed_webtoken
+
+        @app.route('/toy/ias/issueWebToken', methods=['POST'])
+        @app.route('/toy/ias/verifyWebToken', methods=['POST'])
+        @app.route('/toy/sdk/issueWebToken.nx', methods=['POST'])
+        @app.route('/toy/sdk/verifyWebToken.nx', methods=['POST'])
+        def ias_webtoken():
+            self.log_request('/toy/ias/webtoken')
+            token = _extract_webtoken_from_request() or self.fixed_webtoken or _mint_dummy_webtoken()
+            return _webtoken_response(token)
+
+        @app.route('/api/toy/ias/issueWebToken', methods=['POST'])
+        @app.route('/api/toy/ias/verifyWebToken', methods=['POST'])
+        @app.route('/api/toy/sdk/issueWebToken.nx', methods=['POST'])
+        @app.route('/api/toy/sdk/verifyWebToken.nx', methods=['POST'])
+        def ias_webtoken_api():
+            return ias_webtoken()
+
+    # keep existing routes below...
 
         @app.route('/crash-reporting-api-rs26-usw2.cloud.unity3d.com/api/reporting/v1/projects/<project>/events', methods=['POST'])
         def crash_reporting(project):
@@ -590,6 +772,25 @@ class BlueArchiveServer:
             "errorText": "Success"
         }
 
+    def _load_fixed_webtoken(self):
+        # 1) Environment variable takes priority
+        tok = os.environ.get('IAS_FIXED_WEBTOKEN')
+        if tok and tok.strip():
+            print_colored("Using IAS_FIXED_WEBTOKEN from environment.", YELLOW)
+            return tok.strip()
+        # 2) Fallback: try to read from requests/5.txt (header capture)
+        try:
+            root = Path(__file__).parent
+            p = root / 'requests' / '5.txt'
+            if p.exists():
+                txt = p.read_text(encoding='utf-8', errors='ignore')
+                for line in txt.splitlines():
+                    if line.lower().startswith('ias-game-token:'):
+                        return line.split(':', 1)[1].strip()
+        except Exception:
+            pass
+        return None
+
 class AntiCheatServer:
     def create_flask_app(self):
         try:
@@ -616,11 +817,56 @@ def check_port_available(port):
     except:
         return False
 
+def _get_ssl_hostnames():
+    # Domains the client will connect to; include localhost for manual testing
+    hostnames = {
+        'localhost',
+        '127.0.0.1',
+        'public.api.nexon.com',
+        'prod-noticepool.game.nexon.com',
+        'nxm-eu-bagl.nexon.com',
+        'nxm-ios-bagl.nexon.com',
+        'nxm-kr-bagl.nexon.com',
+        'nxm-tw-bagl.nexon.com',
+        'nxm-th-bagl.nexon.com',
+        'nxm-or-bagl.nexon.com',
+        'crash-reporting-api-rs26-usw2.cloud.unity3d.com',
+    }
+    return sorted(hostnames)
+
+def _get_cert_paths():
+    from pathlib import Path as _Path
+    cert_dir = _Path(__file__).parent / 'certs'
+    cert_path = cert_dir / 'selfsigned_cert.pem'
+    key_path = cert_dir / 'selfsigned_key.pem'
+    return cert_path, key_path
+
+def _install_cert_windows(cert_path):
+    try:
+        if platform.system() != "Windows":
+            return False
+        if not is_admin():
+            print_colored("Admin required to trust certificate automatically.", YELLOW)
+            return False
+        if not cert_path.exists():
+            return False
+        # Use certutil to add to Trusted Root Certification Authorities
+        result = subprocess.run(["certutil", "-addstore", "root", str(cert_path)], capture_output=True, text=True)
+        if result.returncode == 0:
+            print_colored("Trusted self-signed certificate in Windows Root store.", GREEN)
+            return True
+        else:
+            print_colored(f"certutil failed: {result.stderr.strip()}", YELLOW)
+            return False
+    except Exception as e:
+        print_colored(f"certutil error: {e}", YELLOW)
+        return False
+
 def start_server_thread(app, port, name, use_ssl=False):
     def run_server():
         try:
             if use_ssl:
-                ssl_context = create_ssl_context()
+                ssl_context = create_ssl_context(_get_ssl_hostnames())
                 if ssl_context:
                     print_colored(f"{name} server on port {port} (HTTPS)", CYAN)
                     app.run(host='0.0.0.0', port=port, debug=False, use_reloader=False, ssl_context=ssl_context)
@@ -637,7 +883,7 @@ def start_server_thread(app, port, name, use_ssl=False):
     thread.start()
     return thread
 
-def create_ssl_context():
+def create_ssl_context(hostnames=None):
     try:
         import ssl
         from cryptography import x509
@@ -646,6 +892,19 @@ def create_ssl_context():
         from cryptography.hazmat.primitives.asymmetric import rsa
         from cryptography.hazmat.primitives import serialization
         import datetime
+        import ipaddress
+        from pathlib import Path as _Path
+
+        # Reuse persistent cert/key if they exist
+        cert_dir = _Path(__file__).parent / 'certs'
+        cert_dir.mkdir(exist_ok=True)
+        cert_path = cert_dir / 'selfsigned_cert.pem'
+        key_path = cert_dir / 'selfsigned_key.pem'
+
+        if cert_path.exists() and key_path.exists():
+            context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+            context.load_cert_chain(str(cert_path), str(key_path))
+            return context
 
         private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
 
@@ -657,42 +916,43 @@ def create_ssl_context():
             x509.NameAttribute(NameOID.COMMON_NAME, "localhost"),
         ])
 
-        cert = x509.CertificateBuilder().subject_name(
-            subject
-        ).issuer_name(
-            issuer
-        ).public_key(
-            private_key.public_key()
-        ).serial_number(
-            x509.random_serial_number()
-        ).not_valid_before(
-            datetime.datetime.utcnow()
-        ).not_valid_after(
-            datetime.datetime.utcnow() + datetime.timedelta(days=365)
-        ).add_extension(
-            x509.SubjectAlternativeName([
-                x509.DNSName("localhost"),
-                x509.DNSName("127.0.0.1"),
-            ]),
-            critical=False,
-        ).sign(private_key, hashes.SHA256())
+        # Build SANs including all expected hostnames to satisfy SNI checks
+        names = {"localhost", "127.0.0.1"}
+        if hostnames:
+            names.update(set(hostnames))
+        san_entries = []
+        for hn in sorted(names):
+            try:
+                san_entries.append(x509.IPAddress(ipaddress.ip_address(hn)))
+            except ValueError:
+                san_entries.append(x509.DNSName(hn))
+
+        cert = (
+            x509.CertificateBuilder()
+            .subject_name(subject)
+            .issuer_name(issuer)
+            .public_key(private_key.public_key())
+            .serial_number(x509.random_serial_number())
+            .not_valid_before(datetime.datetime.utcnow())
+            .not_valid_after(datetime.datetime.utcnow() + datetime.timedelta(days=365))
+            .add_extension(x509.SubjectAlternativeName(san_entries), critical=False)
+            .sign(private_key, hashes.SHA256())
+        )
+
+        # Persist to disk so the certificate can be trusted via Windows cert store
+        with open(cert_path, 'wb') as cf:
+            cf.write(cert.public_bytes(serialization.Encoding.PEM))
+        with open(key_path, 'wb') as kf:
+            kf.write(
+                private_key.private_bytes(
+                    encoding=serialization.Encoding.PEM,
+                    format=serialization.PrivateFormat.PKCS8,
+                    encryption_algorithm=serialization.NoEncryption(),
+                )
+            )
 
         context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-
-        cert_file = tempfile.NamedTemporaryFile(mode='wb', delete=False, suffix='.pem')
-        key_file = tempfile.NamedTemporaryFile(mode='wb', delete=False, suffix='.pem')
-
-        cert_file.write(cert.public_bytes(serialization.Encoding.PEM))
-        cert_file.close()
-
-        key_file.write(private_key.private_bytes(
-            encoding=serialization.Encoding.PEM,
-            format=serialization.PrivateFormat.PKCS8,
-            encryption_algorithm=serialization.NoEncryption()
-        ))
-        key_file.close()
-
-        context.load_cert_chain(cert_file.name, key_file.name)
+        context.load_cert_chain(str(cert_path), str(key_path))
         return context
 
     except ImportError:
@@ -743,6 +1003,16 @@ def main():
         input("Press Enter to exit...")
         return 1
 
+    # Ensure certificate exists on disk and try to trust it on Windows
+    try:
+        ctx = create_ssl_context(_get_ssl_hostnames())
+        if ctx is None:
+            print_colored("TLS context unavailable; HTTPS may be disabled.", YELLOW)
+        cert_path, _ = _get_cert_paths()
+        _install_cert_windows(cert_path)
+    except Exception as e:
+        print_colored(f"Certificate setup step failed: {e}", YELLOW)
+
     print_colored("\nStarting services...", GREEN)
 
     ba_server = BlueArchiveServer()
@@ -762,28 +1032,29 @@ def main():
 
     if check_port_available(https_port):
         main_port = https_port
-        use_ssl = True
+        use_ssl_main = True
         print_colored(f"Using HTTPS port {main_port}.", GREEN)
     elif check_port_available(http_port):
         main_port = http_port
-        use_ssl = False
+        use_ssl_main = False
         print_colored(f"Using HTTP port {main_port}.", YELLOW)
     else:
         main_port = 8080
-        use_ssl = False
+        use_ssl_main = False
         print_colored(f"Using fallback port {main_port}.", RED)
 
     if not check_port_available(ac_port):
         print_colored(f"Port {ac_port} is already in use. Anti-cheat mock may clash.", YELLOW)
 
     print_colored(f"\nStarting main server on {main_port}...", GREEN)
-    main_thread = start_server_thread(main_app, main_port, "Main", use_ssl=use_ssl)
+    main_thread = start_server_thread(main_app, main_port, "Main", use_ssl=use_ssl_main)
 
     print_colored("Starting API server on 5000...", GREEN)
-    api_thread = start_server_thread(main_app, 5000, "API", use_ssl=use_ssl)
+    # Always use HTTPS for API and Gateway as the client expects TLS on these ports
+    api_thread = start_server_thread(main_app, 5000, "API", use_ssl=True)
 
     print_colored("Starting Gateway server on 5100...", GREEN)
-    gateway_thread = start_server_thread(main_app, 5100, "Gateway", use_ssl=use_ssl)
+    gateway_thread = start_server_thread(main_app, 5100, "Gateway", use_ssl=True)
 
     if ac_app:
         print_colored(f"Starting anti-cheat mock on {ac_port}...", GREEN)
@@ -793,7 +1064,7 @@ def main():
 
     print_colored("\nServer is up.", BOLD + GREEN)
     print_colored("=" * 30, GREEN)
-    protocol = "https" if use_ssl else "http"
+    protocol = "https" if use_ssl_main else "http"
     print_colored(f"Main:    {protocol}://localhost:{main_port}", CYAN)
     print_colored(f"API:     {protocol}://localhost:5000", CYAN)
     print_colored(f"Gateway: {protocol}://localhost:5100", CYAN)

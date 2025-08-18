@@ -1,6 +1,6 @@
 # Blue Archive Private Server (WIP)
 
-**Status:** in development, currently **non-functional**. It serves config and logs requests. The client still throws network error `10009` on the first API call. Don’t ask why you can’t log in, that’s the point.
+**Status:** in development, currently **non-functional**. It serves config and logs requests. The client currently shows `IAS_DATA_MISMATCH_WEBTOKEN`. Don’t ask why you can’t log in, that’s the point.
 
 ---
 
@@ -69,9 +69,7 @@ There are more in the scripts; these are the important ones.
 
 **Broken**
 
-1. First API call never hits our API listener; client errors with `10009`.
-2. Likely certificate trust or hardcoded host logic in the client.
-3. Possible HTTPS/headers/token mismatch on `/toy/sdk/getCountry.nx`.
+1. First API call never hits our API listener; client errors with `IAS_DATA_MISMATCH_WEBTOKEN`.
 
 ---
 

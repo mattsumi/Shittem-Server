@@ -26,6 +26,23 @@ env/
 *.key
 *.crt
 *.cert
+*.pfx
+*.p12
+
+# TLS key log (Wireshark)
+sslkey.log
+*.keylog
+
+# Env files
+.env.*
+*.env
+
+# Dumps
+*.dmp
+*.crash
+
+# Generic logs
+*.log
 
 # OS generated files
 .DS_Store
