@@ -178,11 +178,11 @@ class BlueArchiveRequestLogger:
                 with open(file_path, 'w', encoding='utf-8') as rf:
                     rf.write(content)
 
-            # Special-case for IAS v3 ticket endpoint: construct JSON { web_token } body
+            # Special-case for IAS v3 ticket endpoint: use X-Ias-Web-Token header and minimal JSON body { gid }
             if path.rstrip('/').endswith('/ias/live/public/v3/issue/ticket/by-web-token'):
                 ps = []
                 ps.append("#!/usr/bin/env pwsh")
-                ps.append("# Auto-generated: v3 ticket replay using JSON body from header/body and robust response capture")
+                ps.append("# Auto-generated: v3 ticket replay using X-Ias-Web-Token header and body { gid } (per official)")
                 ps.append("# Tip: run with call operator:  & \"$PSCommandPath\"")
                 ps.append("param()")
                 ps.append("")
@@ -206,12 +206,14 @@ class BlueArchiveRequestLogger:
                 ps.append("$targetHost = $uri.Host")
                 ps.append("$hostsPath = Join-Path $env:SystemRoot 'System32\\drivers\\etc\\hosts'")
                 ps.append("if (Test-Path $hostsPath) { try { $ts = Get-Date -Format 'yyyyMMdd_HHmmss'; $backup = \"$hostsPath.$ts.bak\"; Copy-Item -Path $hostsPath -Destination $backup -Force | Out-Null; $lines = Get-Content -Path $hostsPath -ErrorAction SilentlyContinue; $new = foreach ($l in $lines) { if ($l -match '127\\.0\\.0\\.1' -and $l -match [regex]::Escape($targetHost)) { continue } else { $l } }; Set-Content -Path $hostsPath -Value $new -Encoding UTF8 } catch { Write-Warning \"Failed to adjust hosts file: $($_.Exception.Message)\" } }")
-                # Build payload
+                # Build payload/body and header token
                 ps.append("$token = $null")
                 ps.append("if ($headers.ContainsKey('X-Ias-Web-Token')) { $token = $headers['X-Ias-Web-Token'] }")
                 ps.append("if (-not $token -and (Test-Path $bodyFile)) { try { $raw = Get-Content -Path $bodyFile -Raw -Encoding Byte; $txt = [System.Text.Encoding]::UTF8.GetString($raw); if ($txt.Trim().StartsWith('{')) { $obj = $txt | ConvertFrom-Json -ErrorAction SilentlyContinue; if ($obj) { $token = $obj.web_token; if (-not $token) { $token = $obj.webToken } } } } catch {} }")
-                ps.append("if (-not $token) { Write-Error 'No web_token available to send'; exit 1 }")
-                ps.append("$payload = @{ web_token = $token } | ConvertTo-Json -Compress")
+                ps.append("if (-not $token) { Write-Error 'No web_token available to set in header'; exit 1 }")
+                ps.append("$headers['X-Ias-Web-Token'] = $token")
+                ps.append("$gid = if ($headers.ContainsKey('Gid')) { $headers['Gid'] } else { '2079' }")
+                ps.append("$payload = @{ gid = $gid } | ConvertTo-Json -Compress")
                 # TLS and request
                 ps.append("try { [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12 } catch {}")
                 ps.append("$content = $null")

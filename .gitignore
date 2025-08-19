@@ -1,6 +1,9 @@
 # Request logs containing sensitive data
 requests/
 request_logs/
+data/
+nexon.har
+nexon.flows
 
 # Python cache and bytecode
 __pycache__/

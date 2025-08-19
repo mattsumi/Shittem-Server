@@ -37,6 +37,7 @@ def is_admin():
 class HostsManager:
     BLUE_ARCHIVE_DOMAINS = [
         'public.api.nexon.com',
+    'signin.nexon.com',
     'prod-noticepool.game.nexon.com',
     # Regional API domains used by Blue Archive
     'nxm-eu-bagl.nexon.com',
@@ -281,6 +282,88 @@ class BlueArchiveServer:
         self.sessions = {}
         self.player_data = {}
         self.crypto_available = self._setup_crypto()
+        # Simple in-memory queue state to mimic gateway behavior
+        self.queue_ticket_seq = 114980000
+        self.queue_allowed_seq = 114980000
+        # Minimal persistent account store
+        self.data_dir = Path(__file__).parent / 'data'
+        self.data_dir.mkdir(exist_ok=True)
+        self.accounts_path = self.data_dir / 'accounts.json'
+        self.accounts = self._load_accounts()
+        # Map transient IAS tickets to a stable user key to avoid new accounts each run
+        self.ticket_map = {}
+        self.current_user_key = None
+        # One-time migration: ensure there is a stable default account key
+        try:
+            if isinstance(self.accounts, dict) and self.accounts and 'uid:default' not in self.accounts:
+                some_key = next(iter(self.accounts.keys()))
+                self.accounts['uid:default'] = self.accounts.get(some_key)
+                self._save_accounts()
+        except Exception as e:
+            print_colored(f"Account migration skipped: {e}", YELLOW)
+
+    def _load_accounts(self):
+        try:
+            if self.accounts_path.exists():
+                with open(self.accounts_path, 'r', encoding='utf-8') as f:
+                    return json.load(f)
+        except Exception as e:
+            print_colored(f"Failed to load accounts: {e}", YELLOW)
+        return {}
+
+    def _save_accounts(self):
+        try:
+            tmp = self.accounts_path.with_suffix('.tmp')
+            with open(tmp, 'w', encoding='utf-8') as f:
+                json.dump(self.accounts, f, ensure_ascii=False, indent=2)
+            os.replace(tmp, self.accounts_path)
+        except Exception as e:
+            print_colored(f"Failed to save accounts: {e}", YELLOW)
+
+    def _derive_ids_from_token(self, token: str, gid: str = '2079'):
+        import hashlib
+        h = hashlib.sha256((token or '').encode('utf-8')).hexdigest()
+        base = 76561197960265728
+        user64 = base + (int(h[:16], 16) % 10**10)
+        platform_user_id = int(h[16:24], 16) % 10**8
+        guid = f"{gid}{str(user64)[-13:]}"
+        return str(platform_user_id), str(guid), str(user64)
+
+    def _get_or_create_account(self, ticket: str, gid: str = '2079'):
+        import hashlib, time as _t
+        ticket_key = hashlib.sha256((ticket or '').encode('utf-8')).hexdigest()
+        # Resolve to a stable user key if we have one
+        user_key = self.ticket_map.get(ticket_key)
+        if not user_key:
+            user_key = self.current_user_key
+            if not user_key:
+                # Fallback to a default singleton account key to avoid spam
+                user_key = 'uid:default'
+            # Remember this mapping for this process lifetime
+            self.ticket_map[ticket_key] = user_key
+
+        if user_key in self.accounts:
+            acct = self.accounts[user_key]
+        else:
+            # Create a new account under the stable user_key
+            platform_user_id, guid, user64 = self._derive_ids_from_token(ticket or user_key, gid)
+            acct = {
+                "gid": gid,
+                "guid": guid,
+                "npSN": guid,
+                "umKey": f"107:{platform_user_id}",
+                "platform_type": "ARENA",
+                "platform_user_id": platform_user_id,
+                "name": "Skye",
+                "level": 1,
+                "attribute": [],
+                "created_at": int(_t.time()),
+                "updated_at": int(_t.time()),
+                "last_login": None,
+            }
+            self.accounts[user_key] = acct
+            self._save_accounts()
+        return acct, user_key
 
     def _setup_crypto(self):
         try:
@@ -304,16 +387,44 @@ class BlueArchiveServer:
 
         app = Flask(__name__)
 
-        @app.route('/com.nexon.bluearchivesteam/server_config/364258_Live.json', methods=['GET'])
-        def server_config():
-            self.log_request('/com.nexon.bluearchivesteam/server_config/364258_Live.json')
+        @app.route('/com.nexon.bluearchivesteam/server_config/<config_name>.json', methods=['GET'])
+        def server_config(config_name):
+            # Accept any clientId_Live.json the game asks for and feed it our endpoints
+            self.log_request(f'/com.nexon.bluearchivesteam/server_config/{config_name}.json')
+            try:
+                # Extract clientId (number) if present
+                client_id = config_name.split('_', 1)[0]
+                if not client_id.isdigit():
+                    client_id = "364258"
+            except Exception:
+                client_id = "364258"
+
+            # Build the ConnectionGroupsJson payload as a JSON string (game expects stringified JSON)
+            groups = [
+                {
+                    "Name": "live",
+                    "OverrideConnectionGroups": [
+                        {
+                            "Name": "global",
+                            "ApiUrl": "https://nxm-eu-bagl.nexon.com:5000/api/",
+                            "GatewayUrl": "https://nxm-eu-bagl.nexon.com:5100/api/",
+                            "NXSID": "live-global"
+                        }
+                    ]
+                }
+            ]
+            try:
+                groups_str = json.dumps(groups, separators=(",", ":"))
+            except Exception:
+                groups_str = "[]"
+
             server_config = {
                 "DefaultConnectionGroup": "live",
                 "DefaultConnectionMode": "no",
-                "ConnectionGroupsJson": "[\r\n\t{\r\n\t\t\"Name\": \"live\",\r\n\t\t\"OverrideConnectionGroups\": [\r\n\t\t\t{\r\n\t\t\t\t\"Name\": \"global\",\r\n\t\t\t\t\"ApiUrl\": \"https://nxm-eu-bagl.nexon.com:5000/api/\",\r\n\t\t\t\t\"GatewayUrl\": \"https://nxm-eu-bagl.nexon.com:5100/api/\",\r\n\t\t\t\t\"NXSID\": \"live-global\"\r\n\t\t\t}\r\n\t]\r\n\t}]",
-                "desc": f"1.79.{self.current_version.split('.')[-1]}"
+                "ConnectionGroupsJson": groups_str,
+                "desc": f"{self.current_version}"
             }
-            print_colored("Server config requested.", BOLD + GREEN)
+            print_colored("Server config served.", BOLD + GREEN)
             return jsonify(server_config)
 
         @app.route('/toy/sdk/getCountry.nx', methods=['POST'])
@@ -373,103 +484,34 @@ class BlueArchiveServer:
             payload = request.get_data()
             if payload and self.crypto_available:
                 self.analyze_flatbuffer_payload(payload)
-
-            enter_toy_response = {
-                "errorCode": 0,
-                "result": {
-                    "service": {
-                        "title": "Blue Archive",
-                        "buildVer": "2",
-                        "policyApiVer": "2",
-                        "termsApiVer": "2",
-                        "useTPA": 0,
-                        "useGbNpsn": 1,
-                        "useGbKrpc": 1,
-                        "useGbArena": 1,
-                        "useGbJppc": 0,
-                        "useGamania": 0,
-                        "useToyBanDialog": 0,
-                        "grbRating": "",
-                        "networkCheckSampleRate": "3",
-                        "nkMemberAccessCode": "0",
-                        "useIdfaCollection": 0,
-                        "useIdfaDialog": 0,
-                        "useIdfaDialogNTest": 0,
-                        "useNexonOTP": 0,
-                        "useRegionLock": 0,
-                        "usePcDirectRun": 0,
-                        "useArenaCSByRegion": 0,
-                        "usePlayNow": 0,
-                        "methinksUsage": {
-                            "useAlwaysOnRecording": 0,
-                            "useScreenshot": 0,
-                            "useStreaming": 0,
-                            "useSurvey": 0
-                        },
-                        "livestreamUsage": {
-                            "useIM": 0
-                        },
-                        "useExactAlarmActivation": 0,
-                        "useCollectUserActivity": 0,
-                        "userActivityDataPushNotification": {
-                            "changePoints": [],
-                            "notificationType": ""
-                        },
-                        "appAppAuthLoginIconUrl": "",
-                        "useGuidCreationBlk": 0,
-                        "guidCreationBlkWlCo": [],
-                        "useArena2FA": 0,
-                        "usePrimary": 1,
-                        "loginUIType": "1",
-                        "clientId": "364258",
-                        "useMemberships": [101, 103, 110, 107, 9999],
-                        "useMembershipsInfo": {
-                            "nexonNetSecretKey": "",
-                            "nexonNetProductId": "",
-                            "nexonNetRedirectUri": ""
-                        }
-                    },
-                    "endBanner": {},
-                    "country": "GB",
-                    "idfa": {
-                        "dialog": [],
-                        "imgUrl": "",
-                        "language": ""
-                    },
-                    "useLocalPolicy": ["0", "0"],
-                    "enableLogging": False,
-                    "enablePlexLogging": False,
-                    "enableForcePingLogging": False,
-                    "userArenaRegion": 1,
-                    "offerwall": {
-                        "id": 0,
-                        "title": ""
-                    },
-                    "useYoutubeRewardEvent": False,
-                    "gpgCycle": 0,
-                    "eve": {
-                        "domain": "https://127.0.0.1:443",
-                        "g-api": "https://127.0.0.1:443"
-                    },
-                    "insign": {
-                        "useSimpleSignup": 0,
-                        "useKrpcSimpleSignup": 0,
-                        "useArenaSimpleSignup": 0
-                    }
-                },
-                "errorText": "Success",
-                "errorDetail": ""
-            }
-
             print_colored("enterToy called. Initializing.", BOLD + GREEN)
-
-            return Response(json.dumps(enter_toy_response), status=200, headers={
-                'Content-Type': 'text/html; charset=UTF-8',
-                'errorcode': '0',
-                'access-control-allow-origin': '*',
-                'cache-control': 'private',
-                'date': datetime.now().strftime('%a, %d %b %Y %H:%M:%S GMT')
-            })
+            # Exact body and headers from requests/4.txt
+            body = (
+                '{"errorCode":0,"result":{"service":{"title":"Blue Archive","buildVer":"2","policyApiVer":"2","termsApiVer":"2","useTPA":0,"useGbNpsn":1,"useGbKrpc":1,"useGbArena":1,"useGbJppc":0,"useGamania":0,"useToyBanDialog":0,"grbRating":"","networkCheckSampleRate":"3","nkMemberAccessCode":"0","useIdfaCollection":0,"useIdfaDialog":0,"useIdfaDialogNTest":0,"useNexonOTP":0,"useRegionLock":0,"usePcDirectRun":0,"useArenaCSByRegion":0,"usePlayNow":0,"methinksUsage":{"useAlwaysOnRecording":0,"useScreenshot":0,"useStreaming":0,"useSurvey":0},"livestreamUsage":{"useIM":0},"useExactAlarmActivation":0,"useCollectUserActivity":0,"userActivityDataPushNotification":{"changePoints":[],"notificationType":""},"appAppAuthLoginIconUrl":"","useGuidCreationBlk":0,"guidCreationBlkWlCo":[],"useArena2FA":0,"usePrimary":1,"loginUIType":"1","clientId":"MjcwOA","useMemberships":[101,103,110,107,9999],"useMembershipsInfo":{"nexonNetSecretKey":"","nexonNetProductId":"","nexonNetRedirectUri":""}},"endBanner":{},"country":"GB","idfa":{"dialog":[],"imgUrl":"","language":""},"useLocalPolicy":["0","0"],"enableLogging":false,"enablePlexLogging":false,"enableForcePingLogging":false,"userArenaRegion":1,"offerwall":{"id":0,"title":""},"useYoutubeRewardEvent":false,"gpgCycle":0,"eve":{"domain":"https://eve.nexon.com","g-api":"https://g-eve-apis.nexon.com"},"insign":{"useSimpleSignup":0,"useKrpcSimpleSignup":0,"useArenaSimpleSignup":0}},"errorText":"Success","errorDetail":""}'
+            )
+            data = body.encode('utf-8')
+            date_val = datetime.now().strftime('%a, %d %b %Y %H:%M:%S GMT')
+            hdrs = [
+                ('Content-Type', 'text/html; charset=UTF-8'),
+                ('Content-Length', '1449'),
+                ('Connection', 'keep-alive'),
+                ('date', date_val),
+                ('access-control-allow-origin', '*'),
+                ('errorcode', '0'),
+                ('cache-control', 'private'),
+                ('x-envoy-upstream-service-time', '337'),
+                ('inface-wasm-filter', '1.8.0'),
+                ('server', 'inface'),
+                ('x-request-id', 'x9lP5bJD0dJV-n0WRuOl9xgOFYwBIKxHt4we2iatDS1y3EqEuUhtvA=='),
+                ('X-Cache', 'Miss from cloudfront'),
+                ('Via', '1.1 ecb6880220cec19d7d48fb6d26bdb1f6.cloudfront.net (CloudFront)'),
+                ('X-Amz-Cf-Pop', 'LHR50-P5'),
+                ('X-Amz-Cf-Id', 'x9lP5bJD0dJV-n0WRuOl9xgOFYwBIKxHt4we2iatDS1y3EqEuUhtvA=='),
+            ]
+            resp = Response(data, status=200)
+            for k, v in hdrs:
+                resp.headers.add(k, v)
+            return resp
 
         @app.route('/api/toy/sdk/enterToy.nx', methods=['POST'])
         def enter_toy_api():
@@ -548,6 +590,12 @@ class BlueArchiveServer:
                 base = 76561197960265728  # SteamID64 base
                 local_session_user_id = str(base + (as_int % 10**10))
 
+            # Fix the current_user_key for the session based on link token so accounts persist
+            try:
+                self.current_user_key = f"uid:{local_session_user_id}"
+            except Exception:
+                pass
+
             resp = {
                 "web_token": web_token,
                 "local_session_type": "arena",
@@ -564,8 +612,10 @@ class BlueArchiveServer:
                 body = request.get_json(silent=True) or {}
             except Exception:
                 body = {}
-
-            wt = body.get('web_token') or body.get('webToken') or ''
+            # Prefer official header X-Ias-Web-Token per HAR, fallback to body
+            wt = request.headers.get('X-Ias-Web-Token') or request.headers.get('x-ias-web-token')
+            if not wt:
+                wt = body.get('web_token') or body.get('webToken') or ''
             platform = 'STEAM'
             try:
                 parts = wt.split('@')
@@ -578,9 +628,9 @@ class BlueArchiveServer:
                 now_ms = int(time.time() * 1000)
                 # Build a game token similar to production: ias:gt:TIMESTAMP:1247143115@<uuid>@PLATFORM:ANA
                 import uuid
-                game_token = f"ias:gt:{now_ms}:1247143115@{uuid.uuid4()}@{platform}:ANA"
+                ticket_token = f"ias:t:{now_ms}:1247143115@{uuid.uuid4()}@{platform}:ANA"
             except Exception:
-                game_token = "ias:gt:0:1247143115@00000000-0000-0000-0000-000000000000@STEAM:ANA"
+                ticket_token = "ias:t:0:1247143115@00000000-0000-0000-0000-000000000000@STEAM:ANA"
 
             user_id = "76561198000000000"
             if wt:
@@ -589,13 +639,84 @@ class BlueArchiveServer:
                 base = 76561197960265728
                 user_id = str(base + (int(h[:16], 16) % 10**10))
 
+            # Match official v3 shape: { "ticket": "..." }
             resp = {
-                "game_token": game_token,
-                "local_session_type": "arena",
-                "local_session_user_id": user_id,
-                "expire_in": 3600,
+                "ticket": ticket_token
             }
             return jsonify(resp)
+
+        # --- IAS v1 game-token by IAS ticket --------------------------------
+        @app.route('/ias/live/public/v1/issue/game-token/by-ticket', methods=['POST'])
+        @app.route('/api/ias/live/public/v1/issue/game-token/by-ticket', methods=['POST'])
+        def ias_game_token_by_ticket():
+            self.log_request('/ias/live/public/v1/issue/game-token/by-ticket')
+            # Exact response captured from HAR
+            body = (
+                '{"game_token":"ias:gt:1755603032166:1247143115@3774ac6b-9f50-4f31-ac6a-9057ee0b97d7@STEAM:ANA"}'
+            )
+            data = body.encode('utf-8')
+            date_val = datetime.now().strftime('%a, %d %b %Y %H:%M:%S GMT')
+            hdrs = [
+                ('Content-Type', 'application/json'),
+                ('Content-Length', '95'),
+                ('Connection', 'keep-alive'),
+                ('date', date_val),
+                ('cache-control', 'no-cache'),
+                ('x-envoy-upstream-service-time', '171'),
+                ('inface-wasm-filter', '1.8.0'),
+                ('server', 'inface'),
+                ('x-request-id', 'cH397L2NpEZ8pr6NAVeFMFJTFObrltlP6Xo0s3PgUG9U18Pemdy51Q=='),
+                ('X-Cache', 'Miss from cloudfront'),
+                ('Via', '1.1 3578a2fc7abb753f586c61e194c5489a.cloudfront.net (CloudFront)'),
+                ('X-Amz-Cf-Pop', 'LHR50-P5'),
+                ('X-Amz-Cf-Id', 'cH397L2NpEZ8pr6NAVeFMFJTFObrltlP6Xo0s3PgUG9U18Pemdy51Q=='),
+            ]
+            resp = Response(data, status=200)
+            for k, v in hdrs:
+                resp.headers.add(k, v)
+            return resp
+
+        # --- Gateway API stub (/api/gateway) ----------------------------------
+        @app.route('/api/gateway', methods=['POST'])
+        def api_gateway():
+            """
+            Mimic the gateway aggregator used by BestHTTP/2 client after IAS ticket.
+            Accepts multipart/form-data with a part named 'mx' (binary). Returns a
+            JSON body shaped like { protocol: "Queuing_GetTicketGL", packet: "{...}" }.
+            """
+            from flask import request as _req
+            self.log_request('/api/gateway')
+            # Read multipart field 'mx' if present (not used for now)
+            try:
+                _ = _req.files.get('mx') or _req.form.get('mx')
+            except Exception:
+                _ = None
+
+            # Progress a simple queue: advance allowed faster than ticket to let client through
+            self.queue_ticket_seq += 1
+            # Allow bursts to pass quickly
+            self.queue_allowed_seq = max(self.queue_allowed_seq, self.queue_ticket_seq)
+
+            # Build a ServerPacket-like structure with JSON string in packet
+            import base64, os as _os, random as _rand
+            enter_ticket = base64.b64encode(_os.urandom(32)).decode('ascii')
+            packet_obj = {
+                "Protocol": 50001,  # Queuing_GetTicketGL
+                "EnterTicket": enter_ticket,
+                "TicketSequence": self.queue_ticket_seq,
+                "AllowedSequence": self.queue_allowed_seq,
+                "RequiredSecondsPerUser": 0.005,
+                "ServerSeed": base64.b64encode(_os.urandom(256)).decode('ascii')
+            }
+            server_packet = {
+                "protocol": "Queuing_GetTicketGL",
+                "packet": json.dumps(packet_obj, separators=(',', ':'))
+            }
+            return app.response_class(
+                response=json.dumps(server_packet),
+                status=200,
+                mimetype='application/json'
+            )
 
         # --- IAS WebToken stubs -------------------------------------------------
         def _mint_dummy_webtoken(client_id: str = "364258", region: str = "global") -> str:
@@ -675,6 +796,241 @@ class BlueArchiveServer:
         @app.route('/api/toy/sdk/verifyWebToken.nx', methods=['POST'])
         def ias_webtoken_api():
             return ias_webtoken()
+
+        # --- IMS Account Link (primary platform) ------------------------------
+        @app.route('/ims/public/v1/link/account/platform/primary', methods=['GET'])
+        def ims_primary_platform():
+            self.log_request('/ims/public/v1/link/account/platform/primary')
+            gid = (request.headers.get('gid') or request.headers.get('Gid') or '2079')
+            ticket = request.headers.get('x-ias-ticket') or request.headers.get('X-Ias-Ticket') or ''
+            acct, _ = self._get_or_create_account(ticket, gid)
+            import datetime as _dt
+            acct['last_login'] = _dt.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.0000000Z')
+            acct['updated_at'] = int(time.time())
+            self._save_accounts()
+            resp = {
+                "links": [
+                    {
+                        "platform_type": acct.get("platform_type", "ARENA"),
+                        "platform_user_id": acct["platform_user_id"],
+                        "guid": acct["guid"],
+                        "is_primary": True,
+                        "primary_platform_at": int(time.time() * 1000),
+                        "game_data": {
+                            "guid": acct["guid"],
+                            "name": acct.get("name", "Player"),
+                            "level": acct.get("level", 1),
+                            "attribute": acct.get("attribute", []),
+                            "date_last_login": acct['last_login']
+                        }
+                    }
+                ]
+            }
+            return jsonify(resp)
+
+        # --- Sign in with IAS ticket (toy sdk) --------------------------------
+        @app.route('/toy/sdk/signInWithTicket.nx', methods=['POST'])
+        @app.route('/api/toy/sdk/signInWithTicket.nx', methods=['POST'])
+        def toy_sign_in_with_ticket():
+            self.log_request('/toy/sdk/signInWithTicket.nx')
+            gid = (request.headers.get('gid') or request.headers.get('Gid') or '2079')
+            ticket = request.headers.get('ias-ticket') or request.headers.get('IAS-Ticket') or ''
+            acct, _ = self._get_or_create_account(ticket, gid)
+            acct['updated_at'] = int(time.time())
+            self._save_accounts()
+            result = {
+                "npSN": acct["npSN"],
+                "guid": acct["guid"],
+                "umKey": acct["umKey"],
+                "isSwap": False,
+                "termsAgree": [
+                    {"termID": 304, "type": [], "optional": 0, "exposureType": "NORMAL", "title": "TERMS OF SERVICE AND END USER LICENSE AGREEMENT", "titleReplacements": [], "isAgree": 1, "isUpdate": 0},
+                    {"termID": 305, "type": [], "optional": 0, "exposureType": "NORMAL", "title": "Privacy Policy", "titleReplacements": [], "isAgree": 1, "isUpdate": 0}
+                ],
+                "npaCode": "0EP0RZW1060XL"
+            }
+            body = {
+                "errorCode": 0,
+                "result": result,
+                "errorText": "Success",
+                "errorDetail": ""
+            }
+            data = json.dumps(body).encode('utf-8')
+            return Response(data, status=200, headers={
+                'Content-Type': 'text/html; charset=UTF-8',
+                'Content-Length': str(len(data)),
+                'errorcode': '0',
+                'access-control-allow-origin': '*',
+                'cache-control': 'private'
+            })
+
+        # --- Terms list endpoint (post-sign-in) ------------------------------
+        @app.route('/toy/sdk/terms.nx', methods=['POST'])
+        @app.route('/api/toy/sdk/terms.nx', methods=['POST'])
+        def toy_terms():
+            self.log_request('/toy/sdk/terms.nx')
+            # Client sends: { gid, locale, method, npsn, termsApiVer, uuid }
+            try:
+                _ = request.get_json(silent=True) or {}
+            except Exception:
+                _ = {}
+            resp = {
+                "errorCode": 0,
+                "result": {
+                    "terms": [
+                        {"termID": 304, "type": [], "optional": 0, "exposureType": "NORMAL", "title": "TERMS OF SERVICE AND END USER LICENSE AGREEMENT", "titleReplacements": []},
+                        {"termID": 305, "type": [], "optional": 0, "exposureType": "NORMAL", "title": "Privacy Policy", "titleReplacements": []}
+                    ]
+                },
+                "errorText": "Success",
+                "errorDetail": ""
+            }
+            data = json.dumps(resp).encode('utf-8')
+            return Response(data, status=200, headers={
+                'Content-Type': 'text/html; charset=UTF-8',
+                'Content-Length': str(len(data)),
+                'errorcode': '0',
+                'access-control-allow-origin': '*',
+                'cache-control': 'private'
+            })
+
+        # --- Country v2 (used by analytics flow) -----------------------------
+        @app.route('/toy/v2/country', methods=['GET'])
+        def toy_country_v2():
+            self.log_request('/toy/v2/country')
+            try:
+                from flask import request as _req
+                ip = getattr(_req, 'remote_addr', '127.0.0.1')
+            except Exception:
+                ip = '127.0.0.1'
+            body = {"ip": ip, "country-code": "GB"}
+            return jsonify(body)
+
+        # --- Push policy (toy-push) -----------------------------------------
+        @app.route('/toy-push/live/sdk/push/policy', methods=['GET'])
+        def toy_push_policy_get():
+            self.log_request('/toy-push/live/sdk/push/policy')
+            svc_id = request.args.get('svcID', '2079')
+            np_token = request.args.get('npToken', '')
+            body = {
+                "push": {
+                    "name": "토이 푸시",
+                    "policies": {
+                        "1": {"enable": True, "name": "AD Push Policy (광고성 푸시 정책)"},
+                        "2": {"enable": True, "name": "Nocturnal Push Policy (야간 푸시 정책)"}
+                    }
+                },
+                "kind": {"name": "게임 푸시", "policies": {}},
+                "svcID": int(svc_id) if str(svc_id).isdigit() else 2079,
+                "npToken": np_token
+            }
+            return jsonify(body)
+
+        @app.route('/toy-push/live/sdk/push/policy', methods=['POST'])
+        def toy_push_policy_post():
+            self.log_request('/toy-push/live/sdk/push/policy')
+            return Response('', status=200, headers={
+                'Content-Length': '0',
+                'expires': '0',
+                'cache-control': 'no-cache, no-store, max-age=0, must-revalidate',
+                'x-xss-protection': '1; mode=block',
+                'pragma': 'no-cache',
+                'x-frame-options': 'DENY',
+                'x-content-type-options': 'nosniff'
+            })
+
+        # --- SDK API: user-meta last-login ----------------------------------
+        @app.route('/sdk-api/user-meta/last-login', methods=['POST'])
+        def sdk_api_user_meta_last_login():
+            self.log_request('/sdk-api/user-meta/last-login')
+            data = b"{}"
+            return Response(data, status=200, headers={
+                'Content-Type': 'application/json',
+                'Content-Length': str(len(data))
+            })
+
+        # --- Analytics stream processor proxy -------------------------------
+        @app.route('/stream-processor-proxy/<region>/client.all.secure', methods=['POST', 'GET'])
+        def stream_processor_proxy(region):
+            self.log_request(f'/stream-processor-proxy/{region}/client.all.secure')
+            # Accept and drop NDJSON analytics batches like prod; respond 200 with empty body per HAR
+            try:
+                _ = request.get_data(cache=False, as_text=False)
+            except Exception:
+                pass
+            # Mimic prod-ish headers to appease picky clients
+            import uuid as _uuid
+            # Header order matters for some strict clients; build via list of tuples
+            hdrs = [
+                ('Content-Length', '0'),
+                ('Connection', 'keep-alive'),
+                ('date', datetime.now().strftime('%a, %d %b %Y %H:%M:%S GMT')),
+                ('x-envoy-upstream-service-time', '254'),
+                ('inface-wasm-filter', '1.8.0'),
+                ('server', 'inface'),
+                ('x-request-id', 'zoor3VtyCQebeofMJFGLCHOSEaUl17SMd2VXEmLKyHQpIeon9L6HUA=='),
+                ('X-Cache', 'Miss from cloudfront'),
+                ('Via', '1.1 70ac0c77136f38f37d334f7cae0b6c42.cloudfront.net (CloudFront)'),
+                ('X-Amz-Cf-Pop', 'LHR50-P5'),
+                ('X-Amz-Cf-Id', 'zoor3VtyCQebeofMJFGLCHOSEaUl17SMd2VXEmLKyHQpIeon9L6HUA=='),
+            ]
+            resp = Response(b"", status=200)
+            for k, v in hdrs:
+                resp.headers.add(k, v)
+            return resp
+
+        # --- Toy SDK: getPolicyList.nx --------------------------------------
+        @app.route('/toy/sdk/getPolicyList.nx', methods=['POST'])
+        @app.route('/api/toy/sdk/getPolicyList.nx', methods=['POST'])
+        def toy_get_policy_list():
+            self.log_request('/toy/sdk/getPolicyList.nx')
+            # Return a base64-encoded encrypted blob as per nexon.har so client can decrypt
+            import base64 as _b64
+            b64_payload = (
+                "k+4aDsyElgNVMq3WHbvFz47/iu9MAuxuTBrN5+u6VupRFXuHwOgcfZxGL5XU9v04j6h+CoAxiFph171R7h8AkN03CJs4lWUWHyc2VY3aQUwQ7q+cYv3SINx4azxP5t/O"
+            )
+            data = _b64.b64decode(b64_payload)
+            date_val = datetime.now().strftime('%a, %d %b %Y %H:%M:%S GMT')
+            hdrs = [
+                ('Content-Type', 'text/html; charset=UTF-8'),
+                ('Content-Length', '96'),
+                ('Connection', 'keep-alive'),
+                ('date', date_val),
+                ('access-control-allow-origin', '*'),
+                ('errorcode', '0'),
+                ('cache-control', 'private'),
+                ('x-envoy-upstream-service-time', '467'),
+                ('inface-wasm-filter', '1.8.0'),
+                ('server', 'inface'),
+                ('x-request-id', 'z_rOyDkmglvfxdAKBzL2dZfby1zmsbLImJDZ9QIMQWuj34Z54XXYEw=='),
+                ('X-Cache', 'Miss from cloudfront'),
+                ('Via', '1.1 32454b720dce934befa2d50bacc6d890.cloudfront.net (CloudFront)'),
+                ('X-Amz-Cf-Pop', 'LHR50-P5'),
+                ('X-Amz-Cf-Id', 'z_rOyDkmglvfxdAKBzL2dZfby1zmsbLImJDZ9QIMQWuj34Z54XXYEw=='),
+            ]
+            resp = Response(data, status=200)
+            for k, v in hdrs:
+                resp.headers.add(k, v)
+            return resp
+
+        # --- Toy SDK: getUserInfo.nx ----------------------------------------
+        @app.route('/toy/sdk/getUserInfo.nx', methods=['POST'])
+        @app.route('/api/toy/sdk/getUserInfo.nx', methods=['POST'])
+        def toy_get_user_info():
+            self.log_request('/toy/sdk/getUserInfo.nx')
+            # Return decoded binary blob matching nexon.har
+            import base64 as _b64
+            b64_payload = (
+                "k+4aDsyElgNVMq3WHbvFz50L26Pzv1CFhY5nVa6Toq4WT+yEYOcHcF8ub3ADbx9wp0YzIt4xDVk4RpaKLgp2YXLgn/vazQ+W6z300q0pno0RGsDlP9gQ8BDZpnouryaqUjCBWLhHeIzasQNWLnj8/I1JmHWf6ipzgWSLXlI1FQXMnc4PsVWdAI4Hfp8MUc3QtgbyxuP8DLPZLCHB8+KWJQend9JHlbxiZbXkuWue9+SsplJHDUtQqFR8dfs2PjeIaFukemOSv1XzQLgsu85+e7hrihHJcnv/LxHURmWl47FEf5pMfNrNx86gmyxKN4McUhAQjtXbrTDHZZcOsteQRnZd8OVYGthrj1r0mOs6L19b2o8fWLcuVlsARxtQerxDwfdioYMqKbLYhmh8/ZIFc4+ofgqAMYhaYde9Ue4fAJDdNwibOJVlFh8nNlWN2kFMEO6vnGL90iDceGs8T+bfzg=="
+            )
+            data = _b64.b64decode(b64_payload)
+            return Response(data, status=200, headers={
+                'Content-Type': 'text/html; charset=UTF-8',
+                'Content-Length': str(len(data)),
+                'errorcode': '0',
+                'access-control-allow-origin': '*',
+                'cache-control': 'private'
+            })
 
     # keep existing routes below...
 
@@ -823,6 +1179,7 @@ def _get_ssl_hostnames():
         'localhost',
         '127.0.0.1',
         'public.api.nexon.com',
+    'signin.nexon.com',
         'prod-noticepool.game.nexon.com',
         'nxm-eu-bagl.nexon.com',
         'nxm-ios-bagl.nexon.com',
