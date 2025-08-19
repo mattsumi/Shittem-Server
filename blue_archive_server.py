@@ -677,46 +677,36 @@ class BlueArchiveServer:
             return resp
 
         # --- Gateway API stub (/api/gateway) ----------------------------------
+        def _forward_to_csharp(target_path: str):
+            try:
+                import requests as _req
+            except Exception:
+                _req = None
+            try:
+                from flask import request as _rq
+                url = f"http://127.0.0.1:7000{target_path}"
+                data = _rq.get_data(cache=False)
+                # Filter hop-by-hop headers
+                drop = {"host", "content-length", "connection", "accept-encoding"}
+                fwd_headers = {k: v for k, v in _rq.headers.items() if k.lower() not in drop}
+                if _req:
+                    r = _req.request(_rq.method, url, params=_rq.args, data=data, headers=fwd_headers, timeout=15)
+                    resp = Response(r.content, status=r.status_code)
+                    for k, v in r.headers.items():
+                        lk = k.lower()
+                        if lk in ("content-length", "transfer-encoding", "connection", "content-encoding"):
+                            continue
+                        resp.headers.add(k, v)
+                    resp.headers['Content-Length'] = str(len(r.content))
+                    return resp
+            except Exception as e:
+                print_colored(f"[proxy] Forward failed: {e}", YELLOW)
+            return jsonify({"error": "csharp_unavailable"}), 502
+
         @app.route('/api/gateway', methods=['POST'])
         def api_gateway():
-            """
-            Mimic the gateway aggregator used by BestHTTP/2 client after IAS ticket.
-            Accepts multipart/form-data with a part named 'mx' (binary). Returns a
-            JSON body shaped like { protocol: "Queuing_GetTicketGL", packet: "{...}" }.
-            """
-            from flask import request as _req
             self.log_request('/api/gateway')
-            # Read multipart field 'mx' if present (not used for now)
-            try:
-                _ = _req.files.get('mx') or _req.form.get('mx')
-            except Exception:
-                _ = None
-
-            # Progress a simple queue: advance allowed faster than ticket to let client through
-            self.queue_ticket_seq += 1
-            # Allow bursts to pass quickly
-            self.queue_allowed_seq = max(self.queue_allowed_seq, self.queue_ticket_seq)
-
-            # Build a ServerPacket-like structure with JSON string in packet
-            import base64, os as _os, random as _rand
-            enter_ticket = base64.b64encode(_os.urandom(32)).decode('ascii')
-            packet_obj = {
-                "Protocol": 50001,  # Queuing_GetTicketGL
-                "EnterTicket": enter_ticket,
-                "TicketSequence": self.queue_ticket_seq,
-                "AllowedSequence": self.queue_allowed_seq,
-                "RequiredSecondsPerUser": 0.005,
-                "ServerSeed": base64.b64encode(_os.urandom(256)).decode('ascii')
-            }
-            server_packet = {
-                "protocol": "Queuing_GetTicketGL",
-                "packet": json.dumps(packet_obj, separators=(',', ':'))
-            }
-            return app.response_class(
-                response=json.dumps(server_packet),
-                status=200,
-                mimetype='application/json'
-            )
+            return _forward_to_csharp('/api/gateway')
 
         # --- IAS WebToken stubs -------------------------------------------------
         def _mint_dummy_webtoken(client_id: str = "364258", region: str = "global") -> str:
@@ -1374,57 +1364,65 @@ def main():
 
     ba_server = BlueArchiveServer()
     main_app = ba_server.create_flask_app()
-
     if not main_app:
-        print_colored("Failed to create main server.", RED)
-        input("Press Enter to exit...")
+        print_colored("Failed to create main server app.", RED)
         return 1
 
     ac_server = AntiCheatServer()
     ac_app = ac_server.create_flask_app()
 
-    https_port = 443
-    http_port = 80
+    # Required ports
+    main_port = 443
+    api_port = 5000
+    gateway_port = 5100
     ac_port = 58880
 
-    if check_port_available(https_port):
-        main_port = https_port
-        use_ssl_main = True
-        print_colored(f"Using HTTPS port {main_port}.", GREEN)
-    elif check_port_available(http_port):
-        main_port = http_port
-        use_ssl_main = False
-        print_colored(f"Using HTTP port {main_port}.", YELLOW)
-    else:
-        main_port = 8080
-        use_ssl_main = False
-        print_colored(f"Using fallback port {main_port}.", RED)
+    # Hard fail if any required port is unavailable
+    unavailable = []
+    if not check_port_available(main_port):
+        unavailable.append(f"{main_port} (Main)")
+    if not check_port_available(api_port):
+        unavailable.append(f"{api_port} (API)")
+    if not check_port_available(gateway_port):
+        unavailable.append(f"{gateway_port} (Gateway)")
+    if ac_app and not check_port_available(ac_port):
+        unavailable.append(f"{ac_port} (Anti-cheat)")
+    if unavailable:
+        print_colored("Required port(s) unavailable: " + ", ".join(unavailable), RED)
+        print_colored("All ports must be free and correct. Exiting.", RED)
+        return 1
 
-    if not check_port_available(ac_port):
-        print_colored(f"Port {ac_port} is already in use. Anti-cheat mock may clash.", YELLOW)
-
+    use_ssl_main = True
     print_colored(f"\nStarting main server on {main_port}...", GREEN)
     main_thread = start_server_thread(main_app, main_port, "Main", use_ssl=use_ssl_main)
 
-    print_colored("Starting API server on 5000...", GREEN)
-    # Always use HTTPS for API and Gateway as the client expects TLS on these ports
-    api_thread = start_server_thread(main_app, 5000, "API", use_ssl=True)
+    # Do not start Python on 5000/5100; those belong to C# API
+    api_thread = None
+    gateway_thread = None
 
-    print_colored("Starting Gateway server on 5100...", GREEN)
-    gateway_thread = start_server_thread(main_app, 5100, "Gateway", use_ssl=True)
-
+    ac_thread = None
     if ac_app:
         print_colored(f"Starting anti-cheat mock on {ac_port}...", GREEN)
         ac_thread = start_server_thread(ac_app, ac_port, "Anti-cheat", use_ssl=False)
 
+    # Give servers a moment to bind, then verify
     time.sleep(2)
+    failed = []
+    if not (main_thread and main_thread.is_alive()):
+        failed.append("Main")
+    # API/Gateway are hosted by C#; no need to check here
+    if ac_app and not (ac_thread and ac_thread.is_alive()):
+        failed.append("Anti-cheat")
+    if failed:
+        print_colored("Failed to start: " + ", ".join(failed), RED)
+        return 1
 
     print_colored("\nServer is up.", BOLD + GREEN)
     print_colored("=" * 30, GREEN)
-    protocol = "https" if use_ssl_main else "http"
-    print_colored(f"Main:    {protocol}://localhost:{main_port}", CYAN)
-    print_colored(f"API:     {protocol}://localhost:5000", CYAN)
-    print_colored(f"Gateway: {protocol}://localhost:5100", CYAN)
+    main_proto = "https" if use_ssl_main else "http"
+    print_colored(f"Main:    {main_proto}://localhost:{main_port}", CYAN)
+    # API and Gateway are started with TLS unconditionally above
+    print_colored(f"API:     https://localhost:5000 (C#)", CYAN)
     if ac_app:
         print_colored(f"AC:      http://localhost:{ac_port}", CYAN)
     print_colored(f"Crypto:  {'enabled' if ba_server.crypto_available else 'basic'}", MAGENTA)
