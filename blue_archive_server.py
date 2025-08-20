@@ -1117,8 +1117,6 @@ class BlueArchiveServer:
             self.log_request(f'/config.na.nexon.com/v2/configurations/{key}')
             return jsonify({})
 
-    # keep existing routes below...
-
         @app.route('/crash-reporting-api-rs26-usw2.cloud.unity3d.com/api/reporting/v1/projects/<project>/events', methods=['POST'])
         def crash_reporting(project):
             self.log_request(f'/crash-reporting (project: {project})')
