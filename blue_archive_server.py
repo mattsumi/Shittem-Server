@@ -11,6 +11,7 @@ import socket
 import platform
 import ctypes
 import tempfile
+import atexit
 
 RED = '\033[91m'
 GREEN = '\033[92m'
@@ -308,6 +309,10 @@ class BlueArchiveServer:
         # Map transient IAS tickets to a stable user key to avoid new accounts each run
         self.ticket_map = {}
         self.current_user_key = None
+        # HAR logging setup
+        self._har_entries = []
+        self._har_logfile = f"server_log_{int(time.time())}.har"
+        self._create_initial_har_file()
         # One-time migration: ensure there is a stable default account key
         try:
             if isinstance(self.accounts, dict) and self.accounts and 'uid:default' not in self.accounts:
@@ -326,7 +331,36 @@ class BlueArchiveServer:
             print_colored(f"Failed to load accounts: {e}", YELLOW)
         return {}
 
-    def _save_accounts(self):
+    def _create_initial_har_file(self):
+        """Create the HAR file immediately with empty entries"""
+        try:
+            data = {
+                "log": {
+                    "version": "1.2",
+                    "creator": {"name": "ShittimServer", "version": "1.0"},
+                    "entries": []
+                }
+            }
+            with open(self._har_logfile, 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=2)
+            print_colored(f"HAR file created: {self._har_logfile}", GREEN)
+        except Exception as e:
+            print_colored(f"Failed to create HAR file: {e}", RED)
+
+    def _update_har_file(self):
+        """Update the HAR file with current entries"""
+        try:
+            data = {
+                "log": {
+                    "version": "1.2",
+                    "creator": {"name": "ShittimServer", "version": "1.0"},
+                    "entries": self._har_entries
+                }
+            }
+            with open(self._har_logfile, 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=2)
+        except Exception as e:
+            print_colored(f"HAR update error: {e}", YELLOW)
         try:
             tmp = self.accounts_path.with_suffix('.tmp')
             with open(tmp, 'w', encoding='utf-8') as f:
@@ -401,6 +435,82 @@ class BlueArchiveServer:
             return None
 
         app = Flask(__name__)
+
+        # Reference to self for closures
+        server_instance = self
+
+        @app.before_request
+        def _har_before_request():
+            from flask import request as _req, g as _g
+            _g._har_start_ts = time.time()
+            try:
+                _g._har_req_body = _req.get_data(cache=True)
+            except Exception:
+                _g._har_req_body = b''
+
+        @app.after_request
+        def _har_after_request(response):
+            try:
+                from flask import request as _req, g as _g
+                import datetime as _dt, http.client as _http
+                started = _dt.datetime.utcnow().isoformat() + 'Z'
+                duration = int((time.time() - getattr(_g, '_har_start_ts', time.time())) * 1000)
+                req_headers = [{"name": k, "value": v} for k, v in _req.headers.items()]
+                req_query = [{"name": k, "value": v} for k, v in _req.args.items()]
+                req_cookies = [{"name": k, "value": v} for k, v in _req.cookies.items()]
+                body_bytes = getattr(_g, '_har_req_body', b'') or b''
+                try:
+                    body_text = body_bytes.decode('latin1')
+                except Exception:
+                    body_text = ''
+                resp_headers = [{"name": k, "value": v} for k, v in response.headers.items()]
+                resp_body = response.get_data() or b''
+                try:
+                    resp_text = resp_body.decode('latin1')
+                except Exception:
+                    resp_text = ''
+                entry = {
+                    "startedDateTime": started,
+                    "time": duration,
+                    "request": {
+                        "method": _req.method,
+                        "url": _req.url,
+                        "httpVersion": "HTTP/1.1",
+                        "headers": req_headers,
+                        "queryString": req_query,
+                        "cookies": req_cookies,
+                        "headersSize": -1,
+                        "bodySize": len(body_bytes),
+                        "postData": {"mimeType": _req.headers.get('Content-Type', ''), "text": body_text} if body_text else {}
+                    },
+                    "response": {
+                        "status": response.status_code,
+                        "statusText": _http.responses.get(response.status_code, ''),
+                        "httpVersion": "HTTP/1.1",
+                        "headers": resp_headers,
+                        "content": {
+                            "size": len(resp_body),
+                            "mimeType": response.headers.get('Content-Type', ''),
+                            "text": resp_text
+                        },
+                        "redirectURL": response.headers.get('Location', ''),
+                        "headersSize": -1,
+                        "bodySize": len(resp_body)
+                    },
+                    "cache": {},
+                    "timings": {"send": 0, "wait": duration, "receive": 0},
+                    "serverIPAddress": _req.host.split(':')[0] if _req.host else '',
+                    "connection": str(_req.environ.get('REMOTE_PORT', ''))
+                }
+                server_instance._har_entries.append(entry)
+                server_instance._update_har_file()
+                print_colored(f"HAR: Added entry #{len(server_instance._har_entries)} for {_req.method} {_req.path}", BLUE)
+                # Debug: print the first entry to see its structure
+                if len(server_instance._har_entries) == 1:
+                    print_colored(f"First HAR entry keys: {list(entry.keys())}", MAGENTA)
+            except Exception as e:
+                print_colored(f"HAR logging error: {e}", YELLOW)
+            return response
 
         @app.route('/com.nexon.bluearchivesteam/server_config/<config_name>.json', methods=['GET'])
         def server_config(config_name):
