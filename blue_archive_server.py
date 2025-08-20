@@ -1057,6 +1057,7 @@ class BlueArchiveServer:
 
         # Stub toy.log; accept and drop logs
         @app.route('/toy.log.nexon.io/', methods=['POST'])
+        @app.route('/toy.log.nexon.io', methods=['POST'])
         def toy_log():
             self.log_request('/toy.log.nexon.io/')
             return Response(b'', status=200)
