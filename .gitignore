@@ -4,6 +4,7 @@ request_logs/
 data/
 nexon.har
 nexon.flows
+*.har
 
 # Python cache and bytecode
 __pycache__/

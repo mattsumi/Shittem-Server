@@ -326,7 +326,11 @@ class BlueArchiveServer:
         try:
             if self.accounts_path.exists():
                 with open(self.accounts_path, 'r', encoding='utf-8') as f:
-                    return json.load(f)
+                    accounts = json.load(f)
+                print_colored(f"Loaded {len(accounts)} accounts from {self.accounts_path}", GREEN)
+                return accounts
+            else:
+                print_colored("No existing accounts file found - starting fresh", YELLOW)
         except Exception as e:
             print_colored(f"Failed to load accounts: {e}", YELLOW)
         return {}
@@ -361,13 +365,28 @@ class BlueArchiveServer:
                 json.dump(data, f, indent=2)
         except Exception as e:
             print_colored(f"HAR update error: {e}", YELLOW)
+
+    def _save_accounts(self):
+        """Save accounts to disk with atomic write to prevent corruption"""
         try:
-            tmp = self.accounts_path.with_suffix('.tmp')
-            with open(tmp, 'w', encoding='utf-8') as f:
+            # Create a temporary file first to ensure atomic write
+            tmp_path = self.accounts_path.with_suffix('.tmp')
+            with open(tmp_path, 'w', encoding='utf-8') as f:
                 json.dump(self.accounts, f, ensure_ascii=False, indent=2)
-            os.replace(tmp, self.accounts_path)
+            
+            # Atomic replace - this prevents corruption if the process is interrupted
+            os.replace(tmp_path, self.accounts_path)
+            
+            print_colored(f"Saved {len(self.accounts)} accounts to disk", GREEN)
         except Exception as e:
             print_colored(f"Failed to save accounts: {e}", YELLOW)
+            # Try to clean up the temp file if it exists
+            try:
+                tmp_path = self.accounts_path.with_suffix('.tmp')
+                if tmp_path.exists():
+                    tmp_path.unlink()
+            except Exception:
+                pass
 
     def _derive_ids_from_token(self, token: str, gid: str = '2079'):
         import hashlib
@@ -905,10 +924,15 @@ class BlueArchiveServer:
             gid = (request.headers.get('gid') or request.headers.get('Gid') or '2079')
             ticket = request.headers.get('x-ias-ticket') or request.headers.get('X-Ias-Ticket') or ''
             acct, _ = self._get_or_create_account(ticket, gid)
+            
+            # Update account metadata (this is what Nexon does internally)
             import datetime as _dt
             acct['last_login'] = _dt.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.0000000Z')
             acct['updated_at'] = int(time.time())
+            
+            # Persist the account changes to disk
             self._save_accounts()
+            
             resp = {
                 "links": [
                     {
@@ -937,8 +961,13 @@ class BlueArchiveServer:
             gid = (request.headers.get('gid') or request.headers.get('Gid') or '2079')
             ticket = request.headers.get('ias-ticket') or request.headers.get('IAS-Ticket') or ''
             acct, _ = self._get_or_create_account(ticket, gid)
+            
+            # Update account metadata on sign-in
             acct['updated_at'] = int(time.time())
+            
+            # Persist the account changes to disk
             self._save_accounts()
+            
             result = {
                 "npSN": acct["npSN"],
                 "guid": acct["guid"],
