@@ -35,17 +35,32 @@ def is_admin():
         return False
 
 class HostsManager:
+    # Domains used by the official Blue Archive client.  Any domain not
+    # redirected will hit the real server and can cause 10001 errors if
+    # network connectivity is blocked.  Extend this list to cover all
+    # endpoints observed in nexon.har.  These values are only added to
+    # your hosts file if you run with administrator privileges.
     BLUE_ARCHIVE_DOMAINS = [
         'public.api.nexon.com',
-    'signin.nexon.com',
-    'prod-noticepool.game.nexon.com',
-    # Regional API domains used by Blue Archive
-    'nxm-eu-bagl.nexon.com',
-    'nxm-ios-bagl.nexon.com',
-    'nxm-kr-bagl.nexon.com',
-    'nxm-tw-bagl.nexon.com',
-    'nxm-th-bagl.nexon.com',
-    'nxm-or-bagl.nexon.com',
+        'signin.nexon.com',
+        'prod-noticepool.game.nexon.com',
+        # Regional API domains used by Blue Archive
+        'nxm-eu-bagl.nexon.com',
+        'nxm-ios-bagl.nexon.com',
+        'nxm-kr-bagl.nexon.com',
+        'nxm-tw-bagl.nexon.com',
+        'nxm-th-bagl.nexon.com',
+        'nxm-or-bagl.nexon.com',
+        # Additional NGS/analytics/config endpoints
+        'x-init.ngs.nexon.com',
+        'x-update.ngs.nexon.com',
+        'x-csauth.ngs.nexon.com',
+        'x-config.ngs.nexon.com',
+        'psm-log.ngs.nexon.com',
+        'toy.log.nexon.io',
+        'gtable.inface.nexon.com',
+        'config.na.nexon.com',
+        # AWS API Gateway used by the web SDK
         'bolo7yechd.execute-api.ap-northeast-1.amazonaws.com',
         'nexon-sdk.nexon.com',
         'api-pub.nexon.com',
@@ -650,31 +665,17 @@ class BlueArchiveServer:
         @app.route('/api/ias/live/public/v1/issue/game-token/by-ticket', methods=['POST'])
         def ias_game_token_by_ticket():
             self.log_request('/ias/live/public/v1/issue/game-token/by-ticket')
-            # Exact response captured from HAR
-            body = (
-                '{"game_token":"ias:gt:1755603032166:1247143115@3774ac6b-9f50-4f31-ac6a-9057ee0b97d7@STEAM:ANA"}'
-            )
-            data = body.encode('utf-8')
-            date_val = datetime.now().strftime('%a, %d %b %Y %H:%M:%S GMT')
-            hdrs = [
-                ('Content-Type', 'application/json'),
-                ('Content-Length', '95'),
-                ('Connection', 'keep-alive'),
-                ('date', date_val),
-                ('cache-control', 'no-cache'),
-                ('x-envoy-upstream-service-time', '171'),
-                ('inface-wasm-filter', '1.8.0'),
-                ('server', 'inface'),
-                ('x-request-id', 'cH397L2NpEZ8pr6NAVeFMFJTFObrltlP6Xo0s3PgUG9U18Pemdy51Q=='),
-                ('X-Cache', 'Miss from cloudfront'),
-                ('Via', '1.1 3578a2fc7abb753f586c61e194c5489a.cloudfront.net (CloudFront)'),
-                ('X-Amz-Cf-Pop', 'LHR50-P5'),
-                ('X-Amz-Cf-Id', 'cH397L2NpEZ8pr6NAVeFMFJTFObrltlP6Xo0s3PgUG9U18Pemdy51Q=='),
-            ]
-            resp = Response(data, status=200)
-            for k, v in hdrs:
-                resp.headers.add(k, v)
-            return resp
+            # Generate a unique game token tied to the incoming ticket.  The official API
+            # derives the game token from the ticket; returning a hard‑coded token causes
+            # the client to reject the login.  We build a new token using the current
+            # timestamp and a random UUID.
+            payload = request.get_json(silent=True) or {}
+            ticket = payload.get('ticket') or ''
+            now_ms = int(time.time() * 1000)
+            platform = 'STEAM'
+            import uuid as _uuid
+            game_token = f"ias:gt:{now_ms}:1247143115@{_uuid.uuid4()}@{platform}:ANA"
+            return jsonify({"game_token": game_token})
 
         # --- Gateway API stub (/api/gateway) ----------------------------------
         def _forward_to_csharp(target_path: str):
@@ -1022,6 +1023,99 @@ class BlueArchiveServer:
                 'cache-control': 'private'
             })
 
+        # --- Stub NGS and analytics endpoints ---------------------------------
+        # Accept and drop any calls to x-init.ngs.nexon.com
+        @app.route('/x-init.ngs.nexon.com/<path:subpath>', methods=['GET', 'POST'])
+        def ngs_init(subpath):
+            self.log_request(f'/x-init.ngs.nexon.com/{subpath}')
+            return Response(b'', status=200)
+
+        # Accept and drop any calls to x-update.ngs.nexon.com
+        @app.route('/x-update.ngs.nexon.com/<path:subpath>', methods=['GET', 'POST'])
+        def ngs_update(subpath):
+            self.log_request(f'/x-update.ngs.nexon.com/{subpath}')
+            return Response(b'', status=200)
+
+        # Stub csauth v1/v2; return empty JSON to satisfy the game
+        @app.route('/x-csauth.ngs.nexon.com/v1', methods=['POST'])
+        @app.route('/x-csauth.ngs.nexon.com/v2', methods=['POST'])
+        def ngs_csauth():
+            self.log_request('/x-csauth.ngs.nexon.com')
+            return jsonify({})
+
+        # Stub x-config; return empty JSON for any path
+        @app.route('/x-config.ngs.nexon.com/<path:subpath>', methods=['GET', 'POST'])
+        def ngs_config(subpath):
+            self.log_request(f'/x-config.ngs.nexon.com/{subpath}')
+            return jsonify({})
+
+        # Stub psm‑log; accept and drop analytics logs
+        @app.route('/psm-log.ngs.nexon.com/gameclient/log', methods=['POST'])
+        def psm_log():
+            self.log_request('/psm-log.ngs.nexon.com/gameclient/log')
+            return Response(b'', status=200)
+
+        # Stub toy.log; accept and drop logs
+        @app.route('/toy.log.nexon.io/', methods=['POST'])
+        def toy_log():
+            self.log_request('/toy.log.nexon.io/')
+            return Response(b'', status=200)
+
+        # Stub gTable; return the static configuration captured from the HAR
+        @app.route('/gtable.inface.nexon.com/gid/<gid>.json', methods=['GET'])
+        def gtable(gid):
+            self.log_request(f'/gtable.inface.nexon.com/gid/{gid}.json')
+            # This JSON was taken from nexon.har; adjust fields if your client expects other values.
+            return jsonify({
+                "toy_service_id": 2079,
+                "arena_product_id": 59754,
+                "game_client_id": None,
+                "portal_game_code": "1000158",
+                "krpc_game_code": 74280,
+                "jppc_game_code": None,
+                "na_service_id": 1050768977,
+                "na_region_host": None,
+                "krpc_service_code": None,
+                "eve_gameinfo_id": None,
+                "twitch_game_id": None,
+                "chzzk_game_id": None,
+                "project_id": "d8e6e343",
+                "guss_service_code": None,
+                "guid": "guid",
+                "world_id": None,
+                "gcid": None,
+                "krpc_member_access_code": None,
+                "jppc_gm": None,
+                "google_oauth_billing_client_redirect_uri": None,
+                "krpc_product_type": None,
+                "jppc_product_type": None,
+                "coin_type": None,
+                "alltem_code": None,
+                "google_oauth_billing_client_id": None,
+                "google_oauth_billing_client_secret": None,
+                "arena_service_code": None,
+                "str_env_type": "LIVE",
+                "game_release_status": "released",
+                "game_name_ko": "블루 아카이브",
+                "game_name_en": "Blue Archive",
+                "gid": gid,
+                "last_modified": {
+                    "modify_date": "2024-10-10T07:48:12.833Z",
+                    "admin_no": 441
+                },
+                "krpc_alltem_code": None,
+                "created": {
+                    "create_date": "2021-10-28T07:35:22.366Z",
+                    "admin_no": 2
+                }
+            })
+
+        # Stub NA configuration; return an empty dict for any key
+        @app.route('/config.na.nexon.com/v2/configurations/<path:key>', methods=['GET'])
+        def config_na(key):
+            self.log_request(f'/config.na.nexon.com/v2/configurations/{key}')
+            return jsonify({})
+
     # keep existing routes below...
 
         @app.route('/crash-reporting-api-rs26-usw2.cloud.unity3d.com/api/reporting/v1/projects/<project>/events', methods=['POST'])
@@ -1178,6 +1272,29 @@ def _get_ssl_hostnames():
         'nxm-th-bagl.nexon.com',
         'nxm-or-bagl.nexon.com',
         'crash-reporting-api-rs26-usw2.cloud.unity3d.com',
+    # Added NGS/analytics/config endpoints to avoid TLS name mismatch
+    'x-init.ngs.nexon.com',
+    'x-update.ngs.nexon.com',
+    'x-csauth.ngs.nexon.com',
+    'x-config.ngs.nexon.com',
+    'psm-log.ngs.nexon.com',
+    'toy.log.nexon.io',
+    'gtable.inface.nexon.com',
+    'config.na.nexon.com',
+    # SDK and CDN endpoints sometimes contacted directly by the client
+    'bolo7yechd.execute-api.ap-northeast-1.amazonaws.com',
+    'nexon-sdk.nexon.com',
+    'api-pub.nexon.com',
+    'member.nexon.com',
+    'sdk-push.mp.nexon.com',
+    'ba.dn.nexoncdn.co.kr',
+    'd2vaidpni345rp.cloudfront.net',
+    'prod-noticeview.bluearchiveyostar.com',
+    'yostarjp.s3-ap-northeast-1.amazonaws.com',
+    'yostar-serverinfo.bluearchiveyostar.com',
+    'ba-gl-web.bluearchiveyostar.com',
+    'ba-gl-kor-web.bluearchiveyostar.com',
+    '54.238.121.146',
     }
     return sorted(hostnames)
 
