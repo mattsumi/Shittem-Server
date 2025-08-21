@@ -35,8 +35,11 @@ if (File.Exists(certPath) && File.Exists(keyPath))
     {
         builder.WebHost.ConfigureKestrel(options =>
         {
-            // HTTP on port 5000
-            options.ListenAnyIP(5000);
+            // HTTPS on port 5000 with our certificate
+            options.ListenAnyIP(5000, listenOptions =>
+            {
+                listenOptions.UseHttps(cert);
+            });
             // HTTPS on port 5100 with our certificate
             options.ListenAnyIP(5100, listenOptions =>
             {
