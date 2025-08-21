@@ -551,7 +551,7 @@ class BlueArchiveServer:
                         {
                             "Name": "global",
                             "ApiUrl": "https://nxm-eu-bagl.nexon.com:5000/api/",
-                            "GatewayUrl": "https://nxm-eu-bagl.nexon.com:5100/api/",
+                            "GatewayUrl": "https://nxm-eu-bagl.nexon.com:5000/api/",
                             "NXSID": "live-global"
                         }
                     ]
