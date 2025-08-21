@@ -551,7 +551,7 @@ class BlueArchiveServer:
                         {
                             "Name": "global",
                             "ApiUrl": "https://nxm-eu-bagl.nexon.com:5000/api/",
-                            "GatewayUrl": "https://nxm-eu-bagl.nexon.com:5000/api/",
+                            "GatewayUrl": "https://nxm-eu-bagl.nexon.com:5100/api/",
                             "NXSID": "live-global"
                         }
                     ]
@@ -1628,24 +1628,24 @@ def main():
 
     # Required ports
     main_port = 443
-    api_port = 5000
-    gateway_port = 5100
+    #api_port = 5000
+    #gateway_port = 5100
     ac_port = 58880
 
     # Hard fail if any required port is unavailable
-    unavailable = []
-    if not check_port_available(main_port):
-        unavailable.append(f"{main_port} (Main)")
-    if not check_port_available(api_port):
-        unavailable.append(f"{api_port} (API)")
-    if not check_port_available(gateway_port):
-        unavailable.append(f"{gateway_port} (Gateway)")
-    if ac_app and not check_port_available(ac_port):
-        unavailable.append(f"{ac_port} (Anti-cheat)")
-    if unavailable:
-        print_colored("Required port(s) unavailable: " + ", ".join(unavailable), RED)
-        print_colored("All ports must be free and correct. Exiting.", RED)
-        return 1
+    #unavailable = []
+    #if not check_port_available(main_port):
+    #    unavailable.append(f"{main_port} (Main)")
+    #if not check_port_available(api_port):
+    #    unavailable.append(f"{api_port} (API)")
+    #if not check_port_available(gateway_port):
+    #    unavailable.append(f"{gateway_port} (Gateway)")
+    #if ac_app and not check_port_available(ac_port):
+    #    unavailable.append(f"{ac_port} (Anti-cheat)")
+    #if unavailable:
+    #    print_colored("Required port(s) unavailable: " + ", ".join(unavailable), RED)
+    #    print_colored("All ports must be free and correct. Exiting.", RED)
+    #    return 1
 
     use_ssl_main = True
     print_colored(f"\nStarting main server on {main_port}...", GREEN)
