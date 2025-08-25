@@ -5,6 +5,7 @@ data/
 nexon.har
 nexon.flows
 *.har
+BA-Metadata/
 
 # Python cache and bytecode
 __pycache__/
