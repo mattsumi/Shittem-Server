@@ -1,0 +1,41 @@
+2025-08-25 21:57:55.778 +01:00 [INF] Starting BlueArchiveAPI Gateway server
+2025-08-25 21:57:56.291 +01:00 [INF] Now listening on: http://0.0.0.0:7000
+2025-08-25 21:57:56.314 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-08-25 21:57:56.322 +01:00 [INF] Hosting environment: Development
+2025-08-25 21:57:56.329 +01:00 [INF] Content root path: C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI
+2025-08-25 22:05:19.555 +01:00 [INF] Request starting HTTP/1.1 GET http://localhost:7000/api/gateway/health - null null
+2025-08-25 22:05:19.661 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.GatewayController.Health (BlueArchiveAPI)'
+2025-08-25 22:05:19.732 +01:00 [INF] Route matched with {action = "Health", controller = "Gateway"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Health() on controller BlueArchiveAPI.Controllers.GatewayController (BlueArchiveAPI).
+2025-08-25 22:05:19.744 +01:00 [INF] AES-256-GCM adapter initialized: Enabled=false
+2025-08-25 22:05:20.185 +01:00 [INF] ChaCha20-Poly1305 adapter initialized: Enabled=false
+2025-08-25 22:05:20.189 +01:00 [INF] Deflate adapter initialized: Enabled=false
+2025-08-25 22:05:20.197 +01:00 [INF] Registered 0 string and 0 numeric protocol handlers
+2025-08-25 22:05:20.206 +01:00 [INF] SessionManager initialized with cookie name: uuid, path: /
+2025-08-25 22:05:20.224 +01:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType1`4[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.DateTime, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-08-25 22:05:20.308 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.GatewayController.Health (BlueArchiveAPI) in 559.1194ms
+2025-08-25 22:05:20.336 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.GatewayController.Health (BlueArchiveAPI)'
+2025-08-25 22:05:20.342 +01:00 [INF] Request finished HTTP/1.1 GET http://localhost:7000/api/gateway/health - 200 null application/json; charset=utf-8 790.9148ms
+2025-08-25 22:05:46.794 +01:00 [INF] Request starting HTTP/1.1 GET http://localhost:7000/api/connectiongroup - null null
+2025-08-25 22:05:46.808 +01:00 [INF] Request finished HTTP/1.1 GET http://localhost:7000/api/connectiongroup - 404 0 null 14.0727ms
+2025-08-25 22:05:46.833 +01:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:7000/api/connectiongroup, Response status code: 404
+2025-08-25 22:08:04.399 +01:00 [INF] Request starting HTTP/1.1 GET http://localhost:7000/suffix2333/com.nexon.bluearchive/server_config/1.50.202328_Live.json - null null
+2025-08-25 22:08:04.447 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.ServerConfigController.GetServerUrl (BlueArchiveAPI)'
+2025-08-25 22:08:04.499 +01:00 [INF] Route matched with {action = "GetServerUrl", controller = "ServerConfig"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.ActionResult`1[System.String] GetServerUrl(System.String) on controller BlueArchiveAPI.Controllers.ServerConfigController (BlueArchiveAPI).
+2025-08-25 22:08:05.096 +01:00 [INF] server url from: localhost:7000
+2025-08-25 22:08:05.716 +01:00 [INF] Executing ObjectResult, writing value of type 'System.String'.
+2025-08-25 22:08:06.032 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.ServerConfigController.GetServerUrl (BlueArchiveAPI) in 1235.1794ms
+2025-08-25 22:08:06.046 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.ServerConfigController.GetServerUrl (BlueArchiveAPI)'
+2025-08-25 22:08:06.060 +01:00 [INF] Request finished HTTP/1.1 GET http://localhost:7000/suffix2333/com.nexon.bluearchive/server_config/1.50.202328_Live.json - 200 null text/plain; charset=utf-8 1661.8469ms
+2025-08-25 22:08:06.229 +01:00 [INF] Request starting HTTP/1.1 GET http://localhost:7000/favicon.ico - null null
+2025-08-25 22:08:06.252 +01:00 [INF] Request finished HTTP/1.1 GET http://localhost:7000/favicon.ico - 404 0 null 23.7063ms
+2025-08-25 22:08:06.276 +01:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:7000/favicon.ico, Response status code: 404
+2025-08-25 22:09:03.875 +01:00 [INF] Request starting HTTP/1.1 GET http://localhost:7000/api/gateway/health - null null
+2025-08-25 22:09:03.882 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.GatewayController.Health (BlueArchiveAPI)'
+2025-08-25 22:09:03.886 +01:00 [INF] Route matched with {action = "Health", controller = "Gateway"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Health() on controller BlueArchiveAPI.Controllers.GatewayController (BlueArchiveAPI).
+2025-08-25 22:09:03.889 +01:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType1`4[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.DateTime, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-08-25 22:09:03.894 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.GatewayController.Health (BlueArchiveAPI) in 5.4057ms
+2025-08-25 22:09:03.897 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.GatewayController.Health (BlueArchiveAPI)'
+2025-08-25 22:09:03.900 +01:00 [INF] Request finished HTTP/1.1 GET http://localhost:7000/api/gateway/health - 200 null application/json; charset=utf-8 24.6532ms
+2025-08-25 22:09:03.949 +01:00 [INF] Request starting HTTP/1.1 GET http://localhost:7000/favicon.ico - null null
+2025-08-25 22:09:03.955 +01:00 [INF] Request finished HTTP/1.1 GET http://localhost:7000/favicon.ico - 404 0 null 5.3213ms
+2025-08-25 22:09:03.961 +01:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:7000/favicon.ico, Response status code: 404

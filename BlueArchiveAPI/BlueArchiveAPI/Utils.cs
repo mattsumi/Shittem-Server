@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BlueArchiveAPI.Models;
 using BlueArchiveAPI.NetworkModels;
+using BlueArchiveAPI.Handlers;
 using Microsoft.Extensions.Logging.Abstractions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -73,6 +74,58 @@ namespace BlueArchiveAPI
         public static Protocol ParseProtocolHash(string hash)
         {
             return _protocolHash[hash];
+        }
+
+        /// <summary>
+        /// Convert string protocol name to Protocol enum value
+        /// Supports both underscore format (Account_Create) and slash format (account/create)
+        /// </summary>
+        public static Protocol? ParseProtocolString(string protocolName)
+        {
+            if (string.IsNullOrEmpty(protocolName))
+                return null;
+
+            // Try direct enum parsing first (underscore format)
+            if (Enum.TryParse<Protocol>(protocolName, true, out var directResult))
+            {
+                return directResult;
+            }
+
+            // Try converting slash format to underscore format
+            var underscoreFormat = protocolName.Replace("/", "_");
+            if (Enum.TryParse<Protocol>(underscoreFormat, true, out var convertedResult))
+            {
+                return convertedResult;
+            }
+
+            // Try reverse lookup from path format
+            if (_protocolEndpoints.TryGetValue(protocolName.ToLower(), out var pathResult))
+            {
+                return pathResult;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Convert Protocol enum to string protocol name (underscore format)
+        /// </summary>
+        public static string GetProtocolString(Protocol protocol)
+        {
+            return protocol.ToString();
+        }
+
+        /// <summary>
+        /// Get handler from HandlerManager using string protocol name
+        /// </summary>
+        public static IHandler? GetHandlerByProtocolString(string protocolName)
+        {
+            var protocolEnum = ParseProtocolString(protocolName);
+            if (protocolEnum.HasValue)
+            {
+                return HandlerManager.GetHandler(protocolEnum.Value);
+            }
+            return null;
         }
 
         public static T GetDataFromFile<T>(string filename, bool ignoreMissing)

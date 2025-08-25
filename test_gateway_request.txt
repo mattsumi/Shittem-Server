@@ -1,0 +1,5 @@
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="mx.dat"
+
+{"protocol":"Account_CheckNexon","data":{"SessionKey":{"MxToken":"test_token_123","AccountServerId":12345},"AccountId":12345}}
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
