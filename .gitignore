@@ -1,3 +1,21 @@
+# ClientHook build outputs and binaries
+ClientHook/build/
+ClientHook/**/bin/
+ClientHook/**/Release/
+ClientHook/**/Debug/
+ClientHook/**/*.obj
+ClientHook/**/*.tlog/
+ClientHook/**/*.lastbuildstate
+ClientHook/**/*.recipe
+ClientHook/**/*.exp
+ClientHook/**/*.lib
+ClientHook/**/*.exe
+ClientHook/**/*.dll
+ClientHook/**/CMakeFiles/
+ClientHook/**/CMakeCache.txt
+ClientHook/**/cmake_install.cmake
+ClientHook/**/ZERO_CHECK*/
+ClientHook/**/ALL_BUILD*/
 # Request logs containing sensitive data
 requests/
 request_logs/
