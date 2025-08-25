@@ -1,0 +1,624 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>GameGateway</name>
+    </assembly>
+    <members>
+        <member name="T:GameGateway.Compression.DeflateAdapter">
+            <summary>
+            Deflate/zlib compression adapter
+            </summary>
+        </member>
+        <member name="M:GameGateway.Compression.DeflateAdapter.CalculateAdler32(System.Byte[])">
+            <summary>
+            Calculates Adler-32 checksum as per RFC 1950
+            </summary>
+        </member>
+        <member name="T:GameGateway.Crypto.Aes256GcmAdapter">
+            <summary>
+            AES-256-GCM cryptographic adapter
+            </summary>
+        </member>
+        <member name="T:GameGateway.Crypto.ChaCha20Poly1305Adapter">
+            <summary>
+            ChaCha20-Poly1305 cryptographic adapter using NSec
+            </summary>
+        </member>
+        <member name="T:GameGateway.Handlers.AccountAuthHandler">
+            <summary>
+            Handler for Account_Auth protocol (main authentication)
+            </summary>
+        </member>
+        <member name="T:GameGateway.Handlers.AccountAuthResponse">
+            <summary>
+            Response payload for Account_Auth
+            </summary>
+        </member>
+        <member name="P:GameGateway.Handlers.AccountAuthResponse.ResultState">
+            <summary>
+            Result state of the authentication
+            </summary>
+        </member>
+        <member name="P:GameGateway.Handlers.AccountAuthResponse.SessionKey">
+            <summary>
+            Session key information
+            </summary>
+        </member>
+        <member name="P:GameGateway.Handlers.AccountAuthResponse.AccountId">
+            <summary>
+            Account ID
+            </summary>
+        </member>
+        <member name="P:GameGateway.Handlers.AccountAuthResponse.AuthToken">
+            <summary>
+            Authentication token
+            </summary>
+        </member>
+        <member name="P:GameGateway.Handlers.AccountAuthResponse.AccountInfo">
+            <summary>
+            Account information
+            </summary>
+        </member>
+        <member name="T:GameGateway.Handlers.AccountInfo">
+            <summary>
+            Account information details
+            </summary>
+        </member>
+        <member name="P:GameGateway.Handlers.AccountInfo.AccountId">
+            <summary>
+            Account ID
+            </summary>
+        </member>
+        <member name="P:GameGateway.Handlers.AccountInfo.AccountServerId">
+            <summary>
+            Account server ID
+            </summary>
+        </member>
+        <member name="P:GameGateway.Handlers.AccountInfo.Nickname">
+            <summary>
+            Player nickname
+            </summary>
+        </member>
+        <member name="P:GameGateway.Handlers.AccountInfo.Level">
+            <summary>
+            Player level
+            </summary>
+        </member>
+        <member name="P:GameGateway.Handlers.AccountInfo.Experience">
+            <summary>
+            Player experience points
+            </summary>
+        </member>
+        <member name="P:GameGateway.Handlers.AccountInfo.LastLoginTime">
+            <summary>
+            Last login timestamp
+            </summary>
+        </member>
+        <member name="T:GameGateway.Handlers.AccountCheckHandler">
+            <summary>
+            Handler for Account_Check protocol (first auth probe)
+            </summary>
+        </member>
+        <member name="T:GameGateway.Handlers.AccountCheckResponse">
+            <summary>
+            Response payload for Account_Check
+            </summary>
+        </member>
+        <member name="P:GameGateway.Handlers.AccountCheckResponse.ResultState">
+            <summary>
+            Result state of the check
+            </summary>
+        </member>
+        <member name="P:GameGateway.Handlers.AccountCheckResponse.SessionKey">
+            <summary>
+            Session key information
+            </summary>
+        </member>
+        <member name="P:GameGateway.Handlers.AccountCheckResponse.AccountId">
+            <summary>
+            Account ID
+            </summary>
+        </member>
+        <member name="T:GameGateway.Handlers.QueueGetTicketHandler">
+            <summary>
+            Handler for Queue_GetTicket protocol
+            </summary>
+        </member>
+        <member name="M:GameGateway.Handlers.QueueGetTicketHandler.GenerateEnterTicket">
+            <summary>
+            Generates a random enter ticket
+            </summary>
+        </member>
+        <member name="T:GameGateway.Handlers.QueueGetTicketResponse">
+            <summary>
+            Response payload for Queue_GetTicket
+            </summary>
+        </member>
+        <member name="P:GameGateway.Handlers.QueueGetTicketResponse.EnterTicket">
+            <summary>
+            Enter ticket identifier
+            </summary>
+        </member>
+        <member name="P:GameGateway.Handlers.QueueGetTicketResponse.TicketSequence">
+            <summary>
+            Ticket sequence number
+            </summary>
+        </member>
+        <member name="P:GameGateway.Handlers.QueueGetTicketResponse.AllowedSequence">
+            <summary>
+            Allowed sequence number
+            </summary>
+        </member>
+        <member name="P:GameGateway.Handlers.QueueGetTicketResponse.RequiredSecondsPerUser">
+            <summary>
+            Required seconds per user
+            </summary>
+        </member>
+        <member name="P:GameGateway.Handlers.QueueGetTicketResponse.ServerSeed">
+            <summary>
+            Server seed for randomization
+            </summary>
+        </member>
+        <member name="T:GameGateway.Interfaces.ICompressionAdapter">
+            <summary>
+            Interface for compression operations on request/response data
+            </summary>
+        </member>
+        <member name="P:GameGateway.Interfaces.ICompressionAdapter.Name">
+            <summary>
+            Gets the name of the compression adapter
+            </summary>
+        </member>
+        <member name="P:GameGateway.Interfaces.ICompressionAdapter.IsEnabled">
+            <summary>
+            Gets whether the adapter is enabled
+            </summary>
+        </member>
+        <member name="M:GameGateway.Interfaces.ICompressionAdapter.CompressAsync(System.Byte[])">
+            <summary>
+            Compresses the input data
+            </summary>
+            <param name="data">The data to compress</param>
+            <returns>The compressed data</returns>
+        </member>
+        <member name="M:GameGateway.Interfaces.ICompressionAdapter.DecompressAsync(System.Byte[])">
+            <summary>
+            Decompresses the input data
+            </summary>
+            <param name="compressedData">The data to decompress</param>
+            <returns>The decompressed data</returns>
+        </member>
+        <member name="M:GameGateway.Interfaces.ICompressionAdapter.CanDecompress(System.Byte[])">
+            <summary>
+            Determines if the given data appears to be compressed by this adapter
+            </summary>
+            <param name="data">The data to check</param>
+            <returns>True if the data appears to be compressed by this adapter</returns>
+        </member>
+        <member name="T:GameGateway.Interfaces.ICryptoAdapter">
+            <summary>
+            Interface for cryptographic operations on request/response data
+            </summary>
+        </member>
+        <member name="P:GameGateway.Interfaces.ICryptoAdapter.Name">
+            <summary>
+            Gets the name of the crypto adapter
+            </summary>
+        </member>
+        <member name="P:GameGateway.Interfaces.ICryptoAdapter.IsEnabled">
+            <summary>
+            Gets whether the adapter is enabled
+            </summary>
+        </member>
+        <member name="M:GameGateway.Interfaces.ICryptoAdapter.EncryptAsync(System.Byte[])">
+            <summary>
+            Encrypts the input data
+            </summary>
+            <param name="plaintext">The data to encrypt</param>
+            <returns>The encrypted data</returns>
+        </member>
+        <member name="M:GameGateway.Interfaces.ICryptoAdapter.DecryptAsync(System.Byte[])">
+            <summary>
+            Decrypts the input data
+            </summary>
+            <param name="ciphertext">The data to decrypt</param>
+            <returns>The decrypted data</returns>
+        </member>
+        <member name="M:GameGateway.Interfaces.ICryptoAdapter.CanDecrypt(System.Byte[])">
+            <summary>
+            Determines if the given data appears to be encrypted by this adapter
+            </summary>
+            <param name="data">The data to check</param>
+            <returns>True if the data appears to be encrypted by this adapter</returns>
+        </member>
+        <member name="T:GameGateway.Interfaces.IProtocolHandler">
+            <summary>
+            Interface for protocol-specific request handlers
+            </summary>
+        </member>
+        <member name="P:GameGateway.Interfaces.IProtocolHandler.ProtocolName">
+            <summary>
+            Gets the protocol name handled by this handler
+            </summary>
+        </member>
+        <member name="P:GameGateway.Interfaces.IProtocolHandler.ProtocolCode">
+            <summary>
+            Gets the numeric protocol code handled by this handler
+            </summary>
+        </member>
+        <member name="M:GameGateway.Interfaces.IProtocolHandler.HandleAsync(GameGateway.Models.GameRequest,GameGateway.Models.GameSession,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Handles the incoming request and produces a response payload
+            </summary>
+            <param name="request">The decoded request</param>
+            <param name="session">The session context</param>
+            <param name="requestId">The correlation ID for this request</param>
+            <param name="cancellationToken">Cancellation token</param>
+            <returns>The response payload to be serialized</returns>
+        </member>
+        <member name="T:GameGateway.Models.GameRequest">
+            <summary>
+            Represents a decoded game request
+            </summary>
+        </member>
+        <member name="P:GameGateway.Models.GameRequest.Protocol">
+            <summary>
+            Protocol name (string format)
+            </summary>
+        </member>
+        <member name="P:GameGateway.Models.GameRequest.ProtocolCode">
+            <summary>
+            Protocol code (numeric format, alternative to Protocol)
+            </summary>
+        </member>
+        <member name="P:GameGateway.Models.GameRequest.Payload">
+            <summary>
+            The packet data containing the request payload
+            </summary>
+        </member>
+        <member name="P:GameGateway.Models.GameRequest.RequestId">
+            <summary>
+            Request ID for correlation
+            </summary>
+        </member>
+        <member name="P:GameGateway.Models.GameRequest.AdditionalData">
+            <summary>
+            Additional fields from the request
+            </summary>
+        </member>
+        <member name="M:GameGateway.Models.GameRequest.GetProtocolIdentifier">
+            <summary>
+            Gets the effective protocol identifier (string or numeric)
+            </summary>
+        </member>
+        <member name="T:GameGateway.Models.GameResponse">
+            <summary>
+            Represents a game response that will be sent back to the client
+            </summary>
+        </member>
+        <member name="P:GameGateway.Models.GameResponse.Protocol">
+            <summary>
+            Protocol code (numeric identifier)
+            </summary>
+        </member>
+        <member name="P:GameGateway.Models.GameResponse.ResultState">
+            <summary>
+            Result state of the operation
+            </summary>
+        </member>
+        <member name="P:GameGateway.Models.GameResponse.ServerTimeTicks">
+            <summary>
+            Server time ticks
+            </summary>
+        </member>
+        <member name="P:GameGateway.Models.GameResponse.Payload">
+            <summary>
+            The response payload object
+            </summary>
+        </member>
+        <member name="T:GameGateway.Models.BaseResponsePayload">
+            <summary>
+            Base class for protocol-specific response payloads
+            </summary>
+        </member>
+        <member name="P:GameGateway.Models.BaseResponsePayload.Protocol">
+            <summary>
+            Numeric protocol code
+            </summary>
+        </member>
+        <member name="P:GameGateway.Models.BaseResponsePayload.ServerTimeTicks">
+            <summary>
+            Server time ticks (DateTime.UtcNow.Ticks)
+            </summary>
+        </member>
+        <member name="T:GameGateway.Models.SessionKeyInfo">
+            <summary>
+            Session key information included in responses
+            </summary>
+        </member>
+        <member name="P:GameGateway.Models.SessionKeyInfo.AccountServerId">
+            <summary>
+            Account server ID
+            </summary>
+        </member>
+        <member name="P:GameGateway.Models.SessionKeyInfo.MxToken">
+            <summary>
+            The consistent MxToken for this session
+            </summary>
+        </member>
+        <member name="T:GameGateway.Models.AccountDB">
+            <summary>
+            Minimal account database information
+            </summary>
+        </member>
+        <member name="P:GameGateway.Models.AccountDB.ServerId">
+            <summary>
+            Server ID
+            </summary>
+        </member>
+        <member name="P:GameGateway.Models.AccountDB.Nickname">
+            <summary>
+            Player nickname
+            </summary>
+        </member>
+        <member name="P:GameGateway.Models.AccountDB.State">
+            <summary>
+            Account state
+            </summary>
+        </member>
+        <member name="P:GameGateway.Models.AccountDB.Level">
+            <summary>
+            Player level
+            </summary>
+        </member>
+        <member name="T:GameGateway.Models.GameSession">
+            <summary>
+            Represents a game session stored in cache
+            </summary>
+        </member>
+        <member name="P:GameGateway.Models.GameSession.SessionId">
+            <summary>
+            Unique session identifier (UUID)
+            </summary>
+        </member>
+        <member name="P:GameGateway.Models.GameSession.MxToken">
+            <summary>
+            The MxToken for this session - captured on first occurrence and reused consistently
+            </summary>
+        </member>
+        <member name="P:GameGateway.Models.GameSession.AccountServerId">
+            <summary>
+            Account server ID if available
+            </summary>
+        </member>
+        <member name="P:GameGateway.Models.GameSession.AccountId">
+            <summary>
+            Account ID if available
+            </summary>
+        </member>
+        <member name="P:GameGateway.Models.GameSession.CreatedAt">
+            <summary>
+            Session creation timestamp
+            </summary>
+        </member>
+        <member name="P:GameGateway.Models.GameSession.LastAccessedAt">
+            <summary>
+            Last access timestamp
+            </summary>
+        </member>
+        <member name="P:GameGateway.Models.GameSession.Data">
+            <summary>
+            Additional session data
+            </summary>
+        </member>
+        <member name="M:GameGateway.Models.GameSession.Touch">
+            <summary>
+            Updates the last accessed timestamp
+            </summary>
+        </member>
+        <member name="M:GameGateway.Models.GameSession.CaptureOrGetMxToken(System.String)">
+            <summary>
+            Captures or retrieves the MxToken for this session
+            </summary>
+            <param name="token">Token from incoming request</param>
+            <returns>The session's consistent MxToken</returns>
+        </member>
+        <member name="M:GameGateway.Models.GameSession.GenerateNewMxToken">
+            <summary>
+            Generates a new 32-byte Base64-encoded random token
+            </summary>
+        </member>
+        <member name="T:GameGateway.Services.CodecRegistry">
+            <summary>
+            Registry and pipeline for encoding/decoding request data
+            </summary>
+        </member>
+        <member name="M:GameGateway.Services.CodecRegistry.DecodeAsync(System.Byte[],System.Threading.CancellationToken)">
+            <summary>
+            Decodes incoming request data through the codec pipeline
+            </summary>
+            <param name="data">Raw mx.dat bytes</param>
+            <param name="cancellationToken">Cancellation token</param>
+            <returns>Decoded JSON string</returns>
+        </member>
+        <member name="M:GameGateway.Services.CodecRegistry.DecodeAsync(System.Byte[],System.String)">
+            <summary>
+            Decodes incoming request data through the codec pipeline
+            </summary>
+            <param name="data">Raw mx.dat bytes</param>
+            <param name="requestId">Request correlation ID</param>
+            <returns>Decoded JSON string and codec information</returns>
+        </member>
+        <member name="M:GameGateway.Services.CodecRegistry.EncodeAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Encodes response data through the codec pipeline
+            </summary>
+            <param name="json">JSON string to encode</param>
+            <param name="cancellationToken">Cancellation token</param>
+            <returns>Encoded bytes</returns>
+        </member>
+        <member name="M:GameGateway.Services.CodecRegistry.EncodeAsync(System.String,System.String)">
+            <summary>
+            Encodes response data through the codec pipeline
+            </summary>
+            <param name="json">JSON string to encode</param>
+            <param name="requestId">Request correlation ID</param>
+            <returns>Encoded bytes</returns>
+        </member>
+        <member name="M:GameGateway.Services.CodecRegistry.IsPlainJson(System.Byte[])">
+            <summary>
+            Attempts to detect if the data is plain UTF-8 JSON (passthrough case)
+            </summary>
+            <param name="data">Data to check</param>
+            <returns>True if data appears to be plain JSON</returns>
+        </member>
+        <member name="T:GameGateway.Services.MultipartParser">
+            <summary>
+            Parser for multipart/form-data requests to extract mx.dat content
+            </summary>
+        </member>
+        <member name="M:GameGateway.Services.MultipartParser.ParseAsync(Microsoft.AspNetCore.Http.HttpRequest,System.Threading.CancellationToken)">
+            <summary>
+            Parse multipart/form-data request and extract all form fields
+            </summary>
+            <param name="request">HTTP request</param>
+            <param name="cancellationToken">Cancellation token</param>
+            <returns>Dictionary of form field names to byte arrays</returns>
+        </member>
+        <member name="M:GameGateway.Services.MultipartParser.ExtractMxDataAsync(System.String,System.IO.Stream,System.String)">
+            <summary>
+            Extracts the mx.dat part from multipart/form-data request
+            </summary>
+            <param name="contentType">Content-Type header value</param>
+            <param name="body">Request body stream</param>
+            <param name="requestId">Request correlation ID</param>
+            <returns>The mx.dat content bytes</returns>
+        </member>
+        <member name="M:GameGateway.Services.MultipartParser.ExtractBoundary(System.String)">
+            <summary>
+            Extracts boundary string from Content-Type header
+            </summary>
+        </member>
+        <member name="M:GameGateway.Services.MultipartParser.ParseMultipartContent(System.String,System.String,System.String)">
+            <summary>
+            Parses multipart content and extracts mx part
+            </summary>
+        </member>
+        <member name="T:GameGateway.Services.ProtocolRouter">
+            <summary>
+            Routes protocol requests to appropriate handlers
+            </summary>
+        </member>
+        <member name="M:GameGateway.Services.ProtocolRouter.RegisterHandlers">
+            <summary>
+            Registers all protocol handlers from DI container
+            </summary>
+        </member>
+        <member name="M:GameGateway.Services.ProtocolRouter.RouteAsync(GameGateway.Models.GameRequest,GameGateway.Models.GameSession,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Routes a request to the appropriate protocol handler
+            </summary>
+            <param name="request">The decoded game request</param>
+            <param name="session">The game session</param>
+            <param name="requestId">Request correlation ID</param>
+            <param name="cancellationToken">Cancellation token</param>
+            <returns>The response payload from the handler</returns>
+        </member>
+        <member name="M:GameGateway.Services.ProtocolRouter.RouteRequestAsync(GameGateway.Models.GameRequest,GameGateway.Models.GameSession,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Routes a request to the appropriate protocol handler (internal method)
+            </summary>
+            <param name="request">The decoded game request</param>
+            <param name="session">The game session</param>
+            <param name="requestId">Request correlation ID</param>
+            <param name="cancellationToken">Cancellation token</param>
+            <returns>The response payload from the handler</returns>
+        </member>
+        <member name="M:GameGateway.Services.ProtocolRouter.GetRegisteredHandlers">
+            <summary>
+            Gets the list of registered protocol handlers for diagnostics
+            </summary>
+            <returns>Dictionary of protocol names/codes to handler types</returns>
+        </member>
+        <member name="M:GameGateway.Services.ProtocolRouter.HasHandler(System.String,System.Nullable{System.Int32})">
+            <summary>
+            Checks if a handler exists for the given protocol
+            </summary>
+            <param name="protocol">Protocol name</param>
+            <param name="protocolCode">Protocol code</param>
+            <returns>True if a handler exists</returns>
+        </member>
+        <member name="T:GameGateway.Services.SessionManager">
+            <summary>
+            Manages game sessions with UUID cookies and MxToken handling
+            </summary>
+        </member>
+        <member name="M:GameGateway.Services.SessionManager.GetOrCreateSessionAsync(Microsoft.AspNetCore.Http.HttpContext,System.Threading.CancellationToken)">
+            <summary>
+            Gets or creates a session for the request
+            </summary>
+            <param name="httpContext">HTTP context</param>
+            <param name="cancellationToken">Cancellation token</param>
+            <returns>The game session</returns>
+        </member>
+        <member name="M:GameGateway.Services.SessionManager.GetOrCreateSessionAsync(Microsoft.AspNetCore.Http.HttpContext,System.String)">
+            <summary>
+            Gets or creates a session for the request (internal method)
+            </summary>
+            <param name="httpContext">HTTP context</param>
+            <param name="requestId">Request correlation ID</param>
+            <returns>The game session</returns>
+        </member>
+        <member name="M:GameGateway.Services.SessionManager.StoreSessionAsync(GameGateway.Models.GameSession)">
+            <summary>
+            Stores a session in the cache
+            </summary>
+            <param name="session">Session to store</param>
+        </member>
+        <member name="M:GameGateway.Services.SessionManager.RemoveSession(System.String)">
+            <summary>
+            Removes a session from the cache
+            </summary>
+            <param name="sessionId">Session ID to remove</param>
+        </member>
+        <member name="M:GameGateway.Services.SessionManager.GetSessionIdFromCookie(Microsoft.AspNetCore.Http.HttpContext)">
+            <summary>
+            Gets the session ID from the request cookie
+            </summary>
+        </member>
+        <member name="M:GameGateway.Services.SessionManager.SetSessionCookie(Microsoft.AspNetCore.Http.HttpContext,System.String)">
+            <summary>
+            Sets the session cookie in the response
+            </summary>
+        </member>
+        <member name="M:GameGateway.Services.SessionManager.GenerateNewSessionId">
+            <summary>
+            Generates a new UUID v4 session ID
+            </summary>
+        </member>
+        <member name="M:GameGateway.Services.SessionManager.GetCacheKey(System.String)">
+            <summary>
+            Gets the cache key for a session ID
+            </summary>
+        </member>
+        <member name="M:GameGateway.Services.SessionManager.SetLoadBalancerCookies(Microsoft.AspNetCore.Http.HttpContext)">
+            <summary>
+            Sets load balancer cookies as specified in requirements
+            </summary>
+        </member>
+        <member name="M:GameGateway.Services.SessionManager.GetSessionStats">
+            <summary>
+            Gets session statistics for monitoring
+            </summary>
+            <returns>Dictionary of session statistics</returns>
+        </member>
+        <member name="M:GameGateway.Services.SessionManager.UpdateSessionCookieAsync(Microsoft.AspNetCore.Http.HttpContext,GameGateway.Models.GameSession)">
+            <summary>
+            Updates the session cookie in the response after processing
+            </summary>
+            <param name="httpContext">HTTP context</param>
+            <param name="session">Session to update</param>
+            <returns>Task</returns>
+        </member>
+    </members>
+</doc>
