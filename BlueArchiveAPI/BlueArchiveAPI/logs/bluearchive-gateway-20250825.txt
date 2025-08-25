@@ -39,3 +39,22 @@
 2025-08-25 22:09:03.949 +01:00 [INF] Request starting HTTP/1.1 GET http://localhost:7000/favicon.ico - null null
 2025-08-25 22:09:03.955 +01:00 [INF] Request finished HTTP/1.1 GET http://localhost:7000/favicon.ico - 404 0 null 5.3213ms
 2025-08-25 22:09:03.961 +01:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:7000/favicon.ico, Response status code: 404
+2025-08-25 22:31:05.304 +01:00 [INF] Request starting HTTP/1.1 POST http://localhost:7000/api/gateway - multipart/form-data 196
+2025-08-25 22:31:05.309 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.GatewayController.HandleRequest (BlueArchiveAPI)'
+2025-08-25 22:31:05.324 +01:00 [INF] Route matched with {action = "HandleRequest", controller = "Gateway"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] HandleRequest() on controller BlueArchiveAPI.Controllers.GatewayController (BlueArchiveAPI).
+2025-08-25 22:31:05.336 +01:00 [INF] Gateway request 1d735ee1 started from 127.0.0.1
+2025-08-25 22:31:05.341 +01:00 [ERR] Gateway request 1d735ee1 failed after 8.602ms
+System.ArgumentException: No boundary found in Content-Type header (Parameter 'contentType')
+   at BlueArchiveAPI.Gateway.Services.MultipartParser.ExtractMxDataAsync(String contentType, Stream body, String requestId) in C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI\Gateway\Services\MultipartParser.cs:line 58
+   at BlueArchiveAPI.Controllers.GatewayController.HandleRequest() in C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI\Controllers\GatewayController.cs:line 56
+2025-08-25 22:31:05.442 +01:00 [INF] Executing FileContentResult, sending file with download name '' ...
+2025-08-25 22:31:05.460 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.GatewayController.HandleRequest (BlueArchiveAPI) in 133.8585ms
+2025-08-25 22:31:05.463 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.GatewayController.HandleRequest (BlueArchiveAPI)'
+2025-08-25 22:31:05.466 +01:00 [INF] Request finished HTTP/1.1 POST http://localhost:7000/api/gateway - 200 114 application/octet-stream 161.8804ms
+2025-08-25 22:33:30.255 +01:00 [INF] Request starting HTTP/1.1 POST http://localhost:7000/api/account/checknexon - application/x-www-form-urlencoded 0
+2025-08-25 22:33:30.261 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.ApiController.GameApi (BlueArchiveAPI)'
+2025-08-25 22:33:30.271 +01:00 [INF] Route matched with {action = "GameApi", controller = "Api"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult] GameApi(System.String, System.String, System.String, Boolean, System.String) on controller BlueArchiveAPI.Controllers.ApiController (BlueArchiveAPI).
+2025-08-25 22:33:30.321 +01:00 [INF] Executing BadRequestObjectResult, writing value of type 'Microsoft.AspNetCore.Mvc.ValidationProblemDetails'.
+2025-08-25 22:33:30.403 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.ApiController.GameApi (BlueArchiveAPI) in 128.7574ms
+2025-08-25 22:33:30.407 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.ApiController.GameApi (BlueArchiveAPI)'
+2025-08-25 22:33:30.410 +01:00 [INF] Request finished HTTP/1.1 POST http://localhost:7000/api/account/checknexon - 400 null application/problem+json; charset=utf-8 154.568ms

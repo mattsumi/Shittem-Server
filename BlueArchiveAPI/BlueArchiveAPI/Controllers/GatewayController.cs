@@ -80,53 +80,54 @@ public class GatewayController : ControllerBase
             // Route to appropriate handler
             var responseObject = await _protocolRouter.RouteRequestAsync(gameRequest, session, requestId);
 
-            // Create the official server response format
-            var serverPacket = CreateOfficialResponse(gameRequest, responseObject);
+            // Create the official server response format with packet-only encoding
+            var serverPacket = await CreateOfficialResponseAsync(gameRequest, responseObject, requestId);
 
-            // Serialize the response
+            // Serialize the outer ServerPacket wrapper as plain JSON
             var responseJson = JsonConvert.SerializeObject(serverPacket, Formatting.None);
             var responseBytes = Encoding.UTF8.GetBytes(responseJson);
 
-            // Encode the response through the codec pipeline
-            var encodedResponse = await _codecRegistry.EncodeAsync(responseJson, requestId);
-
-            // Set response headers
-            Response.ContentType = "application/octet-stream";
-            Response.ContentLength = encodedResponse.Length;
+            // Set response headers for plain JSON response
+            Response.ContentType = "application/json; charset=utf-8";
+            Response.ContentLength = responseBytes.Length;
 
             // Apply session cookies and tokens
             await _sessionManager.UpdateSessionCookieAsync(HttpContext, session);
 
             var duration = DateTime.UtcNow - startTime;
-            _logger.LogInformation("Gateway request {RequestId} completed in {Duration}ms, response size: {Size} bytes", 
-                requestId, duration.TotalMilliseconds, encodedResponse.Length);
+            _logger.LogInformation("Gateway request {RequestId} completed in {Duration}ms, response size: {Size} bytes",
+                requestId, duration.TotalMilliseconds, responseBytes.Length);
 
-            return File(encodedResponse, "application/octet-stream");
+            return File(responseBytes, "application/json");
         }
         catch (Exception ex)
         {
             var duration = DateTime.UtcNow - startTime;
             _logger.LogError(ex, "Gateway request {RequestId} failed after {Duration}ms", requestId, duration.TotalMilliseconds);
 
-            // Return error response
-            var errorResponse = new ServerPacket("Error", JsonConvert.SerializeObject(new { error = ex.Message }));
+            // Return error response as plain JSON (no encoding for errors)
+            var errorObject = new { error = ex.Message };
+            var errorPacketJson = JsonConvert.SerializeObject(errorObject, Formatting.None);
+            var errorResponse = new ServerPacket("Error", errorPacketJson);
             var errorJson = JsonConvert.SerializeObject(errorResponse, Formatting.None);
             var errorBytes = Encoding.UTF8.GetBytes(errorJson);
 
-            Response.ContentType = "application/octet-stream";
+            Response.ContentType = "application/json; charset=utf-8";
             Response.ContentLength = errorBytes.Length;
 
-            return File(errorBytes, "application/octet-stream");
+            return File(errorBytes, "application/json");
         }
     }
 
     /// <summary>
-    /// Creates the official server response format with protocol string and JSON-encoded packet
+    /// Creates the official server response format with protocol string and encoded packet
+    /// Only the packet property is compressed/encrypted, the outer wrapper remains plain JSON
     /// </summary>
     /// <param name="request">The original game request</param>
     /// <param name="responseObject">The response object from the handler</param>
+    /// <param name="requestId">Request correlation ID</param>
     /// <returns>ServerPacket in official format</returns>
-    private ServerPacket CreateOfficialResponse(GameRequest request, object responseObject)
+    private async Task<ServerPacket> CreateOfficialResponseAsync(GameRequest request, object responseObject, string requestId)
     {
         // Get the protocol name as string
         string protocolString;
@@ -148,7 +149,29 @@ public class GatewayController : ControllerBase
         // Serialize the response object as the packet content
         var packetJson = JsonConvert.SerializeObject(responseObject, Formatting.None);
         
-        return new ServerPacket(protocolString, packetJson);
+        // Apply compression/encryption only to the packet content
+        var encodedPacketBytes = await _codecRegistry.EncodeAsync(packetJson, requestId);
+        
+        // Convert encoded bytes to base64 if compression/encryption was applied,
+        // otherwise keep as plain JSON string
+        string packetContent;
+        if (encodedPacketBytes.Length != Encoding.UTF8.GetBytes(packetJson).Length ||
+            !Encoding.UTF8.GetString(encodedPacketBytes).Equals(packetJson))
+        {
+            // Data was encoded, use base64
+            packetContent = Convert.ToBase64String(encodedPacketBytes);
+            _logger.LogDebug("Packet encoded to base64 for request {RequestId}, size: {Size} -> {EncodedSize}",
+                requestId, packetJson.Length, packetContent.Length);
+        }
+        else
+        {
+            // Data was not encoded (pass-through), use as plain string
+            packetContent = packetJson;
+            _logger.LogDebug("Packet passed through without encoding for request {RequestId}, size: {Size}",
+                requestId, packetJson.Length);
+        }
+        
+        return new ServerPacket(protocolString, packetContent);
     }
 
     /// <summary>
@@ -182,7 +205,7 @@ public class GatewayController : ControllerBase
     }
 
     /// <summary>
-    /// Captures tokens from request headers and stores them in the session
+    /// Captures tokens from request headers and stores them in the session for reuse
     /// </summary>
     /// <param name="request">HTTP request</param>
     /// <param name="session">Game session</param>
@@ -196,16 +219,53 @@ public class GatewayController : ControllerBase
             _logger.LogDebug("Captured MxToken for session {SessionId}", session.SessionId);
         }
 
-        // Capture any session-related cookies
+        // Comprehensive cookie capture for session reuse after flip
+        // Capture ALL cookies except system/security sensitive ones
+        var excludedCookies = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            // .NET/ASP.NET system cookies
+            ".AspNetCore.Session",
+            ".AspNetCore.Identity.Application",
+            ".AspNetCore.Antiforgery",
+            ".AspNetCore.Cookies",
+            "__RequestVerificationToken",
+            
+            // Browser security cookies
+            "__Host-",
+            "__Secure-",
+            
+            // Analytics/tracking (optional - can be removed if needed)
+            "_ga", "_gid", "_gat", "_gtag", "_fbp", "_fbc"
+        };
+
+        var capturedCount = 0;
+        var skippedCount = 0;
+
         foreach (var cookie in request.Cookies)
         {
-            if (cookie.Key.StartsWith("session", StringComparison.OrdinalIgnoreCase) ||
-                cookie.Key.Equals("uuid", StringComparison.OrdinalIgnoreCase) ||
-                cookie.Key.StartsWith("AWSALB", StringComparison.OrdinalIgnoreCase))
+            // Skip excluded system/security cookies
+            if (excludedCookies.Any(excluded => cookie.Key.StartsWith(excluded, StringComparison.OrdinalIgnoreCase)))
+            {
+                skippedCount++;
+                _logger.LogTrace("Skipped system cookie {CookieName} for session {SessionId}", cookie.Key, session.SessionId);
+                continue;
+            }
+
+            // Capture all other cookies for reuse
+            var previousValue = session.Cookies.GetValueOrDefault(cookie.Key);
+            if (previousValue != cookie.Value)
             {
                 session.Cookies[cookie.Key] = cookie.Value;
-                _logger.LogDebug("Captured cookie {CookieName} for session {SessionId}", cookie.Key, session.SessionId);
+                capturedCount++;
+                _logger.LogDebug("Captured cookie {CookieName}={CookieValue} for session {SessionId}",
+                    cookie.Key, cookie.Value, session.SessionId);
             }
+        }
+
+        if (capturedCount > 0)
+        {
+            _logger.LogInformation("Captured {CapturedCount} cookies ({SkippedCount} skipped) for session {SessionId}",
+                capturedCount, skippedCount, session.SessionId);
         }
 
         await Task.CompletedTask;

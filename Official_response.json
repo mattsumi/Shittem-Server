@@ -1,0 +1,403 @@
+            {
+                "startedDateTime": "2025-08-19T11:38:15.017407+00:00",
+                "time": 1045.5658435821533,
+                "request": {
+                    "method": "POST",
+                    "url": "https://nxm-eu-bagl.nexon.com:5100/api/gateway",
+                    "httpVersion": "HTTP/2.0",
+                    "cookies": [
+                        {
+                            "name": "AWSALB",
+                            "value": "8ExwaR4TPzlU2o7ajQvJxHod+11UqzKQUc8jwKwqbShUY4NEtIGvxTUI4fkcZjSXsfIFnPjW92cyUTHO/roL5JEP4LbQgUpWGVLub6nRmR6XfPFKW3liNdk0E3DtwzyrklKO6PIP5tmgInqOM56nh8J3EK9wCrZowMbqn8Sc+i3ROPtxR/aYGeU06HIo7w=="
+                        },
+                        {
+                            "name": "AWSALBCORS",
+                            "value": "8ExwaR4TPzlU2o7ajQvJxHod+11UqzKQUc8jwKwqbShUY4NEtIGvxTUI4fkcZjSXsfIFnPjW92cyUTHO/roL5JEP4LbQgUpWGVLub6nRmR6XfPFKW3liNdk0E3DtwzyrklKO6PIP5tmgInqOM56nh8J3EK9wCrZowMbqn8Sc+i3ROPtxR/aYGeU06HIo7w=="
+                        }
+                    ],
+                    "headers": [
+                        {
+                            "name": "mx",
+                            "value": "1"
+                        },
+                        {
+                            "name": "accept-encoding",
+                            "value": "gzip"
+                        },
+                        {
+                            "name": "user-agent",
+                            "value": "BestHTTP/2 v2.4.0"
+                        },
+                        {
+                            "name": "content-type",
+                            "value": "multipart/form-data; boundary=BestHTTP_HTTPMultiPartForm_49629D08"
+                        },
+                        {
+                            "name": "content-length",
+                            "value": "561"
+                        },
+                        {
+                            "name": "cookie",
+                            "value": "AWSALB=8ExwaR4TPzlU2o7ajQvJxHod+11UqzKQUc8jwKwqbShUY4NEtIGvxTUI4fkcZjSXsfIFnPjW92cyUTHO/roL5JEP4LbQgUpWGVLub6nRmR6XfPFKW3liNdk0E3DtwzyrklKO6PIP5tmgInqOM56nh8J3EK9wCrZowMbqn8Sc+i3ROPtxR/aYGeU06HIo7w==; AWSALBCORS=8ExwaR4TPzlU2o7ajQvJxHod+11UqzKQUc8jwKwqbShUY4NEtIGvxTUI4fkcZjSXsfIFnPjW92cyUTHO/roL5JEP4LbQgUpWGVLub6nRmR6XfPFKW3liNdk0E3DtwzyrklKO6PIP5tmgInqOM56nh8J3EK9wCrZowMbqn8Sc+i3ROPtxR/aYGeU06HIo7w=="
+                        }
+                    ],
+                    "queryString": [],
+                    "headersSize": 632,
+                    "bodySize": 561,
+                    "postData": {
+                        "mimeType": "multipart/form-data; boundary=BestHTTP_HTTPMultiPartForm_49629D08",
+                        "text": "--BestHTTP_HTTPMultiPartForm_49629D08\r\nContent-Disposition: form-data; name=\"mx\"; filename=\"mx.dat\"\r\nContent-Type: application/octet-stream\r\nContent-Length: 354\r\n\r\nU\u00fb\u00b7\u008dQ\u00c3\u0000\u0000\u0010\u00d8\u00d9\u00d9\u00c6R\u00d1\u00d9\u00ec\u00a9}\u00b1\u00d9&\u00bcI\u0088\u00b2Z\u00e9\u00cd\\&\u0092Gr\u0005q\u0090U\u0096Lw\u00e9\u0000\u00b3\u0092\u00ac\u00aa5\u00f4\u001f\u00b2\u00f2\u0083\u00f4\u0094\u00d3\u00f2\u00ba&\u00a4hig\u00f5\u00f68G6\u00ab\u00e1>\u00a7J\u0004\u00bckJG\u00dfK\u00e9\u00d9y\u00d2KFRE\u00fd\u00d8\u00d1\u00d0*R\u00f9\u007fU\u0092\u00efZ\u00ab3\u00a8\u00fd\u00d00M\u0090\u00d7\u00efx[\u00e8\u00d7\u00f8]\u00d8<\u00e5x\u0098\u00fd\u00b1\u00cd\u008b\u0013Ox\u00c9H\u000be/\u00bd\u0012\u0019R\u0003I\u00a3\u00b7\u008dG\u00dd\u00ff\u00c9xO{\u00c8\u0012{\u0085~B\u00fd\u0014\u008a\u00eb\u0082\u00f2\u00e4\u00ec1u\u00b8dZ$\u00be\u009cX\u001a\u001er\u00fa\u0002{eD\u00be\u0089\u00bc \no\u00f3EM\u00b3T\u001f\u00bd\u00e2\u00fe\u008b\u00c0!M\u001eg\u00a9F\u00fa\u00c2\f\u00ba\u00b8\f\u0001\r\u00eeKm\u00b3\u00e9a\u00f9\u00e2\u00bc\u00153Qc&v=!\u00ecT\u00d6`\u008bD4\u001f\u009a\u00000\u00c7t*\u00af\u00a7rx\u001a\bg:\u001c\u00ad*\u00fbxgI\u00a7\u0011@\u00bd\u00bb\u00d7\u00a4\u00e9~fR\u009d\u00f8\u0011\u00c3\u00c20\u00dct?\u0087\u0001\u00dft\u00ce\u001eQ\u0087\u009dl=\u00f4>\u00d8\u009e \u00e9\u00a5\u00e2N\u0004\u0010\u00ac[\u00dc\u0000z\u0018h\u0088,9\u009f\u00a2`c\u00c1\u0016\u0013\u00c56\u00f1\u00ea\u00fc\u00c3\"Q\u008ea\u0017\u00f7\u001c\u00d2c\u00b3:\u00ac\u00c17\u00aeAwz\u0014\u00c3n'*\u00d2J(\u00ca\u0004\u0010\u00d8\u00d9\u00d9\r\n--BestHTTP_HTTPMultiPartForm_49629D08--\r\n",
+                        "params": []
+                    }
+                },
+                "response": {
+                    "status": 200,
+                    "statusText": "",
+                    "httpVersion": "HTTP/2.0",
+                    "cookies": [
+                        {
+                            "name": "AWSALB",
+                            "value": "brWGzkAcBVSVwnN94nw5N+RL/LzHdBw2O7hihfGl9ERTr6wx20qw7ljuYUwx0T2m4GhmNAG37SHkoXzoa+i1QkpTkUCroehBH0N5N8epdfr8BTL6EyTcDkxyni6XZUnSJsP95Z2SqipBQU/fNSrCa9gj52laa1Wbba4OEk9xAOD/eNMe9FAjV7fKy5OoIg==",
+                            "path": "/",
+                            "domain": "",
+                            "httpOnly": false,
+                            "secure": false
+                        },
+                        {
+                            "name": "AWSALBCORS",
+                            "value": "brWGzkAcBVSVwnN94nw5N+RL/LzHdBw2O7hihfGl9ERTr6wx20qw7ljuYUwx0T2m4GhmNAG37SHkoXzoa+i1QkpTkUCroehBH0N5N8epdfr8BTL6EyTcDkxyni6XZUnSJsP95Z2SqipBQU/fNSrCa9gj52laa1Wbba4OEk9xAOD/eNMe9FAjV7fKy5OoIg==",
+                            "path": "/",
+                            "domain": "",
+                            "httpOnly": false,
+                            "secure": true,
+                            "sameSite": "None"
+                        }
+                    ],
+                    "headers": [
+                        {
+                            "name": "date",
+                            "value": "Tue, 19 Aug 2025 11:38:15 GMT"
+                        },
+                        {
+                            "name": "content-type",
+                            "value": "application/json; charset=utf-8"
+                        },
+                        {
+                            "name": "set-cookie",
+                            "value": "AWSALB=brWGzkAcBVSVwnN94nw5N+RL/LzHdBw2O7hihfGl9ERTr6wx20qw7ljuYUwx0T2m4GhmNAG37SHkoXzoa+i1QkpTkUCroehBH0N5N8epdfr8BTL6EyTcDkxyni6XZUnSJsP95Z2SqipBQU/fNSrCa9gj52laa1Wbba4OEk9xAOD/eNMe9FAjV7fKy5OoIg==; Expires=Tue, 26 Aug 2025 11:38:14 GMT; Path=/"
+                        },
+                        {
+                            "name": "set-cookie",
+                            "value": "AWSALBCORS=brWGzkAcBVSVwnN94nw5N+RL/LzHdBw2O7hihfGl9ERTr6wx20qw7ljuYUwx0T2m4GhmNAG37SHkoXzoa+i1QkpTkUCroehBH0N5N8epdfr8BTL6EyTcDkxyni6XZUnSJsP95Z2SqipBQU/fNSrCa9gj52laa1Wbba4OEk9xAOD/eNMe9FAjV7fKy5OoIg==; Expires=Tue, 26 Aug 2025 11:38:14 GMT; Path=/; SameSite=None; Secure"
+                        },
+                        {
+                            "name": "server",
+                            "value": "Kestrel"
+                        },
+                        {
+                            "name": "content-encoding",
+                            "value": "gzip"
+                        },
+                        {
+                            "name": "vary",
+                            "value": "Accept-Encoding"
+                        },
+                        {
+                            "name": "strict-transport-security",
+                            "value": "max-age=2592000"
+                        }
+                    ],
+                    "content": {
+                        "size": 6099,
+                        "compression": 1132,
+                        "mimeType": "application/json; charset=utf-8",
+                        "text": "{\"protocol\":\"Queuing_GetTicketGL\",\"packet\":\"{\\\"Protocol\\\":50001,\\\"EnterTicket\\\":\\\"cd/9kG9fjQj2Cph+v+s1RepEhaL2IwOQqy3ChhrcXP8=\\\",\\\"TicketSequence\\\":114981989,\\\"AllowedSequence\\\":114983840,\\\"RequiredSecondsPerUser\\\":0.005387640752114649,\\\"ServerSeed\\\":\\\"68A46227mz86Br6:zF0@@r3(oHSfFb/MH6+{YG{:Dgyt(Wa&00000zY:?UFT=-cO+OjYa7!p+TO6O8rmp#JQl?U?0I1x9I<ln[(!hbadCie4twZtFzrxw3iJLIt=*H*x5pl$--q3BGlt/!gG!RCc@y-7kj8AeBFMGrp&e0lN:sT%G8pXw?&(ClT%1[4k(zB5MU1w?6O.7=MfX0@=G@{id3Cl3&xJ<7VG?)a}YSd0(+>VC:KU+uV&bekp>m)!(*8nyW!Vb)rO(l{oI59)=/3I/eFy(d0l6&NN?419b]g5&cqV^qk/tGn^lW-UneR2P2vO?Zb}%HW>=tzI(v6o/91.yx<(tR41]hrF.bExhBR+Q4<^J:?X/Ym7}Lj?:0ApkYxmu$*BXWNG9V10n?)Te8URSW>XiLKSG4I/dqpU7cGofAOA^=r0=h3CEF8UCvxyu{S@uu0bhP1UN{wTjd}IUhs**zeOhsLdRA{dZt!mcE=jS+WQtB*B3DMk/%Ng]-.{FcpFZJ=LALwC0Nam!tA3oFe(v8KSoA0htO.qswqz}Mhz50AfW8cJ%zgN(4@fh#[k{g0>L(RN:l]U]KQ@7M83Y=Inp4HZT^%5}d+tOg{$DjrI&K^fl:<3sIds/R[#d?9mTc2vDUlv/Gsj-kh]:hLl7oyTdyf]0a>/g1#l2O-v-n>@65.MB^&04s8T5vPuc7X&AEKO?v7Hqo&^2{(1xAGH<R(*QA[A0VB/50Rm!e=rW.xH9Fv-<U#W01@[=7]DL}eU(H2[R*Mg=h43Vuv=YyNkM3)Yygn4kw/d:nR7Gd*L]GPDO&YOsB]:#J+5vw]y23r}6&06r)fJCofZk/#+R<D<R#XDJ@QY[4lKh4^=hjk?z%-EuM]FFo>$INo/>m)4ufxV[IHOW8pE{pQ[).NV8aH$64PC30rCfrs9E&=CxHB9(x&&)*j@W]K?7Q48}RTA%}lj[{TRv4w/o$HLsLQ-elVo^bzkHBpU4o<m+wMNcJ#nQdxQx>:H3lPV4T:R*>[dJOg.s1G9Nu3qa&c?npDH)20Sd2wqrgyoU90t%G6DY$Wtf!rGU>w*h=>QI9aQxOlbOxpfPl-k>Gj!5v$jcN>T=(-?#MX20uwg$kPb*F?aa}nikWy!iLA=6.%yoG9K-sT3!.H}?wQlaKIXXRVpf8nGbWvsGf([X)Z?>TU)(m]tQX?5Kz<tDv!Qt9T3u3QGE#38ZXB[chUe740t8uoo=2wI>P.*d6=#MVwO6!QI/pN-NP$JCS:&$./BUW9jgP?90{!]&3k<]If^5NyqHzXLK7+e&3cKj=<N+=*O1WKe8&F)ADJL3v&STNEDJqQn2)f@n/wl5Fp(jcE+J9-IUV+.Ts9^>F:#J{]t?xq-3LI/T:[WQr&?d4a[*qQ6=tXC.lBXVn5M2ZS(&OSUl<[Lq9/3i2y/6Wyl4Oh+DkSZyai+]ic%e)2EJC0xpeOHyTIB+<JU/yBZ10Es>tUUOj]Du&><sgN:^=m9IA]/l/n^!llYX@H[<MVNmqVb?l+wa@hrE7C1[m/7j:{f)Yu7mGWdz26KHj/D@w/YnW(GhrxSHv!wAsEMg^4o6Z!WID>pe2l*7oViLx<Air9rPS:khr/zO{VJ+nShi)*9<8.grE{j$ac*IeMHKHyMSC1oaK/A<@xvf7+@LbK30Ma{wyzdVM$(BEWbfpX4Es/Vtwj3ZoyEFmMixcVxsvLj/MND4#t<a:w$wvdU-?9e2X+nf7R68{e^j>o]p[)K}8F.bnd=T3@NYAgQRe9dat:[XLa[/(aa{NGWz4@>Dd$lH^A@FE<RogD2+#[Gi^ak2=j{]%xmA&wRQb/MEz<(XX>u!Td8PAJHjtE51YPTq5k-H9#TsQ!x5}m+mReV>gv6i<glaukyk[K%qh>hQJY$SOya7T::--kg%o}@>DmQVMVnNT&G8$Hy&tVFs!9d+Zo+u3wOWn.8O7y<W--GDqtcTDO{vs7JqoHT<60%co7d[7yOdG8L1FyanN@M[}rooSb-t+b$e&SAgTAw-c}AKOiB-!X9PkNV%#=5W[f%*r80I=kz@$+HWA*EA6MK=QG$%1b@kh.doqlxlPKIz!SKjgvhD8u4xfsf<+zR&vWK.UuB!<Co1.{QNkr4{48AuSm0iv**EowMk?i7)3vVLJX&^Ac/Dk%Q7N{a}M9(=Q.[[:8+F1)pYF2^4U0D/LA[uM.vZmWpRmN0x7K6FfL3&gA.CJ)!rJXhji+Gqj56eX!Z4SK!WUJW<dZ>vi52*03<3wBBhBz:0ZIl=d{cbU(}6@@FcHB8QJ8P</f-WWm!mV@h+cBL{r?T1y+-vFn+82@zo%[UC2:Jb9kr}).L[*45{fP&NY@4anSG>=t*6?)fxBaKwe!lX/MOf^phH$kGSKQn[7>uYk[#&vwQWz64MUWn[^QYpWY#htmOkNMk7p8+S7$yGYPj.CZjMfEo<Gr9ihLrrC967Zz7udc+5u7o&U@PQ$DwOy+Gy:iAxFhfy(0W*bZDcRxd1NjEh#1T<vGT/5EvspwH@4S&@iCfN7)?kUQ4X^fr#k2i5fys5IUkFdNNoGT%cp3gXM>gJ!gd%CPrjoPh2>DI.ReOB{O%sUOO[D2YW#u.p{6Po<14]Nwcz=aVyQKAhRJn/i5p!RXK3w1Y=Cziy]19=(V8bw=$W.thQ@LL}Ss=Et>Gs.SdO$2D{/F?vP}niL9jwuCLx3xTNhD?ompJAlm*%wHwL0eggM=KYv[Sm2qe^VS?HVue*64}f.iL>)9pkwWU5(&1?{?:vS1ZO?NN#T]Sn]3.Ov@!77Q8a4UMm/8$b4ZYG]7^PDdoP}[QPO-){#Qc&64Hd&7mjW%8NJzJ+BU]ho/<p6oKu3:o<j&Zzk$0z[O$T^d8B[@Q]#H-JzZ&5WDK[ErrWi0XpLlYv$Uxi3(m4oX&nSIR8QpVUIM.KwF?z[@&o>]%:tT1VBU<qss6/w/($p1&l?O8y/d8RWQ8/z]PD2%&d-yIfuAl<rsB4zHxwK>h8}f&VzS9u1{N2DNgzO9q*?5wbIV1pY4((>/tmq615G^R!hNOIhyD0K:o:>D(wgpQT<Ppi4<]C-z}iz^Wj*YFP)6W.99CGd)h<]<jeL4^F<zJJb8i00lxFj)g6D4FOG6-ehA&5PSZFtMP4zh.zWULOhtfs(b4w(G-pJeFXL&Y>-Rqm2VFUqun>$/jU<sm01fC>J7!yB*t92vFBeh{b/AwfH8?md)A@MWMCJ&PAqvw8z@-.CSalh3tz)$yv7(+dT)v+(0K9lpt!]+)$5QQT8TGT?MwGvX}!uf8@V*Bk7//OvLrhLiQaRn:8(J8e+m8=Eg#0$LCnN?W*5=jlx+[?y$6YF>*T^xPr@eV]b#t2k4g/X?CjQp?4Y4ue?9H1Ob:Jl8xIpM.RewbPVTn]t/j06HEJvv4kDU?DI&[L!uD0g>iQmb1.HK/Jt[h[eM>wnrh7Giy2$Xk*8q*N0p%sDRF6mU<.id3z.{9XW)Yr:9?)^fNO7wf.<:Z*VWoWhn:)iN{C}I%Pwf%%t}()s7[}.%sX&tb8!+tF]^DTYGi7k]Rm0mqHZ%*Gt7UdXAh#&E1g27>lewb..i=4sr[jHY?G[>%L)cwyKO*x!vU+.^gOdTxo9r7NSh2JLlazFYPIlo}SIs4&D8*ktX<O<(IO5lB[a*TD4m9q!u8oN):xPF1V(9nw<3T%{14$]{zz>pM3XbP.n^EP)cYjP/w-mGXQcPp&83/t6WB*::fj*9ep*cg&/hgd0N7<cK.nvGq1N&vknQ!{6u6w(J9(.$CzTuc=TcS9QUlYtCR44%OfHG.2ycD+>4?BKp4Pr(DUn{CWe$NQr>RC6YPB3feVxBNJclHUE3HN!>XyC^i7S+LqmcAQ5p9jue5y)T*8G88)Nz0)ZwcILhlULs{&a=X)jWl&]N$#]=y<ia$n/i0trzdB(=Jb&RQ6lQh}(pJrUDAOs-SW&J=A7g<UyfRswq#e1ejTV.zIcr)Wj#UWX@V:HybVlNXw8<gggl[4E1AnwVVdn?!Ct?)}^N{vbXmGJzY}K=/qA856MZ^Ut.eSp<bp1ArFdBPh1%u0VYQq!UlL)bLM:QWErQ4JeS+04(cSI/=rlcPffGb0j+**/]a9W+CdV0g]NOtz16>cl0fe00n0]eBn/b6h8{1dmtBrrSyJ6wABYNM6mdZhfJMSC39C@CwK[MhcQt5z(WrOzZ1f<zru>>b<H3+6W{Ux0ZRYQo80&T!NPgF#BDa#pbs?GU!B5nh{Hu+j/@FciF:A{DyusfVw?r4dTFa&FvC<BkHcq23?y8?cWuiDY}bGsV1Ylw8yf6^b@?>Q88p%*]{N>olJiu)W?n=B%cW&z-X=#jz/CbgRM{phgP+3P%peV^xY=Sgn2Oo%mD7:$m7NCthgPWA&nzz6Oig8c!a+>#T#:{C.Nlesq=ijbB+t+i?b)o)?rNE#uVmla?{cJpnShg[F+O&Y&*cYj*plgrZq@k48-{%xiM19KCF=AAxHmg(8PYW)}En(}Ac{a=$DzY[8O>j6^5Z$Y92fcxS7vgVO<9!9pYHdCRC@rR[mY)C)3a-rKp(eDL<g+^^4nb^FoNlO)x?OBsc1?)Yb@TA1[Gj(b<}e8Xp13[8Nc[zeFX^CftHpTiUSpGuKA50]yQ<%@<Qc&gLJzkBVvXp:{[6J>uG&jt2Za-#ZBuEdN8[P<ENtDVE4rCt1Td80q33[HfQmMQWb0{0b=kptbl?8-WPP0$%=SU2TVZ*m@uW!s(QeOj-W#AUrI)dW&<fwVV0iP#bx/5]GU/9wLzb=#nhW^j0&D5*p*ZlitYIJ@^d@XIdXc)e@9ODj*)?2HK&?0?!V:(He(]B04C}wwM:DjGA4yL>LNeKsS04ORYXj1QmSk]CXDssDL>iA3{>2}1xxHf)oS^G(lxWda8FzEEl{1(<MDLxN.]WHYE(aT]6fU4GOXnt(E>H?A&xdOQhHl]oT&qW)){])D<@T7H*XqhvNKrJ8%(e^4Y*7t6qaTaKoP-2?0>&c.W{<!&FoTY{[h!7D6XJHwSf+GY5(j]HGx(]ZWNTl5a11&hp]))d8e%O$V=/]:/0&MZw+>s-^[^4!hjmSGym74V)pi(/U5MolPRv=ui?ua8X*5$bpFTl]GdmUjA^u3s&o4{PbeUVJ#R#N@o1Vt2T?omn[o}wp*oKzkz^H7:7FWn]pJzzEsit<YzGcyFPqr5K1HFc=N7/489fMudkyjq?.UDYDm)5NntgSH=?zr7ZT)!3/xsMUM=G2ye4+^2<tQIdcz{er.)?-iu]:1xjeBCT)Y!i]ycgQx4K&/%*kDUa!LnR-/a]%4JY]044LE]iX.y{tL8V1IjKr?/u9@y%ARB?:!GJ2-=M?BUBI8gvzZ=S758?Z9K4t24yUB?Zc0e[S(X-dpfOcbG9fNgc1@F89)/-Y1@JA)21fR=00!CWLxdB<1O=nP.6{N[[R-sVd?[}q.KGG{BUhwESWV>(-&WDg)bjZk7x<H(uCEW-MY(YD=}iX1upyd%m//V=Kz#ke%xRS]XLX@B/QxYxzD>SH+e6A00b<+<]{N=G5Eu5xK)*13jS2?S{(:djL<REEh?r!RQOG5{XN*Hzqa}@HUCC>xf:Pv6UiE2.#ee)Uqkv.]-&VUe}EWBLFW[<*Ay}P25aOO@KP)B*YhoQckz7F!KQO7(HN>C^R1p.r%xk1!v?g3{tL<9rG}:4pOh^^0Roz[<-@f64+0rhhM3p6lcx1ZDq)FPsx4w4$c@EVp+?HOL+5-uGJl7J%w@k5V/H)9Fz%X]tcu)bf.=fJb:=ytVv43ox2HUMIH8k(#92>M:6?)H=eoR{9{&V=p}ev*-SrIEe3AmI6HKyI0Z?R-YqK{4xFJsQnREPWxTXAy3p7uiNzjbOEz]tC=cpls:o[/@RJFRch8U%R31vG*Qqjffu63s5?llUDE=h@aHO5X-@1.>t5.Bs<4zK0)BEY!0Ry6q=SDJ(zPd6*KJtj1O/ogS?h#BaLRM$6Dyavrl6*]WPzSw@?AR?U+FLjnGtXX0Ir!6*vB(e#kY>Qsu:qj{6e2U^5dYOF*0HZZ{s4P]Fo0c5r%ZnSzDMM1fu]A)46hDBwBG5[)/&a{XkhpjadX<1dKbNPCHvL3ck>tv)C-+uH<owWGAv=sGGBDBtP@3j5[.d8.){318yvlY{[ByDNwT-NLI:W7b=[Ob8IV}eVlzDH2FIRV.$DGxY/yV2dnb[^2bR%qUmui3^Xp{op!99Req66X^TtfOqO>lrNkv%u1r2uxD3EqfUv)pgyC@q7xJV/aHP%(j8ymn(mTM!btUVefGp[3e>:ZGl>wTZkYDTXJ>S%?e]]4+yxeiVDeQ#h>7@b{Wq#dg6p1A=vZsMqlqz*8VpSK0n@KG+}[5jqlU1sQbeetrMJw3KV79S2t?WsNx@1L1D!hpMnct}IV7wP%+-B0[ew[Gioj+:yAdh?ANm(x?dQqZp0YcYZh-)YH.)O9Z{gTstw{DTY*]@}o(4I/:}LwV@=w3-cb3MRr(f1u2tKDeUf1I+h[sw0iBDPU[i!$]>8FrT]<^a6d3CW*De!A]j^h@6>6FyPqk1fn+yKsdC*mnFS]3]i#}1uW]G=$?{8pwB%m/fCE2P+lIom{T3deF@EfE+=y+DRJ+#hGdLR9K8ofWLQ5#U3X5Hb>qBCBScCo.4[D!Jka/e&28VVH4vs.UQ[5[+[lmS<qyx:JD:K.7AkGA7q32cdU%>r-nFCdlen{sGkG>u1Icx/Z>T81LE#(w1Dg!.h*c4PEg2PH@}mZt.!SY{@6qsU<g)yt}Qfzf>fp9(HrYGeXT/Z5^#[[fxs{H5=MpjF][zdiHZfJbYo3eFS{Bmv<!qd?HZ5m[}Bv&ow?#q)->J/J0GxH!K!Ma5L%?P}3y05&8lZ8%gX/e/>v{.fE/$6dKj]lCSJ<7k<:@)b1r/Czc84$%k{]XE6pA*Ff(dZ8zDHyjT1b(3{hE9GQ%]367o27hPa1wPF$)$nvfZ48iHgas/>:o13X!x<fF8-j>)/3c70]tTL3-DB-+!CGuuzVd<JiH(oM@bx\\\"}\"}"
+                    },
+                    "redirectURL": "",
+                    "headersSize": 810,
+                    "bodySize": 6099
+                },
+                "cache": {},
+                "timings": {
+                    "connect": 69.32997703552246,
+                    "ssl": 167.96445846557617,
+                    "send": 4.995584487915039,
+                    "receive": 12.236833572387695,
+                    "wait": 791.038990020752
+                },
+                "serverIPAddress": "52.29.125.7"
+            },
+            {
+                "startedDateTime": "2025-08-19T11:38:16.265255+00:00",
+                "time": 204.41293716430664,
+                "request": {
+                    "method": "POST",
+                    "url": "https://nxm-eu-bagl.nexon.com:5000/api/gateway",
+                    "httpVersion": "HTTP/2.0",
+                    "cookies": [
+                        {
+                            "name": "AWSALB",
+                            "value": "brWGzkAcBVSVwnN94nw5N+RL/LzHdBw2O7hihfGl9ERTr6wx20qw7ljuYUwx0T2m4GhmNAG37SHkoXzoa+i1QkpTkUCroehBH0N5N8epdfr8BTL6EyTcDkxyni6XZUnSJsP95Z2SqipBQU/fNSrCa9gj52laa1Wbba4OEk9xAOD/eNMe9FAjV7fKy5OoIg=="
+                        },
+                        {
+                            "name": "AWSALBCORS",
+                            "value": "brWGzkAcBVSVwnN94nw5N+RL/LzHdBw2O7hihfGl9ERTr6wx20qw7ljuYUwx0T2m4GhmNAG37SHkoXzoa+i1QkpTkUCroehBH0N5N8epdfr8BTL6EyTcDkxyni6XZUnSJsP95Z2SqipBQU/fNSrCa9gj52laa1Wbba4OEk9xAOD/eNMe9FAjV7fKy5OoIg=="
+                        }
+                    ],
+                    "headers": [
+                        {
+                            "name": "mx",
+                            "value": "1"
+                        },
+                        {
+                            "name": "accept-encoding",
+                            "value": "gzip"
+                        },
+                        {
+                            "name": "user-agent",
+                            "value": "BestHTTP/2 v2.4.0"
+                        },
+                        {
+                            "name": "content-type",
+                            "value": "multipart/form-data; boundary=BestHTTP_HTTPMultiPartForm_79515028"
+                        },
+                        {
+                            "name": "content-length",
+                            "value": "430"
+                        },
+                        {
+                            "name": "cookie",
+                            "value": "AWSALB=brWGzkAcBVSVwnN94nw5N+RL/LzHdBw2O7hihfGl9ERTr6wx20qw7ljuYUwx0T2m4GhmNAG37SHkoXzoa+i1QkpTkUCroehBH0N5N8epdfr8BTL6EyTcDkxyni6XZUnSJsP95Z2SqipBQU/fNSrCa9gj52laa1Wbba4OEk9xAOD/eNMe9FAjV7fKy5OoIg==; AWSALBCORS=brWGzkAcBVSVwnN94nw5N+RL/LzHdBw2O7hihfGl9ERTr6wx20qw7ljuYUwx0T2m4GhmNAG37SHkoXzoa+i1QkpTkUCroehBH0N5N8epdfr8BTL6EyTcDkxyni6XZUnSJsP95Z2SqipBQU/fNSrCa9gj52laa1Wbba4OEk9xAOD/eNMe9FAjV7fKy5OoIg=="
+                        }
+                    ],
+                    "queryString": [],
+                    "headersSize": 632,
+                    "bodySize": 430,
+                    "postData": {
+                        "mimeType": "multipart/form-data; boundary=BestHTTP_HTTPMultiPartForm_79515028",
+                        "text": "--BestHTTP_HTTPMultiPartForm_79515028\r\nContent-Disposition: form-data; name=\"mx\"; filename=\"mx.dat\"\r\nContent-Type: application/octet-stream\r\nContent-Length: 223\r\n\r\nm\u008dmR\u00f6\u0003\u0000\u00002\u00d9\u00d9\u00d9\u00c6R\u00d1\u00d9\u00ee\u00a9}\u00b1\u00d9&\u00e4W\u0018S\u001b\u00e9\u00cd\u009c&<\u00b4\u00d4\u0095\u00b2\u0082\u00b0\u00da\u00f7}\u0011\u0081\u00bfq\f\u008f\u00a9\u00c2\n\u00fepT\u0090\u0014R\u00e3\u00eb!6\u0017\u00d1cbR\u001a\u00e0.\u00ce\u00f3\u00bedL\u008f\u00da\u00d6Z\u00e9\u00bf\u0089\u00d7\u00ac\u00d0\u00e5!\u00c6T4\b\u00d9\u00ee\u00bet\u00c0\u008d[\u00f1\u008e\u00f1\"\u00cb\u00a6up\b\u0084\t\u00d8\u0006\u00d2\u0094\u0011\u00b9\u00b7\u00e5c\u007fJ\u00e4\u00a39\u00f9\u0002Vu&\u0015/^\f\u00b8E\u00d6\u00b3\u00ad\u00c0\u0088a\u001f\u00b8w\u001d.aa\u00f7\u008e~\u0082M\u00f2<=o\u0093~\u0019\u00f9\u000e\u00c4\u00c3f\u00c0C7Q\u0016+\u00c3\u00d0\u0094\u00f2\u00af\u00c3\u0006X\\\u00f9\u00dc\u00e5WK\u00fd\u0011\u00ff\u00b0M_\u00a8\u001byy\u00df\u0010f@\u00c3P\u00e3\u00b2g)/#\u00e5J\u000bGT\u00f6\u0003\u00e64$\u00d8\u00cc\u00f1U\u00982\u00d9\u00d9\u00d9\r\n--BestHTTP_HTTPMultiPartForm_79515028--\r\n",
+                        "params": []
+                    }
+                },
+                "response": {
+                    "status": 200,
+                    "statusText": "",
+                    "httpVersion": "HTTP/2.0",
+                    "cookies": [
+                        {
+                            "name": "AWSALB",
+                            "value": "ggittXHgHYRPImrrDixSyTYv2p+EgnGLVDKxiZM246UDFVET5XP+zytrEvpp5/gu0njTsmvIZN25eMwnO6yIqGa5NlY3X0tLQRcXTF89Q4mVFoh0iDPOuhKGRWi2HgK399KEKVQAPLHDu9POzS1zIB3eDBGuNTQuoFyIsESeUYcaG2kXqo2qREnO6vk1/A==",
+                            "path": "/",
+                            "domain": "",
+                            "httpOnly": false,
+                            "secure": false
+                        },
+                        {
+                            "name": "AWSALBCORS",
+                            "value": "ggittXHgHYRPImrrDixSyTYv2p+EgnGLVDKxiZM246UDFVET5XP+zytrEvpp5/gu0njTsmvIZN25eMwnO6yIqGa5NlY3X0tLQRcXTF89Q4mVFoh0iDPOuhKGRWi2HgK399KEKVQAPLHDu9POzS1zIB3eDBGuNTQuoFyIsESeUYcaG2kXqo2qREnO6vk1/A==",
+                            "path": "/",
+                            "domain": "",
+                            "httpOnly": false,
+                            "secure": true,
+                            "sameSite": "None"
+                        },
+                        {
+                            "name": "uuid",
+                            "value": "46a1b893-cb9e-4e9d-9baa-bf459f5cec9d",
+                            "path": "/",
+                            "domain": "",
+                            "httpOnly": false,
+                            "secure": false
+                        }
+                    ],
+                    "headers": [
+                        {
+                            "name": "date",
+                            "value": "Tue, 19 Aug 2025 11:38:15 GMT"
+                        },
+                        {
+                            "name": "content-type",
+                            "value": "application/json; charset=utf-8"
+                        },
+                        {
+                            "name": "set-cookie",
+                            "value": "AWSALB=ggittXHgHYRPImrrDixSyTYv2p+EgnGLVDKxiZM246UDFVET5XP+zytrEvpp5/gu0njTsmvIZN25eMwnO6yIqGa5NlY3X0tLQRcXTF89Q4mVFoh0iDPOuhKGRWi2HgK399KEKVQAPLHDu9POzS1zIB3eDBGuNTQuoFyIsESeUYcaG2kXqo2qREnO6vk1/A==; Expires=Tue, 26 Aug 2025 11:38:15 GMT; Path=/"
+                        },
+                        {
+                            "name": "set-cookie",
+                            "value": "AWSALBCORS=ggittXHgHYRPImrrDixSyTYv2p+EgnGLVDKxiZM246UDFVET5XP+zytrEvpp5/gu0njTsmvIZN25eMwnO6yIqGa5NlY3X0tLQRcXTF89Q4mVFoh0iDPOuhKGRWi2HgK399KEKVQAPLHDu9POzS1zIB3eDBGuNTQuoFyIsESeUYcaG2kXqo2qREnO6vk1/A==; Expires=Tue, 26 Aug 2025 11:38:15 GMT; Path=/; SameSite=None; Secure"
+                        },
+                        {
+                            "name": "server",
+                            "value": "Kestrel"
+                        },
+                        {
+                            "name": "content-encoding",
+                            "value": "gzip"
+                        },
+                        {
+                            "name": "set-cookie",
+                            "value": "uuid=46a1b893-cb9e-4e9d-9baa-bf459f5cec9d; path=/"
+                        },
+                        {
+                            "name": "vary",
+                            "value": "Accept-Encoding"
+                        },
+                        {
+                            "name": "strict-transport-security",
+                            "value": "max-age=2592000"
+                        }
+                    ],
+                    "content": {
+                        "size": 214,
+                        "compression": 35,
+                        "mimeType": "application/json; charset=utf-8",
+                        "text": "{\"protocol\":\"Account_CheckNexon\",\"packet\":\"{\\\"Protocol\\\":1014,\\\"ResultState\\\":1,\\\"ServerTimeTicks\\\":638912326950000000,\\\"SessionKey\\\":{\\\"AccountServerId\\\":3218642,\\\"MxToken\\\":\\\"DahKHFxbYAYbh66L6/+0uu+xAZfFODd55/CMK6g3Y9M=\\\"},\\\"AccountId\\\":3218642}\"}"
+                    },
+                    "redirectURL": "",
+                    "headersSize": 881,
+                    "bodySize": 214
+                },
+                "cache": {},
+                "timings": {
+                    "connect": 48.143625259399414,
+                    "ssl": 74.82481002807617,
+                    "send": 7.838726043701172,
+                    "receive": 6.030082702636719,
+                    "wait": 67.57569313049316
+                },
+                "serverIPAddress": "52.29.125.7"
+            },
+            {
+                "startedDateTime": "2025-08-19T11:38:16.805032+00:00",
+                "time": 1842.435359954834,
+                "request": {
+                    "method": "POST",
+                    "url": "https://nxm-eu-bagl.nexon.com:5000/api/gateway",
+                    "httpVersion": "HTTP/2.0",
+                    "cookies": [
+                        {
+                            "name": "AWSALB",
+                            "value": "ggittXHgHYRPImrrDixSyTYv2p+EgnGLVDKxiZM246UDFVET5XP+zytrEvpp5/gu0njTsmvIZN25eMwnO6yIqGa5NlY3X0tLQRcXTF89Q4mVFoh0iDPOuhKGRWi2HgK399KEKVQAPLHDu9POzS1zIB3eDBGuNTQuoFyIsESeUYcaG2kXqo2qREnO6vk1/A=="
+                        },
+                        {
+                            "name": "AWSALBCORS",
+                            "value": "ggittXHgHYRPImrrDixSyTYv2p+EgnGLVDKxiZM246UDFVET5XP+zytrEvpp5/gu0njTsmvIZN25eMwnO6yIqGa5NlY3X0tLQRcXTF89Q4mVFoh0iDPOuhKGRWi2HgK399KEKVQAPLHDu9POzS1zIB3eDBGuNTQuoFyIsESeUYcaG2kXqo2qREnO6vk1/A=="
+                        },
+                        {
+                            "name": "uuid",
+                            "value": "46a1b893-cb9e-4e9d-9baa-bf459f5cec9d"
+                        }
+                    ],
+                    "headers": [
+                        {
+                            "name": "mx",
+                            "value": "1"
+                        },
+                        {
+                            "name": "accept-encoding",
+                            "value": "gzip"
+                        },
+                        {
+                            "name": "user-agent",
+                            "value": "BestHTTP/2 v2.4.0"
+                        },
+                        {
+                            "name": "content-type",
+                            "value": "multipart/form-data; boundary=BestHTTP_HTTPMultiPartForm_E0445A40"
+                        },
+                        {
+                            "name": "content-length",
+                            "value": "661"
+                        },
+                        {
+                            "name": "cookie",
+                            "value": "AWSALB=ggittXHgHYRPImrrDixSyTYv2p+EgnGLVDKxiZM246UDFVET5XP+zytrEvpp5/gu0njTsmvIZN25eMwnO6yIqGa5NlY3X0tLQRcXTF89Q4mVFoh0iDPOuhKGRWi2HgK399KEKVQAPLHDu9POzS1zIB3eDBGuNTQuoFyIsESeUYcaG2kXqo2qREnO6vk1/A==; AWSALBCORS=ggittXHgHYRPImrrDixSyTYv2p+EgnGLVDKxiZM246UDFVET5XP+zytrEvpp5/gu0njTsmvIZN25eMwnO6yIqGa5NlY3X0tLQRcXTF89Q4mVFoh0iDPOuhKGRWi2HgK399KEKVQAPLHDu9POzS1zIB3eDBGuNTQuoFyIsESeUYcaG2kXqo2qREnO6vk1/A==; uuid=46a1b893-cb9e-4e9d-9baa-bf459f5cec9d"
+                        }
+                    ],
+                    "queryString": [],
+                    "headersSize": 675,
+                    "bodySize": 661,
+                    "postData": {
+                        "mimeType": "multipart/form-data; boundary=BestHTTP_HTTPMultiPartForm_E0445A40",
+                        "text": "--BestHTTP_HTTPMultiPartForm_E0445A40\r\nContent-Disposition: form-data; name=\"mx\"; filename=\"mx.dat\"\r\nContent-Type: application/octet-stream\r\nContent-Length: 454\r\n\r\n\u00d20W\u00c2S[i\u0005\u00be\u00db\u00d9\u00d9\u00c6R\u00d1\u00d9\u00e1\u00a9}\u00b1\u00d9&\u0094K\u0084\u00b6B\u00e9\u00c1\\&\u00d3+\u008cr\u00fb\u00d3\u00dfEYmR\u00f50\u00de\u0093\u0089sHu\u0013\u00b7\u00ff\u0019\u00f6P\u008ci\u00ea\u0002\u00bd\u00b8\u008c&\"\u00d5\u00b0\u0089vI4\u00aa\u00c7F\u000e^\u00ae-\u00fb\\\u00cf|q\u00885`\u00f7o\b\u0096IS\u00d0W\u00bb\u000e\u009f\u00d2\u00e1\u00fc\u00cd\u001cet\u00b2\u00c2\u00fc0\u009a\u00eb5\u0017\u0013\u00cbM\u0093\u0087\u0089Ue\u00d1\u00e2\u00c7@\u00e3\u00ca*\u0098\u00ef\u0093\u00aa \u00dfcn\u00f9|\u00c2jh\u008c\u00f9\u00ee\u0004\u00c8wU\u00c0\u00e4X\r\u0095\u0098\u00da%{\u00ea{\u00ac\u00afHy\u000e\u00b8\u00e8\u00df\u0099vU\u008a(\u008e\u0080G\u00be\u0080\u00eeG2a\u00d7\u00ff\u00ff=t\u009c[[\u00b0\u00ed=\u00ba\u00fc\u00b5\u00e0\"\n\u001b\u0099\u001a\u0088\\\u00a8\u008d=\u00dd\u0096\u00d1t\u00db\u00d3\u00bc\u00c9\u00dc\u00e7\u007f\u00dc\u0019M!A\t\u0090\u00e9,{QU\u0007\u008d\u0089\u00e9zz]r\u00faJ[\u0082\u00b89\u00bb2\u00bf\u00d8\u00ac\u00b4\u00fce\u00ad\u00b7\u009e\u00bc\u000f\u00f0\u00d4\u0094\u00d3TI\u0084\u001f'@eG\u00d0\u009a\u00b5\u00ed\u00ce\u00f4\u000ekB\u00c2K\u00d8\u00e4\u00a4\u00eeW]\u008f~\u0012\u00b5P\u0003\u00d9)\u00a8}\u00f3v\u00cc\u0085P\u00f2\u0088?\u00ec\u00a5#Y&\u00c7u\u0096\u00a0\u00da2z\u00ef3\u008c\u0017.\u00b4g6\u00d6\u00c6a\u00e0@\u000e\u0015\u00e5\u0003/a\u00b8\u00d4\u00d5\u00e4%\u00d9\u00dcE?\u009c\u00b4O\u0083o_\"Er\u00daS\u00da\u0006,\u001a\u00a9[\u00a4\u00eeU[\u0092\u00dd|\u001eb\u00ea\nDx\u00f6x\u009a(\u00a2\u0006\u00bc\u00c6\u00e6\u00da\u00b0S0F\t\u001e\u0007M\u00dd?\u00e6\u0091\u0016\u00c2(\u00df\u00a4\u00d4R%i\u00a5\u00a7\u00e5\u00ceb\u0000w\u00e1\u00c9k\u00fb.\u00ae\u00b7\u0002\u0007D\u00befs\u001e,[_8$\u00e5\u0084KdfR\u000b\u00b61\u001ag\u00ebf\t\u00e7'\u00da[\r\u0005\u00a1\u00be\u00db\u00d9\u00d9\r\n--BestHTTP_HTTPMultiPartForm_E0445A40--\r\n",
+                        "params": []
+                    }
+                },
+                "response": {
+                    "status": 200,
+                    "statusText": "",
+                    "httpVersion": "HTTP/2.0",
+                    "cookies": [
+                        {
+                            "name": "AWSALB",
+                            "value": "oE+TBXkOH2Qqky5XbZKqVuHM8ZXH0P0nISk/ba3B1qf98F2VVViNsmTHKSwPf0znSBHbJBmBy/rXUwUXHCklQVsQT+RB3zDKkN+MXIBseX0okBzp2bKEnS+9BotZKpOxNkPHyC4Z1h0rgi/N1Nu+1K7nc8TuW9eVCJ/YvnwrBx/x8dDo/3OJOaJwB0/jNA==",
+                            "path": "/",
+                            "domain": "",
+                            "httpOnly": false,
+                            "secure": false
+                        },
+                        {
+                            "name": "AWSALBCORS",
+                            "value": "oE+TBXkOH2Qqky5XbZKqVuHM8ZXH0P0nISk/ba3B1qf98F2VVViNsmTHKSwPf0znSBHbJBmBy/rXUwUXHCklQVsQT+RB3zDKkN+MXIBseX0okBzp2bKEnS+9BotZKpOxNkPHyC4Z1h0rgi/N1Nu+1K7nc8TuW9eVCJ/YvnwrBx/x8dDo/3OJOaJwB0/jNA==",
+                            "path": "/",
+                            "domain": "",
+                            "httpOnly": false,
+                            "secure": true,
+                            "sameSite": "None"
+                        }
+                    ],
+                    "headers": [
+                        {
+                            "name": "date",
+                            "value": "Tue, 19 Aug 2025 11:38:17 GMT"
+                        },
+                        {
+                            "name": "content-type",
+                            "value": "application/json; charset=utf-8"
+                        },
+                        {
+                            "name": "set-cookie",
+                            "value": "AWSALB=oE+TBXkOH2Qqky5XbZKqVuHM8ZXH0P0nISk/ba3B1qf98F2VVViNsmTHKSwPf0znSBHbJBmBy/rXUwUXHCklQVsQT+RB3zDKkN+MXIBseX0okBzp2bKEnS+9BotZKpOxNkPHyC4Z1h0rgi/N1Nu+1K7nc8TuW9eVCJ/YvnwrBx/x8dDo/3OJOaJwB0/jNA==; Expires=Tue, 26 Aug 2025 11:38:16 GMT; Path=/"
+                        },
+                        {
+                            "name": "set-cookie",
+                            "value": "AWSALBCORS=oE+TBXkOH2Qqky5XbZKqVuHM8ZXH0P0nISk/ba3B1qf98F2VVViNsmTHKSwPf0znSBHbJBmBy/rXUwUXHCklQVsQT+RB3zDKkN+MXIBseX0okBzp2bKEnS+9BotZKpOxNkPHyC4Z1h0rgi/N1Nu+1K7nc8TuW9eVCJ/YvnwrBx/x8dDo/3OJOaJwB0/jNA==; Expires=Tue, 26 Aug 2025 11:38:16 GMT; Path=/; SameSite=None; Secure"
+                        },
+                        {
+                            "name": "server",
+                            "value": "Kestrel"
+                        },
+                        {
+                            "name": "content-encoding",
+                            "value": "gzip"
+                        },
+                        {
+                            "name": "vary",
+                            "value": "Accept-Encoding"
+                        },
+                        {
+                            "name": "strict-transport-security",
+                            "value": "max-age=2592000"
+                        }
+                    ],
+                    "content": {
+                        "size": 807,
+                        "compression": 633,
+                        "mimeType": "application/json; charset=utf-8",
+                        "text": "{\"protocol\":\"Account_Auth\",\"packet\":\"{\\\"Protocol\\\":1002,\\\"CurrentVersion\\\":368538,\\\"TTSCdnUri\\\":\\\"https://ba.dn.nexoncdn.co.kr/tts/version2/\\\",\\\"AccountDB\\\":{\\\"ServerId\\\":3218642,\\\"Nickname\\\":\\\"Skye\\\",\\\"CallName\\\":\\\"Sky\\\",\\\"CallNameKatakana\\\":\\\"\u30f3\u30b7\u30fc\\\",\\\"CallNameKorean\\\":\\\"\uc2a4\uce74\uc774\\\",\\\"State\\\":1,\\\"Level\\\":56,\\\"Exp\\\":2070,\\\"RepresentCharacterServerId\\\":196716572,\\\"LastConnectTime\\\":\\\"2025-08-19T07:49:01\\\",\\\"CallNameUpdateTime\\\":\\\"2025-06-30T06:27:42\\\",\\\"PublisherAccountId\\\":20790000040815695,\\\"RetentionDays\\\":0,\\\"CreateDate\\\":\\\"2025-06-30T06:27:11\\\",\\\"LinkRewardDate\\\":\\\"2025-06-30T06:28:05\\\"},\\\"AttendanceBookRewards\\\":[],\\\"AttendanceHistoryDBs\\\":[{\\\"ServerId\\\":3359134,\\\"AttendanceBookUniqueId\\\":1,\\\"AttendedDay\\\":{\\\"1\\\":\\\"2025-08-19T07:49:33\\\"}}],\\\"RepurchasableMonthlyProductCountDBs\\\":[],\\\"MonthlyProductParcel\\\":[],\\\"MonthlyProductMail\\\":[],\\\"BiweeklyProductParcel\\\":[],\\\"BiweeklyProductMail\\\":[],\\\"WeeklyProductParcel\\\":[],\\\"WeeklyProductMail\\\":[],\\\"EncryptedUID\\\":\\\"VGACSWCFGOOJTAQVN4SKV5A5KM\\\",\\\"AccountRestrictionsDB\\\":{},\\\"IssueAlertInfos\\\":[],\\\"ServerTimeTicks\\\":638912326960000000,\\\"MissionProgressDBs\\\":[{\\\"MissionUniqueId\\\":1501,\\\"Complete\\\":true,\\\"StartTime\\\":\\\"2025-08-19T20:38:16\\\"},{\\\"MissionUniqueId\\\":1700,\\\"StartTime\\\":\\\"2025-08-19T07:49:01\\\",\\\"ProgressParameters\\\":{\\\"0\\\":8}}],\\\"SessionKey\\\":{\\\"AccountServerId\\\":3218642,\\\"MxToken\\\":\\\"DahKHFxbYAYbh66L6/+0utThq2DV186/KX3882qMeb8=\\\"},\\\"AccountId\\\":3218642}\"}"
+                    },
+                    "redirectURL": "",
+                    "headersSize": 810,
+                    "bodySize": 807
+                },
+                "cache": {},
+                "timings": {
+                    "connect": -1.0,
+                    "ssl": -1.0,
+                    "send": 5.929708480834961,
+                    "receive": 33.890724182128906,
+                    "wait": 1802.6149272918701
+                },
+                "serverIPAddress": "52.29.125.7"
+            },

@@ -1,0 +1,18 @@
+2025-08-26 00:11:56.974 +01:00 [INF] Starting BlueArchiveAPI Gateway server
+2025-08-26 00:11:57.352 +01:00 [INF] Now listening on: http://0.0.0.0:7000
+2025-08-26 00:11:57.365 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-08-26 00:11:57.369 +01:00 [INF] Hosting environment: Development
+2025-08-26 00:11:57.373 +01:00 [INF] Content root path: C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI
+2025-08-26 00:14:47.534 +01:00 [INF] Application is shutting down...
+2025-08-26 00:21:57.544 +01:00 [INF] Starting BlueArchiveAPI Gateway server
+2025-08-26 00:21:58.687 +01:00 [INF] Now listening on: http://0.0.0.0:7000
+2025-08-26 00:21:58.746 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-08-26 00:21:58.767 +01:00 [INF] Hosting environment: Development
+2025-08-26 00:21:58.790 +01:00 [INF] Content root path: C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI
+2025-08-26 00:23:43.454 +01:00 [INF] Application is shutting down...
+2025-08-26 00:29:09.734 +01:00 [INF] Starting BlueArchiveAPI Gateway server
+2025-08-26 00:29:10.212 +01:00 [INF] Now listening on: http://0.0.0.0:7000
+2025-08-26 00:29:10.222 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-08-26 00:29:10.225 +01:00 [INF] Hosting environment: Development
+2025-08-26 00:29:10.227 +01:00 [INF] Content root path: C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI
+2025-08-26 00:29:39.953 +01:00 [INF] Application is shutting down...

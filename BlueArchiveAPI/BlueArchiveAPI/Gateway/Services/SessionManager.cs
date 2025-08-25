@@ -248,7 +248,46 @@ public class SessionManager
         // Update the session cookie with any new values
         SetSessionCookie(httpContext, session.SessionId);
         
-        // Set load balancer cookies
+        // Apply all captured session cookies to the response
+        ApplyCapturedCookies(httpContext, session);
+        
+        // Set load balancer cookies from configuration as fallback
         SetLoadBalancerCookies(httpContext);
+    }
+
+    /// <summary>
+    /// Applies all captured cookies from the session to the response
+    /// This ensures cookies captured from official server requests are reused on subsequent responses
+    /// </summary>
+    /// <param name="httpContext">HTTP context</param>
+    /// <param name="session">Game session containing captured cookies</param>
+    private void ApplyCapturedCookies(HttpContext httpContext, GameSession session)
+    {
+        if (session.Cookies == null || session.Cookies.Count == 0)
+        {
+            _logger.LogDebug("No captured cookies to apply for session {SessionId}", session.SessionId);
+            return;
+        }
+
+        var cookieOptions = new CookieOptions
+        {
+            Path = "/",
+            HttpOnly = false, // Allow JavaScript access for compatibility
+            SameSite = httpContext.Request.IsHttps ? SameSiteMode.None : SameSiteMode.Lax,
+            Secure = httpContext.Request.IsHttps,
+            Expires = DateTimeOffset.UtcNow.AddDays(7) // Default 7-day expiry
+        };
+
+        foreach (var capturedCookie in session.Cookies)
+        {
+            // Apply the captured cookie to the response
+            httpContext.Response.Cookies.Append(capturedCookie.Key, capturedCookie.Value, cookieOptions);
+            
+            _logger.LogDebug("Applied captured cookie {CookieName}={CookieValue} to response for session {SessionId}",
+                capturedCookie.Key, capturedCookie.Value, session.SessionId);
+        }
+
+        _logger.LogInformation("Applied {CookieCount} captured cookies to response for session {SessionId}",
+            session.Cookies.Count, session.SessionId);
     }
 }

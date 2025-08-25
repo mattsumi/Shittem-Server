@@ -108,8 +108,14 @@ public class ProtocolRouter
             var responseJson = System.Text.Encoding.UTF8.GetString(response);
             var serverPacket = JsonConvert.DeserializeObject<ServerPacket>(responseJson);
             
-            // Return the inner packet as parsed JSON object
-            return JsonConvert.DeserializeObject(serverPacket.Packet);
+            // Parse the inner packet as object for session data capture
+            var responseObject = JsonConvert.DeserializeObject(serverPacket.Packet);
+            
+            // Capture dynamic session data from the response (best effort)
+            await CaptureSessionDataFromResponse(session, responseObject, handlerName, requestId);
+            
+            // Return the response object
+            return responseObject;
         }
         catch (Exception ex)
         {
@@ -222,12 +228,10 @@ public class ProtocolRouter
             var currentMxToken = session.CaptureOrGetMxToken();
             sessionKeyToken["MxToken"] = currentMxToken;
 
-            // Set AccountServerId from session (or default for new sessions)
+            // Set AccountServerId from session (generates defaults if needed)
             if (sessionKeyToken["AccountServerId"] == null)
             {
-                // For new sessions, we might not have an AccountServerId yet
-                // Some handlers (like Account.CheckNexon) will set this
-                sessionKeyToken["AccountServerId"] = session.AccountId ?? 0;
+                sessionKeyToken["AccountServerId"] = session.GetAccountServerId();
             }
 
             // Update the packet with the enriched SessionKey
@@ -236,7 +240,7 @@ public class ProtocolRouter
             // Ensure AccountId is present at the root level (required by BasePacket)
             if (packetData["AccountId"] == null)
             {
-                packetData["AccountId"] = session.AccountId ?? 0;
+                packetData["AccountId"] = session.GetAccountId();
             }
 
             _logger.LogDebug("Enriched {Protocol} packet with SessionKey (AccountServerId: {AccountId}, MxToken: {HasToken})",
@@ -278,10 +282,10 @@ public class ProtocolRouter
             // Add minimal SessionKey
             fallbackPacket["SessionKey"] = new JObject
             {
-                ["AccountServerId"] = session.AccountId ?? 0,
+                ["AccountServerId"] = session.GetAccountServerId(),
                 ["MxToken"] = session.CaptureOrGetMxToken()
             };
-            fallbackPacket["AccountId"] = session.AccountId ?? 0;
+            fallbackPacket["AccountId"] = session.GetAccountId();
 
             // Format as encrypted packet
             var json = fallbackPacket.ToString(Formatting.None);
@@ -294,5 +298,77 @@ public class ProtocolRouter
 
             return Convert.ToBase64String(packet);
         }
+    }
+    
+    /// <summary>
+    /// Captures session data from handler responses to maintain consistency
+    /// </summary>
+    /// <param name="session">Game session to update</param>
+    /// <param name="responseObject">Response data from handler</param>
+    /// <param name="protocolName">Protocol name for logging</param>
+    /// <param name="requestId">Request correlation ID</param>
+    private async Task CaptureSessionDataFromResponse(GameSession session, object responseObject, string protocolName, string requestId)
+    {
+        if (responseObject == null) return;
+        
+        try
+        {
+            // Key protocols that contain user account data
+            var shouldCapture = protocolName.StartsWith("Account_") ||
+                               protocolName.Contains("Auth") ||
+                               protocolName.Contains("Login") ||
+                               protocolName.Contains("Check");
+            
+            if (shouldCapture)
+            {
+                // Capture data using the GameSession's reflection-based capture method
+                session.CaptureOfficialData(responseObject);
+                
+                // Also look for nested account data in common response structures
+                if (responseObject is JObject jobj)
+                {
+                    // Look for UserDB or AccountDB objects
+                    var userDb = jobj.SelectToken("UserDB") ?? jobj.SelectToken("AccountDB");
+                    if (userDb != null)
+                    {
+                        session.CaptureOfficialData(userDb.ToObject<object>());
+                    }
+                    
+                    // Look for SessionKey data
+                    var sessionKey = jobj.SelectToken("SessionKey");
+                    if (sessionKey != null)
+                    {
+                        var sessionKeyObj = sessionKey.ToObject<object>();
+                        if (sessionKeyObj != null)
+                        {
+                            session.CaptureOfficialData(sessionKeyObj);
+                        }
+                        
+                        // Specifically capture MxToken if present
+                        var mxToken = sessionKey.SelectToken("MxToken")?.ToString();
+                        if (!string.IsNullOrEmpty(mxToken))
+                        {
+                            session.CaptureOrGetMxToken(mxToken);
+                        }
+                    }
+                }
+                
+                _logger.LogDebug("Captured session data from {Protocol} response for request {RequestId} (Official: {IsOfficial})",
+                    protocolName, requestId, session.IsOfficialCapture);
+            }
+            
+            // For sessions without captured data, ensure defaults are generated
+            if (!session.IsOfficialCapture)
+            {
+                session.GenerateDefaultsIfMissing();
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to capture session data from {Protocol} response for request {RequestId}",
+                protocolName, requestId);
+        }
+        
+        await Task.CompletedTask;
     }
 }
