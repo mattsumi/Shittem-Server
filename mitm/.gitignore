@@ -1,0 +1,22 @@
+# Log files - keep directory but ignore log files
+logs/*.jsonl
+logs/*.log
+logs/*.txt
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+
+# mitmproxy certificates if stored here
+*.pem
+*.crt
+*.key
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
