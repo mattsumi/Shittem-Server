@@ -406,9 +406,13 @@ class BlueArchiveMITMProxy:
             connector=ba_connector
         )
         
-        # Setup graceful shutdown
-        for sig in [signal.SIGINT, signal.SIGTERM]:
-            signal.signal(sig, self._signal_handler)
+        # Setup graceful shutdown (include SIGBREAK on Windows if available)
+        for sig_name in ("SIGINT", "SIGTERM", "SIGBREAK"):
+            if hasattr(signal, sig_name):
+                try:
+                    signal.signal(getattr(signal, sig_name), self._signal_handler)
+                except Exception:
+                    pass
         
     # Start servers
         success = await self._start_servers()
@@ -459,7 +463,9 @@ class BlueArchiveMITMProxy:
             https_app.router.add_get('/_proxy/health', self._handle_health)
             https_app.router.add_get('/_proxy/status', self._handle_status)
             https_app.router.add_get('/_proxy/flip', self._handle_flip)
+            https_app.router.add_get('/_proxy/flip_wildcard', self._handle_flip_wildcard)
             https_app.router.add_get('/_proxy/unflip', self._handle_unflip)
+            https_app.router.add_get('/_proxy/stop', self._handle_stop)
             https_app.router.add_route('*', '/{path:.*}', self._handle_https_request)
             
             ssl_context = self.cert_manager.get_ssl_context()
@@ -480,7 +486,10 @@ class BlueArchiveMITMProxy:
             # HTTP Proxy Server  
             http_app = web.Application()
             http_app.router.add_get('/_proxy/flip', self._handle_flip)
+            http_app.router.add_get('/_proxy/flip_wildcard', self._handle_flip_wildcard)
             http_app.router.add_get('/_proxy/unflip', self._handle_unflip)
+            # Plain HTTP stop endpoint avoids TLS cert hassles
+            http_app.router.add_get('/_proxy/stop', self._handle_stop)
             http_app.router.add_route('*', '/{path:.*}', self._handle_http_request)
             
             http_runner = web.AppRunner(http_app, access_log=None)
@@ -851,33 +860,86 @@ class BlueArchiveMITMProxy:
             }
         })
 
+    async def _handle_stop(self, request):
+        """HTTP endpoint to gracefully stop the proxy."""
+        print_colored("Stop requested via /_proxy/stop", YELLOW)
+        try:
+            # Trigger shutdown like signal handler would
+            self.shutdown_event.set()
+            # Run shutdown sequence
+            await self._shutdown()
+        except Exception as e:
+            print_colored(f"Stop endpoint error: {e}", YELLOW)
+        return web.json_response({"status": "stopping"})
+
     def _enable_gateway_redirect_rules(self):
-        """Enable redirect rules for Blue Archive - FOCUSED on critical gateway only"""
+        """Enable redirect rules targeting ports 443/5000/5100 on all domains in nexon_summary.json"""
         if not (platform.system() == "Windows" and self.redirector and RedirectRule):
             return
         
-        # CRITICAL FIX: Only redirect the PRIMARY gateway that needs transparent redirection
-        # From nexon_summary.json URLs 41-42: nxm-eu-bagl.nexon.com:5000/5100
-        # All other domains work fine through normal proxy settings (HTTPS/443)
-        gateway_rule = RedirectRule(
-            ports=[5000, 5100],  # Only the non-standard ports need transparent redirect
-            to_port=self.https_port,
-            domains=["nxm-eu-bagl.nexon.com"]  # Only 1 domain = ~2 IPs vs 31 IPs
-        )
+        # Load domains from nexon_summary.json
+        domains = []
+        try:
+            summary_path = Path.cwd() / 'nexon_summary.json'
+            if summary_path.exists():
+                with open(summary_path, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    domains = list(dict.fromkeys(data.get('domains', [])))  # de-dup while preserving order
+            else:
+                print_colored("nexon_summary.json not found; falling back to built-in domain list", YELLOW)
+        except Exception as e:
+            print_colored(f"Failed to read nexon_summary.json: {e}", YELLOW)
         
-        rules = [gateway_rule]
+        if not domains:
+            # Fallback to the proxy's baked-in list
+            domains = self.gateway_hosts
+            print_colored(f"Using fallback domain list ({len(domains)} domains)", YELLOW)
+        
+        # Build a single rule covering all requested ports for these domains
+        rule = RedirectRule(
+            ports=[443, 5000, 5100],
+            to_port=self.https_port,
+            domains=domains
+        )
+        rules = [rule]
         
         # Update IPs for the rule (original working approach)
         for rule in rules:
             rule.update_ips()
         
-        print_colored(f"Enabling transparent redirect for PRIMARY Blue Archive gateway only (filter optimization)", CYAN)
+        total_ips = sum(len(rule._ip_cache) for rule in rules)
+        print_colored(f"Enabling transparent redirect for {len(domains)} domains on ports 443,5000,5100 (resolved IPs: {total_ips})", CYAN)
         if self.verbose:
             for rule in rules:
-                print_colored(f"  Gateway Rule: {rule.domains[0]}, ports {rule.ports} -> {rule.to_port} (IPs: {len(rule._ip_cache)})", CYAN)
-                print_colored(f"  Note: Other domains use standard HTTPS/443 via proxy settings", CYAN)
+                preview = ", ".join(rule.domains[:5]) + (" ..." if len(rule.domains) > 5 else "")
+                print_colored(f"  Rule: domains=[{preview}] ports {rule.ports} -> {rule.to_port} (IPs: {len(rule._ip_cache)})", CYAN)
         
         self.redirector.update_rules(rules)
+        if self.verbose and hasattr(self.redirector, 'get_filter'):
+            try:
+                print_colored(f"WinDivert Filter: {self.redirector.get_filter()}", CYAN)
+            except Exception:
+                pass
+
+    async def _handle_flip_wildcard(self, request):
+        """Enable wildcard redirect on 443/5000/5100 for debugging."""
+        self.global_bootstrap_complete = True
+        if not (platform.system() == "Windows" and self.redirector and RedirectRule):
+            return web.json_response({"status": "error", "error": "redirector not available"}, status=500)
+        try:
+            rule = RedirectRule(
+                ports=[443, 5000, 5100],
+                to_port=self.https_port,
+                domains=None  # wildcard any IP
+            )
+            self.redirector.update_rules([rule])
+            print_colored("Transparent redirect (wildcard): ENABLED", GREEN)
+            if self.verbose and hasattr(self.redirector, 'get_filter'):
+                print_colored(f"WinDivert Filter: {self.redirector.get_filter()}", CYAN)
+            return web.json_response({"status": "ok", "flipped": True, "wildcard": True})
+        except Exception as e:
+            print_colored(f"Failed to enable wildcard rules: {e}", YELLOW)
+            return web.json_response({"status": "error", "error": str(e)}, status=500)
     
     def _signal_handler(self, signum, frame):
         """Handle shutdown signals"""
