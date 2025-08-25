@@ -52,6 +52,7 @@ TARGET_DOMAINS: List[str] = [
 # Default private server settings
 PRIVATE_HOST: str = os.getenv("BA_PRIVATE_HOST", "127.0.0.1")
 PRIVATE_PORT: int = int(os.getenv("BA_PRIVATE_PORT", "5000"))
+PRIVATE_SERVER: Tuple[str, int] = (PRIVATE_HOST, PRIVATE_PORT)
 PRIVATE_SCHEME: str = os.getenv("BA_PRIVATE_SCHEME", "http")
 
 # Allow domain override via environment
@@ -226,36 +227,51 @@ class BlueArchiveAddon:
         ctx.log.info("Use http://127.0.0.1:9080/_proxy/flip to enable routing")
     
     def request(self, flow: http.HTTPFlow) -> None:
-        """Process outgoing requests - rewrite if flipped and matches target domains"""
+        """Rewrite outgoing requests when flip is enabled and the host matches.
+
+        This implementation normalises the hostname by stripping any explicit
+        port, verifies that the request originates from one of the Blue Archive
+        API ports (443, 5000 or 5100) and only rewrites requests targeting
+        ports 5000 or 5100.  Requests on other ports are passed through
+        unchanged, so CDN or analytics domains continue to work when flipped.
+        The destination is constructed from ``PRIVATE_SERVER``, which should
+        reflect your private API host and port (e.g. 127.0.0.1:7000).
+        """
+        # Bail out early if rewriting is not enabled via the flip flag.
         if not state.flipped:
             return
-            
-        # Get the original host
+        # Retrieve the original host from the request.  This may include an
+        # explicit port (e.g. "nxm-eu-bagl.nexon.com:5000").
         original_host = flow.request.pretty_host
         if not original_host:
             return
-        
-        # Check if this host should be redirected
-        host_lower = original_host.lower()
-        should_redirect = any(host_lower.endswith(domain.lower()) for domain in TARGET_DOMAINS)
-        
-        if should_redirect:
-            # Store original host for logging and debugging
-            original_host_header = original_host
-            original_port = flow.request.port
-            
-            # Rewrite the request to point to private server
-            flow.request.scheme = PRIVATE_SCHEME
-            flow.request.host = PRIVATE_HOST
-            flow.request.port = PRIVATE_PORT
-            
-            # Set Host header to private upstream
-            flow.request.headers["Host"] = f"{PRIVATE_HOST}:{PRIVATE_PORT}"
-            
-            # Add debugging header with original host
-            flow.request.headers["X-Original-Host"] = original_host_header
-            
-            ctx.log.info(f"REDIRECT: {original_host_header} -> {PRIVATE_HOST}:{PRIVATE_PORT}")
+        # Split off any port from the host for domain matching.
+        host_no_port = original_host.split(":", 1)[0].lower()
+        original_port = flow.request.port
+        # Determine whether the hostname matches one of our target domains.
+        matched_domain = any(
+            host_no_port.endswith(domain.lower()) for domain in TARGET_DOMAINS
+        )
+        if not matched_domain:
+            return
+        # Only rewrite requests bound for ports 5000 or 5100.  Requests to
+        # other ports (e.g. 443) remain untouched.
+        if original_port not in (5000, 5100):
+            return
+        # Redirect the request to the private API.  Set scheme, host and port.
+        flow.request.scheme = "http"
+        flow.request.host = PRIVATE_SERVER[0]
+        flow.request.port = PRIVATE_SERVER[1]
+        # Explicitly set the Host header for HTTP/1.1 clients.
+        flow.request.headers["Host"] = f"{PRIVATE_SERVER[0]}:{PRIVATE_SERVER[1]}"
+        # Preserve the original host for debugging purposes.
+        flow.request.headers["X-Original-Host"] = original_host
+        # Emit a log message to indicate the redirection.
+        ctx.log.info(
+            f"REDIRECT: {original_host}:{original_port} -> "
+            f"{PRIVATE_SERVER[0]}:{PRIVATE_SERVER[1]}"
+        )
+
     
     def response(self, flow: http.HTTPFlow) -> None:
         """Process responses - add upstream tagging and log structured data"""
