@@ -51,7 +51,7 @@ TARGET_DOMAINS: List[str] = [
 
 # Default private server settings
 PRIVATE_HOST: str = os.getenv("BA_PRIVATE_HOST", "127.0.0.1")
-PRIVATE_PORT: int = int(os.getenv("BA_PRIVATE_PORT", "5000"))
+PRIVATE_PORT: int = int(os.getenv("BA_PRIVATE_PORT", "7000"))
 PRIVATE_SERVER: Tuple[str, int] = (PRIVATE_HOST, PRIVATE_PORT)
 PRIVATE_SCHEME: str = os.getenv("BA_PRIVATE_SCHEME", "http")
 
@@ -288,7 +288,7 @@ class BlueArchiveAddon:
                     upstream = "PRIVATE"
         
         # Add response header to indicate upstream
-        flow.response.headers["X-Proxy-Upstream"] = upstream
+        flow.response.headers["x-proxy-upstream"] = upstream
         
         # Update statistics  
         if upstream == "PRIVATE":
