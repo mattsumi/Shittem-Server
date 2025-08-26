@@ -18,6 +18,7 @@ public sealed class AccountDocument
         {
             ["AccountId"] = id,
             ["Nickname"] = "Commander",
+            ["CallName"] = "Commander",
             ["Level"] = 1,
             ["Pyroxene"] = 0,
             ["Credits"] = 0,

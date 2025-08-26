@@ -4,8 +4,10 @@ using BlueArchiveAPI.NetworkModels;
 using BlueArchiveAPI.Handlers;
 using BlueArchiveAPI.Models;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using ShittimServer.Admin;
 
 namespace BlueArchiveAPI.Gateway.Services;
 
@@ -351,6 +353,9 @@ public class ProtocolRouter
                             session.CaptureOrGetMxToken(mxToken);
                         }
                     }
+
+                    // NEW: Persist captured account data to AdminStore for immediate admin API access
+                    await PersistAccountDataToAdminStore(jobj, session, protocolName);
                 }
                 
                 _logger.LogDebug("Captured session data from {Protocol} response for request {RequestId} (Official: {IsOfficial})",
@@ -369,6 +374,113 @@ public class ProtocolRouter
                 protocolName, requestId);
         }
         
+        await Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Extracts account data from protocol responses and persists to AdminStore for immediate admin API access
+    /// </summary>
+    /// <param name="responseObject">JSON response object from protocol</param>
+    /// <param name="session">Current game session</param>
+    /// <param name="protocolName">Protocol name for logging</param>
+    private async Task PersistAccountDataToAdminStore(JObject responseObject, GameSession session, string protocolName)
+    {
+        try
+        {
+            var adminStore = _serviceProvider.GetService<IAdminStore>();
+            if (adminStore == null)
+            {
+                _logger.LogWarning("AdminStore service not available for data persistence from {Protocol}", protocolName);
+                return;
+            }
+
+            var accountId = session.GetAccountId();
+            if (accountId <= 0)
+            {
+                _logger.LogWarning("Invalid AccountId {AccountId} for AdminStore persistence from {Protocol}", accountId, protocolName);
+                return;
+            }
+
+            // Get or create account document
+            var accountDoc = adminStore.GetOrCreateAccount(accountId);
+            var hasUpdates = false;
+
+            // Helper function to extract and set field if present
+            void TrySetField(string fieldName, params string[] jsonPaths)
+            {
+                foreach (var path in jsonPaths)
+                {
+                    var token = responseObject.SelectToken(path);
+                    if (token != null && !string.IsNullOrEmpty(token.ToString()))
+                    {
+                        var value = token.Type == JTokenType.String ? token.ToString() : token.Value<object>();
+                        if (value != null)
+                        {
+                            accountDoc.Data[fieldName] = JsonNode.Parse(JsonConvert.SerializeObject(value));
+                            hasUpdates = true;
+                            _logger.LogDebug("Updated {Field} = {Value} from {Protocol} at path {Path}",
+                                fieldName, value, protocolName, path);
+                            break; // Use first found value
+                        }
+                    }
+                }
+            }
+
+            // Extract common account fields from various possible locations in the response
+            // Try both root level and nested UserDB/AccountDB structures
+            TrySetField("Level",
+                "Level", "UserDB.Level", "AccountDB.Level",
+                "User.Level", "Account.Level");
+
+            TrySetField("Pyroxene",
+                "Pyroxene", "UserDB.Pyroxene", "AccountDB.Pyroxene",
+                "User.Pyroxene", "Account.Pyroxene", "Currency.Pyroxene");
+
+            TrySetField("Credits",
+                "Credits", "UserDB.Credits", "AccountDB.Credits",
+                "User.Credits", "Account.Credits", "Currency.Credits");
+
+            TrySetField("Nickname",
+                "Nickname", "UserDB.Nickname", "AccountDB.Nickname",
+                "User.Nickname", "Account.Nickname");
+
+            TrySetField("CallName",
+                "CallName", "UserDB.CallName", "AccountDB.CallName",
+                "User.CallName", "Account.CallName");
+
+            // Try to extract from session data if not found in response
+            if (!hasUpdates && session.IsOfficialCapture)
+            {
+                if (session.Level.HasValue)
+                {
+                    accountDoc.Data["Level"] = session.Level.Value;
+                    hasUpdates = true;
+                }
+                if (!string.IsNullOrEmpty(session.Nickname))
+                {
+                    accountDoc.Data["Nickname"] = session.Nickname;
+                    hasUpdates = true;
+                }
+            }
+
+            // Persist if we found any account data
+            if (hasUpdates)
+            {
+                adminStore.UpsertAccount(accountDoc);
+                _logger.LogInformation("Persisted account data to AdminStore from {Protocol} for AccountId {AccountId}",
+                    protocolName, accountId);
+            }
+            else
+            {
+                _logger.LogDebug("No account data found to persist from {Protocol} for AccountId {AccountId}",
+                    protocolName, accountId);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to persist account data to AdminStore from {Protocol}", protocolName);
+        }
+
         await Task.CompletedTask;
     }
 }

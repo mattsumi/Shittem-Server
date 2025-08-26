@@ -19,8 +19,7 @@ public static class AdminModule
     public static IEndpointRouteBuilder MapAdminApi(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/admin")
-                       .WithTags("Admin")
-                       .RequireHost("localhost", "127.0.0.1", "[::1]");
+                       .WithTags("Admin");
 
         // Health
         group.MapGet("/health", () => Results.Ok(new { ok = true, now = DateTimeOffset.UtcNow }));
