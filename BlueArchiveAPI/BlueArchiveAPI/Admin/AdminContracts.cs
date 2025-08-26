@@ -1,43 +1,72 @@
-using System.Text.Json.Nodes;
+// AdminContracts.cs
+using System.Text.Json.Serialization;
 
-namespace ShittimServer.Admin;
-
-public sealed record MailAttachment(int ItemId, int Count, string? Note);
-public sealed record SendMailRequest(long AccountId, string Subject, string Body, List<MailAttachment>? Attachments);
-public sealed record PublishNoticeRequest(string Title, string Text, string? StartsAt, string? EndsAt, int Priority = 1);
-
-// Small model for authoritative account data captured from official gateway responses
-public sealed class AccountSnapshot
+namespace ShittimServer.Admin
 {
-    public long AccountId { get; set; }
-    public string? Nickname { get; set; }
-    public int? Level { get; set; }
-    public int? Pyroxene { get; set; }
-    public int? PaidPyroxene { get; set; }
-    public int? FreePyroxene { get; set; }
-    public int? Credits { get; set; }
-    public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
-}
-
-// We keep Account as a flexible JSON blob to let you patch arbitrary fields (Level, Pyroxene, credits, roster, etc.)
-public sealed class AccountDocument
-{
-    public long AccountId { get; set; }
-    public JsonObject Data { get; set; } = new();
-
-    public static AccountDocument WithDefaults(long id)
+    // Generic wrapper so the Admin GUI can show messages
+    public sealed class ApiResult<T>
     {
-        var obj = new JsonObject
-        {
-            ["AccountId"] = id,
-            ["Nickname"] = "Commander",
-            ["CallName"] = "Commander",
-            ["Level"] = 1,
-            ["Pyroxene"] = 0,
-            ["Credits"] = 0,
-            ["Units"] = new JsonArray(),   // array of { UnitId, Level, Rarity, ... }
-            ["Mail"] = new JsonArray(),    // array of { Subject, Body, Attachments[], CreatedAt }
-        };
-        return new AccountDocument { AccountId = id, Data = obj };
+        [JsonPropertyName("ok")] public bool Ok { get; set; } = true;
+        [JsonPropertyName("message")] public string? Message { get; set; }
+        [JsonPropertyName("data")] public T? Data { get; set; }
+
+        public static ApiResult<T> Success(T data, string? msg = null)
+            => new() { Ok = true, Message = msg, Data = data };
+
+        public static ApiResult<T> Fail(string msg)
+            => new() { Ok = false, Message = msg, Data = default };
+    }
+
+    // --- Account models ------------------------------------------------------
+
+    public sealed class AccountSummary
+    {
+        [JsonPropertyName("accountId")] public long AccountId { get; set; }
+        [JsonPropertyName("nickname")] public string Nickname { get; set; } = "Sensei";
+        [JsonPropertyName("level")] public int Level { get; set; } = 1;
+        [JsonPropertyName("pyroxene")] public int Pyroxene { get; set; } = 0;
+        [JsonPropertyName("credits")] public int Credits { get; set; } = 0;
+
+        // Minimal inventory/student collections so the GUI can grow later
+        [JsonPropertyName("inventory")] public Dictionary<int, int> Inventory { get; set; } = new();
+        [JsonPropertyName("students")] public List<long> Students { get; set; } = new();
+    }
+
+    public sealed class AccountPatch
+    {
+        [JsonPropertyName("nickname")] public string? Nickname { get; set; }
+        [JsonPropertyName("level")] public int? Level { get; set; }
+        [JsonPropertyName("pyroxene")] public int? Pyroxene { get; set; }
+        [JsonPropertyName("credits")] public int? Credits { get; set; }
+        [JsonPropertyName("inventory")] public Dictionary<int, int>? Inventory { get; set; }
+        [JsonPropertyName("students")] public List<long>? Students { get; set; }
+    }
+
+    // --- Mail models ---------------------------------------------------------
+
+    public sealed class MailAttachment
+    {
+        [JsonPropertyName("itemId")] public int ItemId { get; set; }
+        [JsonPropertyName("count")] public int Count { get; set; }
+        [JsonPropertyName("note")] public string? Note { get; set; }
+    }
+
+    public sealed class MailRequest
+    {
+        [JsonPropertyName("accountId")] public long AccountId { get; set; }
+        [JsonPropertyName("subject")] public string Subject { get; set; } = "System Mail";
+        [JsonPropertyName("body")] public string Body { get; set; } = "";
+        [JsonPropertyName("attachments")] public List<MailAttachment> Attachments { get; set; } = new();
+    }
+
+    // --- Notice models -------------------------------------------------------
+
+    public sealed class NoticeRequest
+    {
+        [JsonPropertyName("title")] public string Title { get; set; } = "";
+        [JsonPropertyName("text")] public string Text { get; set; } = "";
+        [JsonPropertyName("startsAt")] public DateTimeOffset? StartsAt { get; set; }
+        [JsonPropertyName("endsAt")] public DateTimeOffset? EndsAt { get; set; }
+        [JsonPropertyName("priority")] public int Priority { get; set; } = 1;
     }
 }

@@ -9,6 +9,7 @@ using BlueArchiveAPI.Gateway.Compression;
 using BlueArchiveAPI.Gateway.Interfaces;
 using ShittimServer.Admin;
 using Newtonsoft.Json;
+using BlueArchiveAPI.Catalog;
 using Newtonsoft.Json.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -54,6 +55,13 @@ builder.Services.AddSingleton<SessionManager>();
 builder.Services.AddSingleton<CodecRegistry>();
 builder.Services.AddSingleton<ProtocolRouter>();
 
+builder.Services.AddSingleton<IEntityCatalog>(sp =>
+{
+    var env = sp.GetRequiredService<IHostEnvironment>();
+    var dbPath = Path.Combine(env.ContentRootPath, "data", "catalog.sqlite");
+    return new EntityCatalog(dbPath);
+});
+
 // Register crypto adapters
 builder.Services.AddSingleton<ICryptoAdapter, Aes256GcmAdapter>();
 builder.Services.AddSingleton<ICryptoAdapter, ChaCha20Poly1305Adapter>();
@@ -67,6 +75,10 @@ builder.Services.AddAdminModule();
 builder.Services.AddControllers();
 
 var app = builder.Build();
+
+Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "data"));
+var catalogPath = Path.Combine(AppContext.BaseDirectory, "data", "catalog.sqlite");
+builder.Services.AddSingleton<IEntityCatalog>(_ => EntityCatalog.LoadFrom(catalogPath));
 
 // Configure the HTTP request pipeline
 app.UseResponseCompression();
