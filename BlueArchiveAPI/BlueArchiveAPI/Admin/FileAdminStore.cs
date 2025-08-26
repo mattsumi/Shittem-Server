@@ -1,57 +1,123 @@
 // BlueArchiveAPI/Admin/FileAdminStore.cs
 using System.Text.Json;
-using System.Text.Json.Nodes;
 using BlueArchiveAPI.Gateway.Services;
 using Microsoft.Extensions.Hosting;
 
 namespace BlueArchiveAPI.Admin
 {
     /// <summary>
-    /// Very simple file-backed store so the project compiles and runs.
-    /// Writes JSON per-account into ./AdminData/{accountId}.json
-    /// Swap for your real persistence later.
+    /// File-backed IAdminStore. Persists snapshots as JSON under an on-disk root.
+    /// Thread-safe via a SemaphoreSlim around IO operations.
     /// </summary>
     public sealed class FileAdminStore : IAdminStore
     {
         private readonly string _root;
+        private readonly SemaphoreSlim _mutex = new(1, 1);
+
         private static readonly JsonSerializerOptions JsonOpts = new(JsonSerializerDefaults.Web)
         {
             WriteIndented = true
         };
 
-        public FileAdminStore(IHostEnvironment env)
+        // Default to AppContext.BaseDirectory/AdminData
+        public FileAdminStore()
+            : this(Path.Combine(AppContext.BaseDirectory, "AdminData"))
         {
-            _root = Path.Combine(env.ContentRootPath, "AdminData");
+        }
+
+        // Explicit root path
+        public FileAdminStore(string root)
+        {
+            _root = root;
             Directory.CreateDirectory(_root);
         }
 
-        private string PathFor(long id) => System.IO.Path.Combine(_root, $"{id}.json");
+        // Convenience for hosting env
+        public FileAdminStore(IHostEnvironment env)
+            : this(Path.Combine(env.ContentRootPath, "AdminData"))
+        {
+        }
 
-        public async Task<AccountSnapshot?> GetAccountAsync(long accountId, CancellationToken ct = default)
+        private string PathFor(long id) => Path.Combine(_root, $"{id}.json");
+
+        public async Task<AccountSnapshot?> GetAsync(long accountId, CancellationToken ct = default)
         {
             var path = PathFor(accountId);
             if (!File.Exists(path)) return null;
 
-            await using var fs = File.OpenRead(path);
-            return await JsonSerializer.DeserializeAsync<AccountSnapshot>(fs, JsonOpts, ct);
+            await _mutex.WaitAsync(ct).ConfigureAwait(false);
+            try
+            {
+                await using var fs = File.OpenRead(path);
+                return await JsonSerializer.DeserializeAsync<AccountSnapshot>(fs, JsonOpts, ct)
+                    .ConfigureAwait(false);
+            }
+            finally
+            {
+                _mutex.Release();
+            }
         }
 
-        public async Task SaveAccountAsync(AccountSnapshot snapshot, CancellationToken ct = default)
+        public async Task<IReadOnlyList<AccountSnapshot>> GetAllAsync(CancellationToken ct = default)
+        {
+            var list = new List<AccountSnapshot>();
+            await _mutex.WaitAsync(ct).ConfigureAwait(false);
+            try
+            {
+                foreach (var file in Directory.EnumerateFiles(_root, "*.json", SearchOption.TopDirectoryOnly))
+                {
+                    try
+                    {
+                        await using var fs = File.OpenRead(file);
+                        var snap = await JsonSerializer.DeserializeAsync<AccountSnapshot>(fs, JsonOpts, ct)
+                            .ConfigureAwait(false);
+                        if (snap != null) list.Add(snap);
+                    }
+                    catch
+                    {
+                        // ignore bad files
+                    }
+                }
+            }
+            finally
+            {
+                _mutex.Release();
+            }
+
+            return list.AsReadOnly();
+        }
+
+        public async Task SaveAsync(AccountSnapshot snapshot, CancellationToken ct = default)
         {
             snapshot.UpdatedAt = DateTimeOffset.UtcNow;
-
             var path = PathFor(snapshot.AccountId);
-            await using var fs = File.Create(path);
-            await JsonSerializer.SerializeAsync(fs, snapshot, JsonOpts, ct);
+
+            await _mutex.WaitAsync(ct).ConfigureAwait(false);
+            try
+            {
+                await using var fs = File.Create(path);
+                await JsonSerializer.SerializeAsync(fs, snapshot, JsonOpts, ct).ConfigureAwait(false);
+            }
+            finally
+            {
+                _mutex.Release();
+            }
         }
 
-        public async Task<bool> PatchAccountAsync(long accountId, JsonObject patch, CancellationToken ct = default)
+        public async Task PatchAsync(long accountId, Action<AccountSnapshot> patch, CancellationToken ct = default)
         {
-            var snap = await GetAccountAsync(accountId, ct) ?? new AccountSnapshot { AccountId = accountId };
-            foreach (var kv in patch)
-                snap.Data[kv.Key] = kv.Value;
-            await SaveAccountAsync(snap, ct);
-            return true;
+            await _mutex.WaitAsync(ct).ConfigureAwait(false);
+            try
+            {
+                var snap = await GetAsync(accountId, ct).ConfigureAwait(false)
+                           ?? new AccountSnapshot(accountId);
+                patch(snap);
+                await SaveAsync(snap, ct).ConfigureAwait(false);
+            }
+            finally
+            {
+                _mutex.Release();
+            }
         }
     }
 }

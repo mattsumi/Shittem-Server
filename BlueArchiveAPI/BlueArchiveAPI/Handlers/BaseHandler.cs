@@ -21,11 +21,19 @@ namespace BlueArchiveAPI.Handlers
 
         public async Task<byte[]> Handle(string packet)
         {
-            var req = JsonConvert.DeserializeObject<TRequest>(
-                Utils.DecryptRequestPacket(packet));
-            
-            ResponsePacket res = await Handle(req);
-            
+            var json = Utils.DecryptRequestPacket(packet);
+            var req = JsonConvert.DeserializeObject<TRequest>(json);
+            if (req == null)
+            {
+                throw new JsonSerializationException($"Failed to deserialize {typeof(TRequest).Name} from packet");
+            }
+
+            var res = await Handle(req);
+            if (res == null)
+            {
+                throw new InvalidOperationException($"Handler returned null {typeof(TResponse).Name}");
+            }
+
             res.ServerTimeTicks = DateTime.Now.Ticks;
             res.SessionKey ??= req.SessionKey;
 

@@ -1,4 +1,5 @@
 #nullable disable
+#pragma warning disable CS0108, CS8618
 namespace BlueArchiveAPI.NetworkModels;
 
 using System.Collections.ObjectModel;

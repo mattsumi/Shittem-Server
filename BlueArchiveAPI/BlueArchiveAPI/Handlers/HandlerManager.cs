@@ -11,7 +11,7 @@ namespace BlueArchiveAPI.Handlers
         {
             foreach (var type in Assembly.GetExecutingAssembly().ExportedTypes)
             {
-                if (type.BaseType is not { IsGenericType: true } || 
+                if (type.BaseType is not { IsGenericType: true } ||
                     type.BaseType.GetGenericTypeDefinition() != typeof(BaseHandler<,>))
                 {
                     continue;
@@ -22,14 +22,18 @@ namespace BlueArchiveAPI.Handlers
                     continue;
                 }
                 
-                var handler = (IHandler)Activator.CreateInstance(type);
+                var instance = Activator.CreateInstance(type) as IHandler;
+                if (instance is null)
+                {
+                    continue;
+                }
 
-                Console.WriteLine($"[HandlerManager] registering handler: {type.Name} for protocol {handler.RequestProtocol} => {handler.ResponseProtocol}");
-                _handlers.Add(handler.RequestProtocol, handler);
+                Console.WriteLine($"[HandlerManager] registering handler: {type.Name} for protocol {instance.RequestProtocol} => {instance.ResponseProtocol}");
+                _handlers[instance.RequestProtocol] = instance;
             }
         }
 
-        public static IHandler GetHandler(Protocol protocol)
+        public static IHandler? GetHandler(Protocol protocol)
         {
             return _handlers.TryGetValue(protocol, out var val) ? val : null;
         }

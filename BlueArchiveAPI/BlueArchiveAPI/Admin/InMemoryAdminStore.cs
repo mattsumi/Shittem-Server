@@ -14,15 +14,28 @@ public sealed class InMemoryAdminStore : IAdminStore
     // You can swap this for a real DB later
     public InMemoryAdminStore(EntityCatalog catalog) => _catalog = catalog;
 
-    public Task<AccountSnapshot?> GetAccountAsync(long accountId, CancellationToken ct = default)
+    // New IAdminStore contract
+    public Task<AccountSnapshot?> GetAsync(long accountId, CancellationToken ct = default)
         => Task.FromResult(_accounts.TryGetValue(accountId, out var snap) ? snap : null);
 
-    public Task SaveAccountAsync(AccountSnapshot snapshot, CancellationToken ct = default)
+    public Task<IReadOnlyList<AccountSnapshot>> GetAllAsync(CancellationToken ct = default)
+        => Task.FromResult<IReadOnlyList<AccountSnapshot>>(_accounts.Values.ToList().AsReadOnly());
+
+    public Task SaveAsync(AccountSnapshot snapshot, CancellationToken ct = default)
     {
         _accounts[snapshot.AccountId] = snapshot;
         return Task.CompletedTask;
     }
 
+    public Task PatchAsync(long accountId, Action<AccountSnapshot> patch, CancellationToken ct = default)
+    {
+        var snap = _accounts.GetOrAdd(accountId, id => new AccountSnapshot(id, new JsonObject()));
+        patch(snap);
+        _accounts[accountId] = snap;
+        return Task.CompletedTask;
+    }
+
+    // Convenience helpers kept for callers that still pass raw JSON patches
     public Task<bool> PatchAccountAsync(long accountId, JsonObject patch, CancellationToken ct = default)
     {
         if (!_accounts.TryGetValue(accountId, out var snap)) return Task.FromResult(false);
@@ -30,6 +43,7 @@ public sealed class InMemoryAdminStore : IAdminStore
         return Task.FromResult(true);
     }
 
+    // Extra utilities used by admin/handlers (not part of the interface)
     public Task<IReadOnlyList<(int Id, string Name)>> LookupAsync(EntityType type, string query, int limit = 50, CancellationToken ct = default)
     {
         var rows = _catalog.Search(type, query, limit)

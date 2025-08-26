@@ -11,17 +11,34 @@ namespace BlueArchiveAPI.Gateway.Services
     {
         public long AccountId { get; init; }
 
-        // Fields referenced in ProtocolRouter.cs
-        public string Nickname { get; set; } = string.Empty;
-        public int Level { get; set; }
-        public int PaidPyroxene { get; set; }
-        public int FreePyroxene { get; set; }
-        public int Pyroxene { get; set; } // some logs print this directly
-        public long Credits { get; set; }
+        // Fields referenced in ProtocolRouter.cs (nullable to reflect "may not be present" semantics)
+        public string? Nickname { get; set; }
+        public int? Level { get; set; }
+        public int? PaidPyroxene { get; set; }
+        public int? FreePyroxene { get; set; }
+        public int? Pyroxene { get; set; } // some logs print this directly
+        public int? Credits { get; set; }
 
         public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
 
         // Arbitrary admin JSON (safe place to stash extra flags)
         public JsonObject Data { get; init; } = new JsonObject();
+
+        public AccountSnapshot()
+        {
+            UpdatedAt = DateTimeOffset.UtcNow;
+        }
+
+        public AccountSnapshot(long accountId) : this(accountId, new JsonObject())
+        {
+        }
+
+        // Required by InMemoryAdminStore usage
+        public AccountSnapshot(long accountId, JsonObject data)
+        {
+            AccountId = accountId;
+            Data = data ?? new JsonObject();
+            UpdatedAt = DateTimeOffset.UtcNow;
+        }
     }
 }

@@ -73,9 +73,7 @@ builder.Services.AddSingleton<ICompressionAdapter, DeflateAdapter>();
 // Register Admin services
 builder.Services.AddAdminModule();
 builder.Services.AddSingleton(_ => EntityCatalog.LoadFrom(Path.Combine(AppContext.BaseDirectory, "catalog.sqlite")));
-builder.Services.AddSingleton<IAdminStore, InMemoryAdminStore>();
 builder.Services.AddControllers();
-builder.Services.AddSingleton<IAdminStore, FileAdminStore>();
 
 var app = builder.Build();
 

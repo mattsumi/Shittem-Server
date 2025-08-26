@@ -65,19 +65,22 @@ public class SessionManager
             {
                 try
                 {
-                    var sessionJson = (string)cachedSessionData;
-                    session = JsonSerializer.Deserialize<GameSession>(sessionJson);
+                    var sessionJson = cachedSessionData as string;
+                    if (!string.IsNullOrWhiteSpace(sessionJson))
+                    {
+                        session = JsonSerializer.Deserialize<GameSession>(sessionJson);
+                    }
                     
                     if (session != null)
                     {
                         session.Touch();
-                        _logger.LogDebug("Retrieved existing session {SessionId} for request {RequestId}", 
+                        _logger.LogDebug("Retrieved existing session {SessionId} for request {RequestId}",
                             sessionId, requestId);
                     }
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogWarning(ex, "Failed to deserialize cached session {SessionId} for request {RequestId}", 
+                    _logger.LogWarning(ex, "Failed to deserialize cached session {SessionId} for request {RequestId}",
                         sessionId, requestId);
                     session = null;
                 }
@@ -112,7 +115,7 @@ public class SessionManager
     /// Stores a session in the cache
     /// </summary>
     /// <param name="session">Session to store</param>
-    public async Task StoreSessionAsync(GameSession session)
+    public Task StoreSessionAsync(GameSession session)
     {
         try
         {
@@ -134,6 +137,8 @@ public class SessionManager
             _logger.LogError(ex, "Failed to store session {SessionId} in cache", session.SessionId);
             throw;
         }
+
+        return Task.CompletedTask;
     }
 
     /// <summary>

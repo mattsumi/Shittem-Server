@@ -1,13 +1,11 @@
-using BlueArchiveAPI.Gateway.Interfaces;
 using BlueArchiveAPI.Gateway.Models;
+using BlueArchiveAPI.Gateway.Interfaces;
 using BlueArchiveAPI.NetworkModels;
 using BlueArchiveAPI.Handlers;
 using BlueArchiveAPI.Models;
-using System.Text.Json;
-using System.Text.Json.Nodes;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using ShittimServer.Admin;
+using BlueArchiveAPI.Admin;
 
 namespace BlueArchiveAPI.Gateway.Services;
 
@@ -66,7 +64,7 @@ public class ProtocolRouter
             if (!string.IsNullOrEmpty(request.Protocol))
             {
                 protocolEnum = Utils.ParseProtocolString(request.Protocol);
-                handlerName = request.Protocol;
+                handlerName = request.Protocol ?? "Unknown";
             }
             else if (request.ProtocolCode.HasValue)
             {
@@ -99,7 +97,7 @@ public class ProtocolRouter
             
             // Convert request payload to packet string format expected by existing handlers
             // This includes SessionKey enrichment and proper encryption
-            var packetString = await PreparePacketForHandler(request, session, handlerName);
+            var packetString = await PreparePacketForHandler(request, session, handlerName ?? "Unknown");
             var response = await handler.Handle(packetString);
             
             var duration = DateTime.UtcNow - startTime;
@@ -108,10 +106,14 @@ public class ProtocolRouter
 
             // Parse the response bytes back to JSON object
             var responseJson = System.Text.Encoding.UTF8.GetString(response);
-            var serverPacket = JsonConvert.DeserializeObject<ServerPacket>(responseJson);
+            var serverPacket = JsonConvert.DeserializeObject<BlueArchiveAPI.Models.ServerPacket>(responseJson);
+            if (serverPacket == null || string.IsNullOrWhiteSpace(serverPacket.Packet))
+            {
+                throw new InvalidOperationException("Invalid server packet format returned by handler");
+            }
             
             // Parse the inner packet as object for session data capture
-            var responseObject = JsonConvert.DeserializeObject(serverPacket.Packet);
+            var responseObject = JsonConvert.DeserializeObject(serverPacket.Packet) ?? new object();
             
             // Capture dynamic session data from the response (best effort)
             await CaptureSessionDataFromResponse(session, responseObject, handlerName, requestId);
@@ -211,7 +213,7 @@ public class ProtocolRouter
         try
         {
             // Start with the payload JSON from the Gateway request
-            var payloadJson = request.Payload?.ToString() ?? "{}";
+            var payloadJson = request.Payload.HasValue ? request.Payload.Value.GetRawText() : "{}";
             var packetData = JObject.Parse(payloadJson);
 
             // Extract MxToken from the request if present (for token capture)
@@ -265,11 +267,11 @@ public class ProtocolRouter
             
             // Fallback: create a basic packet with minimal SessionKey
             var fallbackPacket = new JObject();
-            if (request.Payload != null)
+            if (request.Payload.HasValue)
             {
                 try
                 {
-                    var payloadObj = JObject.Parse(request.Payload.ToString());
+                    var payloadObj = JObject.Parse(request.Payload.Value.GetRawText());
                     foreach (var prop in payloadObj.Properties())
                     {
                         fallbackPacket[prop.Name] = prop.Value;
@@ -333,7 +335,11 @@ public class ProtocolRouter
                     var userDb = jobj.SelectToken("UserDB") ?? jobj.SelectToken("AccountDB");
                     if (userDb != null)
                     {
-                        session.CaptureOfficialData(userDb.ToObject<object>());
+                        var userDbObj = userDb.ToObject<object>();
+                        if (userDbObj != null)
+                        {
+                            session.CaptureOfficialData(userDbObj);
+                        }
                     }
                     
                     // Look for SessionKey data
@@ -388,7 +394,7 @@ public class ProtocolRouter
     {
         try
         {
-            var adminStore = _serviceProvider.GetService<IAdminStore>();
+            var adminStore = _serviceProvider.GetService<BlueArchiveAPI.Admin.IAdminStore>();
             if (adminStore == null)
             {
                 _logger.LogWarning("AdminStore service not available for data persistence from {Protocol}", protocolName);
@@ -506,7 +512,7 @@ public class ProtocolRouter
             // Persist the snapshot if we captured authoritative data
             if (hasData)
             {
-                adminStore.UpdateFromOfficial(snapshot);
+                await adminStore.SaveAsync(snapshot);
                 _logger.LogInformation("Captured authoritative account data from {Protocol} for AccountId {AccountId}: " +
                     "Nickname={Nickname}, Level={Level}, Pyroxene={Pyroxene}, Credits={Credits}",
                     protocolName, accountId, snapshot.Nickname, snapshot.Level,

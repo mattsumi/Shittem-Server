@@ -128,16 +128,22 @@ namespace BlueArchiveAPI
             return null;
         }
 
-        public static T GetDataFromFile<T>(string filename, bool ignoreMissing)
+        public static T? GetDataFromFile<T>(string filename, bool ignoreMissing) where T : class
         {
             filename += ".json";
 
             if (ignoreMissing && !File.Exists(filename))
             {
-                return default;
+                return null;
             }
 
-            return JsonConvert.DeserializeObject<T>(File.ReadAllText(filename));
+            var json = File.ReadAllText(filename);
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                return null;
+            }
+
+            return JsonConvert.DeserializeObject<T>(json);
         }
         public static void SaveDataToFile<T>(string filename, T t)
         {

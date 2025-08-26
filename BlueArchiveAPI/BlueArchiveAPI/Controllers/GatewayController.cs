@@ -108,7 +108,7 @@ public class GatewayController : ControllerBase
             // Return error response as plain JSON (no encoding for errors)
             var errorObject = new { error = ex.Message };
             var errorPacketJson = JsonConvert.SerializeObject(errorObject, Formatting.None);
-            var errorResponse = new ServerPacket("Error", errorPacketJson);
+            var errorResponse = new BlueArchiveAPI.Models.ServerPacket("Error", errorPacketJson);
             var errorJson = JsonConvert.SerializeObject(errorResponse, Formatting.None);
             var errorBytes = Encoding.UTF8.GetBytes(errorJson);
 
@@ -127,7 +127,7 @@ public class GatewayController : ControllerBase
     /// <param name="responseObject">The response object from the handler</param>
     /// <param name="requestId">Request correlation ID</param>
     /// <returns>ServerPacket in official format</returns>
-    private async Task<ServerPacket> CreateOfficialResponseAsync(GameRequest request, object responseObject, string requestId)
+    private async Task<BlueArchiveAPI.Models.ServerPacket> CreateOfficialResponseAsync(GameRequest request, object responseObject, string requestId)
     {
         // Get the protocol name as string
         string protocolString;
@@ -171,7 +171,7 @@ public class GatewayController : ControllerBase
                 requestId, packetJson.Length);
         }
         
-        return new ServerPacket(protocolString, packetContent);
+        return new BlueArchiveAPI.Models.ServerPacket(protocolString, packetContent);
     }
 
     /// <summary>

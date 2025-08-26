@@ -95,7 +95,7 @@ public class Aes256GcmAdapter : ICryptoAdapter
 
         try
         {
-            using var aes = new AesGcm(_key);
+            using var aes = new AesGcm(_key, 16);
             
             var ciphertext = new byte[plaintext.Length];
             var tag = new byte[16]; // GCM tag is 16 bytes
@@ -157,7 +157,7 @@ public class Aes256GcmAdapter : ICryptoAdapter
             // Extract actual ciphertext
             var encryptedData = ciphertext.AsSpan(offset).ToArray();
             
-            using var aes = new AesGcm(_key);
+            using var aes = new AesGcm(_key, 16);
             var plaintext = new byte[encryptedData.Length];
             
             aes.Decrypt(nonce, encryptedData, tag, plaintext);

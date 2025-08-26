@@ -63,7 +63,7 @@ public class ChaCha20Poly1305Adapter : ICryptoAdapter
         _logger.LogInformation("ChaCha20-Poly1305 adapter initialized: Enabled={IsEnabled}", _isEnabled);
     }
 
-    public async Task<byte[]> EncryptAsync(byte[] plaintext)
+    public Task<byte[]> EncryptAsync(byte[] plaintext)
     {
         if (!_isEnabled || _key == null)
             throw new InvalidOperationException("ChaCha20-Poly1305 adapter is not properly configured");
@@ -95,7 +95,7 @@ public class ChaCha20Poly1305Adapter : ICryptoAdapter
             _logger.LogDebug("ChaCha20-Poly1305 encryption completed: {PlaintextLength} -> {CiphertextLength} bytes",
                 plaintext.Length, output.Length);
                 
-            return output;
+            return Task.FromResult(output);
         }
         catch (Exception ex)
         {
@@ -104,7 +104,7 @@ public class ChaCha20Poly1305Adapter : ICryptoAdapter
         }
     }
 
-    public async Task<byte[]> DecryptAsync(byte[] ciphertext)
+    public Task<byte[]> DecryptAsync(byte[] ciphertext)
     {
         if (!_isEnabled || _key == null)
             throw new InvalidOperationException("ChaCha20-Poly1305 adapter is not properly configured");
@@ -135,7 +135,7 @@ public class ChaCha20Poly1305Adapter : ICryptoAdapter
             _logger.LogDebug("ChaCha20-Poly1305 decryption completed: {CiphertextLength} -> {PlaintextLength} bytes",
                 ciphertext.Length, plaintext.Length);
                 
-            return plaintext;
+            return Task.FromResult(plaintext);
         }
         catch (Exception ex)
         {

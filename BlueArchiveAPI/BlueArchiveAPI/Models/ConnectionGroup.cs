@@ -1,18 +1,21 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace BlueArchiveAPI.Models
 {
     public class ConnectionGroup
     {
-        public string Name;
+        public string Name { get; set; } = string.Empty;
+
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public string ApiUrl;
+        public string ApiUrl { get; set; } = string.Empty;
+
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public string GatewayUrl;
+        public string GatewayUrl { get; set; } = string.Empty;
+
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public bool? DisableWebviewBanner;
+        public bool? DisableWebviewBanner { get; set; }
+
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public ConnectionGroup[] OverrideConnectionGroups;
+        public ConnectionGroup[] OverrideConnectionGroups { get; set; } = System.Array.Empty<ConnectionGroup>();
     }
 }

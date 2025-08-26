@@ -53,6 +53,11 @@ namespace BlueArchiveAPI.Controllers
             var proto = ResolveProtocolOrRaise($"{path1}/{path2}", protocol);
 
             var handler = HandlerManager.GetHandler(proto);
+            if (handler == null)
+            {
+                _logger.LogWarning($"gateway: {protocol}@{path1}/{path2} not implemented!");
+                return NotFound();
+            }
             /*
             var form = new MultipartFormDataContent();
             form.Add(new StringContent(Utils.GetProtocolHash(proto), Encoding.UTF8, "text/plain"), "protocol");
