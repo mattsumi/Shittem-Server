@@ -16,3 +16,74 @@
 2025-08-26 00:29:10.225 +01:00 [INF] Hosting environment: Development
 2025-08-26 00:29:10.227 +01:00 [INF] Content root path: C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI
 2025-08-26 00:29:39.953 +01:00 [INF] Application is shutting down...
+2025-08-26 12:50:07.413 +01:00 [INF] Starting BlueArchiveAPI Gateway server
+2025-08-26 12:50:07.818 +01:00 [INF] Now listening on: http://0.0.0.0:7000
+2025-08-26 12:50:07.830 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-08-26 12:50:07.833 +01:00 [INF] Hosting environment: Development
+2025-08-26 12:50:07.836 +01:00 [INF] Content root path: C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI
+2025-08-26 12:53:21.858 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/account/1234 - null null
+2025-08-26 12:53:21.917 +01:00 [ERR] An unhandled exception has occurred while executing the request.
+System.InvalidOperationException: Could not parse host: [::1]
+   at Microsoft.AspNetCore.Routing.Matching.HostMatcherPolicy.CreateEdgeKey(String host)
+   at Microsoft.AspNetCore.Routing.Matching.HostMatcherPolicy.GetEdgeKeys(Endpoint endpoint)
+   at Microsoft.AspNetCore.Routing.Matching.HostMatcherPolicy.GetEdges(IReadOnlyList`1 endpoints)
+   at Microsoft.AspNetCore.Routing.Matching.DfaMatcherBuilder.ApplyPolicies(DfaNode node)
+   at Microsoft.AspNetCore.Routing.Matching.DfaNode.Visit(Action`1 visitor)
+   at Microsoft.AspNetCore.Routing.Matching.DfaNode.Visit(Action`1 visitor)
+   at Microsoft.AspNetCore.Routing.Matching.DfaNode.Visit(Action`1 visitor)
+   at Microsoft.AspNetCore.Routing.Matching.DfaMatcherBuilder.BuildDfaTree(Boolean includeLabel)
+   at Microsoft.AspNetCore.Routing.Matching.DfaMatcherBuilder.Build()
+   at Microsoft.AspNetCore.Routing.Matching.DataSourceDependentMatcher.CreateMatcher(IReadOnlyList`1 endpoints)
+   at Microsoft.AspNetCore.Routing.DataSourceDependentCache`1.Initialize()
+   at System.Threading.LazyInitializer.EnsureInitializedCore[T](T& target, Boolean& initialized, Object& syncLock, Func`1 valueFactory)
+   at Microsoft.AspNetCore.Routing.Matching.DataSourceDependentMatcher..ctor(EndpointDataSource dataSource, Lifetime lifetime, Func`1 matcherBuilderFactory)
+   at Microsoft.AspNetCore.Routing.Matching.DfaMatcherFactory.CreateMatcher(EndpointDataSource dataSource)
+   at Microsoft.AspNetCore.Routing.EndpointRoutingMiddleware.InitializeCoreAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointRoutingMiddleware.<Invoke>g__AwaitMatcher|10_0(EndpointRoutingMiddleware middleware, HttpContext httpContext, Task`1 matcherTask)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-08-26 12:53:21.975 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/account/1234 - 500 null text/plain; charset=utf-8 120.5679ms
+2025-08-26 12:55:57.006 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/account/3218642 - null null
+2025-08-26 12:55:57.052 +01:00 [ERR] An unhandled exception has occurred while executing the request.
+System.InvalidOperationException: Could not parse host: [::1]
+   at Microsoft.AspNetCore.Routing.Matching.HostMatcherPolicy.CreateEdgeKey(String host)
+   at Microsoft.AspNetCore.Routing.Matching.HostMatcherPolicy.GetEdgeKeys(Endpoint endpoint)
+   at Microsoft.AspNetCore.Routing.Matching.HostMatcherPolicy.GetEdges(IReadOnlyList`1 endpoints)
+   at Microsoft.AspNetCore.Routing.Matching.DfaMatcherBuilder.ApplyPolicies(DfaNode node)
+   at Microsoft.AspNetCore.Routing.Matching.DfaNode.Visit(Action`1 visitor)
+   at Microsoft.AspNetCore.Routing.Matching.DfaNode.Visit(Action`1 visitor)
+   at Microsoft.AspNetCore.Routing.Matching.DfaNode.Visit(Action`1 visitor)
+   at Microsoft.AspNetCore.Routing.Matching.DfaMatcherBuilder.BuildDfaTree(Boolean includeLabel)
+   at Microsoft.AspNetCore.Routing.Matching.DfaMatcherBuilder.Build()
+   at Microsoft.AspNetCore.Routing.Matching.DataSourceDependentMatcher.CreateMatcher(IReadOnlyList`1 endpoints)
+   at Microsoft.AspNetCore.Routing.DataSourceDependentCache`1.Initialize()
+   at System.Threading.LazyInitializer.EnsureInitializedCore[T](T& target, Boolean& initialized, Object& syncLock, Func`1 valueFactory)
+   at Microsoft.AspNetCore.Routing.Matching.DataSourceDependentMatcher..ctor(EndpointDataSource dataSource, Lifetime lifetime, Func`1 matcherBuilderFactory)
+   at Microsoft.AspNetCore.Routing.Matching.DfaMatcherFactory.CreateMatcher(EndpointDataSource dataSource)
+   at Microsoft.AspNetCore.Routing.EndpointRoutingMiddleware.InitializeCoreAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointRoutingMiddleware.<Invoke>g__AwaitMatcher|10_0(EndpointRoutingMiddleware middleware, HttpContext httpContext, Task`1 matcherTask)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-08-26 12:55:57.109 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/account/3218642 - 500 null text/plain; charset=utf-8 105.023ms
+2025-08-26 12:56:14.668 +01:00 [INF] Request starting HTTP/1.1 POST http://127.0.0.1:7000/admin/notice - application/json 112
+2025-08-26 12:56:14.694 +01:00 [ERR] An unhandled exception has occurred while executing the request.
+System.InvalidOperationException: Could not parse host: [::1]
+   at Microsoft.AspNetCore.Routing.Matching.HostMatcherPolicy.CreateEdgeKey(String host)
+   at Microsoft.AspNetCore.Routing.Matching.HostMatcherPolicy.GetEdgeKeys(Endpoint endpoint)
+   at Microsoft.AspNetCore.Routing.Matching.HostMatcherPolicy.GetEdges(IReadOnlyList`1 endpoints)
+   at Microsoft.AspNetCore.Routing.Matching.DfaMatcherBuilder.ApplyPolicies(DfaNode node)
+   at Microsoft.AspNetCore.Routing.Matching.DfaNode.Visit(Action`1 visitor)
+   at Microsoft.AspNetCore.Routing.Matching.DfaNode.Visit(Action`1 visitor)
+   at Microsoft.AspNetCore.Routing.Matching.DfaNode.Visit(Action`1 visitor)
+   at Microsoft.AspNetCore.Routing.Matching.DfaMatcherBuilder.BuildDfaTree(Boolean includeLabel)
+   at Microsoft.AspNetCore.Routing.Matching.DfaMatcherBuilder.Build()
+   at Microsoft.AspNetCore.Routing.Matching.DataSourceDependentMatcher.CreateMatcher(IReadOnlyList`1 endpoints)
+   at Microsoft.AspNetCore.Routing.DataSourceDependentCache`1.Initialize()
+   at System.Threading.LazyInitializer.EnsureInitializedCore[T](T& target, Boolean& initialized, Object& syncLock, Func`1 valueFactory)
+   at Microsoft.AspNetCore.Routing.Matching.DataSourceDependentMatcher..ctor(EndpointDataSource dataSource, Lifetime lifetime, Func`1 matcherBuilderFactory)
+   at Microsoft.AspNetCore.Routing.Matching.DfaMatcherFactory.CreateMatcher(EndpointDataSource dataSource)
+   at Microsoft.AspNetCore.Routing.EndpointRoutingMiddleware.InitializeCoreAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointRoutingMiddleware.<Invoke>g__AwaitMatcher|10_0(EndpointRoutingMiddleware middleware, HttpContext httpContext, Task`1 matcherTask)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-08-26 12:56:14.720 +01:00 [INF] Request finished HTTP/1.1 POST http://127.0.0.1:7000/admin/notice - 500 null text/plain; charset=utf-8 52.0781ms
