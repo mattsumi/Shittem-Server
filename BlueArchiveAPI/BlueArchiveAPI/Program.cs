@@ -8,6 +8,7 @@ using BlueArchiveAPI.Gateway.Crypto;
 using BlueArchiveAPI.Gateway.Compression;
 using BlueArchiveAPI.Gateway.Interfaces;
 using ShittimServer.Admin;
+using BlueArchiveAPI.Admin;
 using Newtonsoft.Json;
 using BlueArchiveAPI.Catalog;
 using Newtonsoft.Json.Linq;
@@ -71,8 +72,10 @@ builder.Services.AddSingleton<ICompressionAdapter, DeflateAdapter>();
 
 // Register Admin services
 builder.Services.AddAdminModule();
-
+builder.Services.AddSingleton(_ => EntityCatalog.LoadFrom(Path.Combine(AppContext.BaseDirectory, "catalog.sqlite")));
+builder.Services.AddSingleton<IAdminStore, InMemoryAdminStore>();
 builder.Services.AddControllers();
+builder.Services.AddSingleton<IAdminStore, FileAdminStore>();
 
 var app = builder.Build();
 

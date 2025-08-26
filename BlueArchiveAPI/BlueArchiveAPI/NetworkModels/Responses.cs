@@ -1,3 +1,4 @@
+#nullable disable
 namespace BlueArchiveAPI.NetworkModels;
 using System.Collections.ObjectModel;
 

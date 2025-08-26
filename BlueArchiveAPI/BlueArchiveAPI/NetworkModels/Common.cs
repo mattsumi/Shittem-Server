@@ -1,4 +1,6 @@
+#nullable disable
 namespace BlueArchiveAPI.NetworkModels;
+
 using System.Collections.ObjectModel;
 
 public class RequestPacket : BasePacket
