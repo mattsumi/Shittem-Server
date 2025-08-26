@@ -8,6 +8,7 @@ public interface IAdminStore
     AccountDocument GetOrCreateAccount(long accountId);
     AccountDocument GetAccount(long accountId);
     AccountDocument UpsertAccount(AccountDocument doc);
+    void UpdateFromOfficial(AccountSnapshot snapshot);
     void AppendMail(long accountId, JsonObject mailItem);
     void AppendNotice(JsonObject notice);
     JsonArray GetNotices();
@@ -138,6 +139,55 @@ public sealed class FileAdminStore : IAdminStore
                 {
                     _accounts[id] = new AccountDocument { AccountId = id, Data = (JsonObject)obj.DeepClone() };
                 }
+            }
+        }
+    }
+
+    public void UpdateFromOfficial(AccountSnapshot snapshot)
+    {
+        lock (_lock)
+        {
+            var doc = GetOrCreateAccount(snapshot.AccountId);
+            var updated = false;
+
+            // Update fields from official data, preserving existing values if new ones are null/empty
+            if (!string.IsNullOrEmpty(snapshot.Nickname))
+            {
+                doc.Data["Nickname"] = snapshot.Nickname;
+                updated = true;
+            }
+
+            if (snapshot.Level.HasValue && snapshot.Level.Value > 0)
+            {
+                doc.Data["Level"] = snapshot.Level.Value;
+                updated = true;
+            }
+
+            // Handle Pyroxene - prefer separate paid/free if available, otherwise use combined
+            if (snapshot.PaidPyroxene.HasValue && snapshot.FreePyroxene.HasValue)
+            {
+                doc.Data["PaidPyroxene"] = snapshot.PaidPyroxene.Value;
+                doc.Data["FreePyroxene"] = snapshot.FreePyroxene.Value;
+                doc.Data["Pyroxene"] = snapshot.PaidPyroxene.Value + snapshot.FreePyroxene.Value;
+                updated = true;
+            }
+            else if (snapshot.Pyroxene.HasValue && snapshot.Pyroxene.Value >= 0)
+            {
+                doc.Data["Pyroxene"] = snapshot.Pyroxene.Value;
+                updated = true;
+            }
+
+            if (snapshot.Credits.HasValue && snapshot.Credits.Value >= 0)
+            {
+                doc.Data["Credits"] = snapshot.Credits.Value;
+                updated = true;
+            }
+
+            if (updated)
+            {
+                doc.Data["LastOfficialUpdate"] = snapshot.UpdatedAt.ToString("o");
+                _accounts[snapshot.AccountId] = doc;
+                Save_NoLock();
             }
         }
     }

@@ -378,7 +378,8 @@ public class ProtocolRouter
     }
 
     /// <summary>
-    /// Extracts account data from protocol responses and persists to AdminStore for immediate admin API access
+    /// Extracts authoritative account data from Account_Check, Account_Auth, and post-login responses
+    /// and persists to AdminStore using the new AccountSnapshot model
     /// </summary>
     /// <param name="responseObject">JSON response object from protocol</param>
     /// <param name="session">Current game session</param>
@@ -401,84 +402,125 @@ public class ProtocolRouter
                 return;
             }
 
-            // Get or create account document
-            var accountDoc = adminStore.GetOrCreateAccount(accountId);
-            var hasUpdates = false;
+            // Only capture from specific authoritative protocols
+            var isAuthoritative = protocolName.Equals("Account_Check", StringComparison.OrdinalIgnoreCase) ||
+                                  protocolName.Equals("Account_Auth", StringComparison.OrdinalIgnoreCase) ||
+                                  protocolName.Contains("Login", StringComparison.OrdinalIgnoreCase);
 
-            // Helper function to extract and set field if present
-            void TrySetField(string fieldName, params string[] jsonPaths)
+            if (!isAuthoritative)
+            {
+                _logger.LogDebug("Skipping account data capture from non-authoritative protocol {Protocol}", protocolName);
+                return;
+            }
+
+            // Create snapshot from official response data
+            var snapshot = new AccountSnapshot
+            {
+                AccountId = accountId,
+                UpdatedAt = DateTimeOffset.UtcNow
+            };
+
+            var hasData = false;
+
+            // Helper function to extract value from multiple JSON paths
+            T? TryExtractValue<T>(params string[] jsonPaths) where T : struct
             {
                 foreach (var path in jsonPaths)
                 {
                     var token = responseObject.SelectToken(path);
-                    if (token != null && !string.IsNullOrEmpty(token.ToString()))
+                    if (token?.Type != JTokenType.Null && token?.Value<T?>() is T value)
                     {
-                        var value = token.Type == JTokenType.String ? token.ToString() : token.Value<object>();
-                        if (value != null)
-                        {
-                            accountDoc.Data[fieldName] = JsonNode.Parse(JsonConvert.SerializeObject(value));
-                            hasUpdates = true;
-                            _logger.LogDebug("Updated {Field} = {Value} from {Protocol} at path {Path}",
-                                fieldName, value, protocolName, path);
-                            break; // Use first found value
-                        }
+                        return value;
                     }
                 }
+                return null;
             }
 
-            // Extract common account fields from various possible locations in the response
-            // Try both root level and nested UserDB/AccountDB structures
-            TrySetField("Level",
+            string? TryExtractString(params string[] jsonPaths)
+            {
+                foreach (var path in jsonPaths)
+                {
+                    var token = responseObject.SelectToken(path);
+                    var value = token?.ToString();
+                    if (!string.IsNullOrEmpty(value) && value != "null")
+                    {
+                        return value;
+                    }
+                }
+                return null;
+            }
+
+            // Extract authoritative account fields from various possible locations
+            snapshot.Nickname = TryExtractString(
+                "Nickname", "UserDB.Nickname", "AccountDB.Nickname",
+                "User.Nickname", "Account.Nickname", "PlayerDB.Nickname");
+
+            snapshot.Level = TryExtractValue<int>(
                 "Level", "UserDB.Level", "AccountDB.Level",
-                "User.Level", "Account.Level");
+                "User.Level", "Account.Level", "PlayerDB.Level");
 
-            TrySetField("Pyroxene",
-                "Pyroxene", "UserDB.Pyroxene", "AccountDB.Pyroxene",
-                "User.Pyroxene", "Account.Pyroxene", "Currency.Pyroxene");
+            // Try to get separate paid/free pyroxene first, then combined
+            snapshot.PaidPyroxene = TryExtractValue<int>(
+                "PaidPyroxene", "UserDB.PaidPyroxene", "AccountDB.PaidPyroxene",
+                "Currency.PaidPyroxene", "Pyroxene.Paid");
 
-            TrySetField("Credits",
+            snapshot.FreePyroxene = TryExtractValue<int>(
+                "FreePyroxene", "UserDB.FreePyroxene", "AccountDB.FreePyroxene",
+                "Currency.FreePyroxene", "Pyroxene.Free");
+
+            // If separate values not found, try combined pyroxene
+            if (!snapshot.PaidPyroxene.HasValue && !snapshot.FreePyroxene.HasValue)
+            {
+                snapshot.Pyroxene = TryExtractValue<int>(
+                    "Pyroxene", "UserDB.Pyroxene", "AccountDB.Pyroxene",
+                    "User.Pyroxene", "Account.Pyroxene", "Currency.Pyroxene");
+            }
+
+            snapshot.Credits = TryExtractValue<int>(
                 "Credits", "UserDB.Credits", "AccountDB.Credits",
                 "User.Credits", "Account.Credits", "Currency.Credits");
 
-            TrySetField("Nickname",
-                "Nickname", "UserDB.Nickname", "AccountDB.Nickname",
-                "User.Nickname", "Account.Nickname");
+            // Check if we captured any meaningful data
+            hasData = !string.IsNullOrEmpty(snapshot.Nickname) ||
+                      snapshot.Level.HasValue ||
+                      snapshot.Pyroxene.HasValue ||
+                      snapshot.PaidPyroxene.HasValue ||
+                      snapshot.FreePyroxene.HasValue ||
+                      snapshot.Credits.HasValue;
 
-            TrySetField("CallName",
-                "CallName", "UserDB.CallName", "AccountDB.CallName",
-                "User.CallName", "Account.CallName");
-
-            // Try to extract from session data if not found in response
-            if (!hasUpdates && session.IsOfficialCapture)
+            // Fallback: try to get data from session if response didn't contain it
+            if (!hasData && session.IsOfficialCapture)
             {
-                if (session.Level.HasValue)
-                {
-                    accountDoc.Data["Level"] = session.Level.Value;
-                    hasUpdates = true;
-                }
                 if (!string.IsNullOrEmpty(session.Nickname))
                 {
-                    accountDoc.Data["Nickname"] = session.Nickname;
-                    hasUpdates = true;
+                    snapshot.Nickname = session.Nickname;
+                    hasData = true;
+                }
+                if (session.Level.HasValue)
+                {
+                    snapshot.Level = session.Level.Value;
+                    hasData = true;
                 }
             }
 
-            // Persist if we found any account data
-            if (hasUpdates)
+            // Persist the snapshot if we captured authoritative data
+            if (hasData)
             {
-                adminStore.UpsertAccount(accountDoc);
-                _logger.LogInformation("Persisted account data to AdminStore from {Protocol} for AccountId {AccountId}",
-                    protocolName, accountId);
+                adminStore.UpdateFromOfficial(snapshot);
+                _logger.LogInformation("Captured authoritative account data from {Protocol} for AccountId {AccountId}: " +
+                    "Nickname={Nickname}, Level={Level}, Pyroxene={Pyroxene}, Credits={Credits}",
+                    protocolName, accountId, snapshot.Nickname, snapshot.Level,
+                    snapshot.Pyroxene ?? (snapshot.PaidPyroxene + snapshot.FreePyroxene), snapshot.Credits);
             }
             else
             {
-                _logger.LogDebug("No account data found to persist from {Protocol} for AccountId {AccountId}",
+                _logger.LogDebug("No authoritative account data found in {Protocol} response for AccountId {AccountId}",
                     protocolName, accountId);
             }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to persist account data to AdminStore from {Protocol}", protocolName);
+            _logger.LogError(ex, "Failed to capture account data from {Protocol} for AdminStore", protocolName);
         }
 
         await Task.CompletedTask;
