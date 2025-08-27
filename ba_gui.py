@@ -632,7 +632,14 @@ class MailTab(QtWidgets.QWidget):
         self._set_picker_busy(True)
         def on_done(types: list[str]):
             self.type_combo.clear()
-            for tname in types:
+            # Only allow item-like types for attachments; exclude characters/units/students
+            allowed = [t for t in types if not any(w in t.lower() for w in ("character", "characters", "unit", "units", "student", "students"))]
+            if not allowed:
+                # Prefer explicit item/consumable-like names
+                allowed = [t for t in types if ("item" in t.lower() or "consum" in t.lower())]
+            if not allowed:
+                allowed = list(types)
+            for tname in allowed:
                 self.type_combo.addItem(tname)
             self.type_combo.setEnabled(True)
             # restore last type
@@ -647,7 +654,7 @@ class MailTab(QtWidgets.QWidget):
             # trigger entity load
             self._on_type_changed()
             self._set_picker_busy(False)
-            self._show_status("")  # clear
+            self._show_status("")
         def on_err(msg: str):
             self._show_status(f"Catalog types not available; using local fallback/default. {msg}")
             # still try to fill whatever we have (model already fell back)
@@ -711,6 +718,14 @@ class MailTab(QtWidgets.QWidget):
         # load entities async
         tname = self.type_combo.currentText().strip()
         if not tname:
+            return
+        # Disallow character-like types for attachments
+        lname = tname.lower()
+        if any(w in lname for w in ("character","characters","unit","units","student","students")):
+            self._entities_current = []
+            self._populate_entity_combo([])
+            self.entity_combo.setEnabled(False)
+            self._show_status("Attachments accept only item-like types.")
             return
         self._set_picker_busy(True)
         def on_done(items: list[dict]):
@@ -1006,35 +1021,46 @@ class GachaTab(QtWidgets.QWidget):
     def _settings(self) -> QtCore.QSettings:
         return QtCore.QSettings("ShittimServer", "AdminGUI")
 
+    def _set_picker_enabled(self, en: bool):
+        for w in (self.filter_edit, self.entity_combo, self.add_btn, self.fill_btn):
+            w.setEnabled(en)
+
     def _init_types_and_entities(self):
         # pick a character-like type
         def on_types(types: list[str]):
-            # Choose 'Character' or 'Unit' (or variants)
-            prefer = ["Character", "Characters", "Unit", "Units"]
+            s = self._settings()
+            pref_saved = s.value("gacha/last_type", "", str)
             picked = None
-            for p in prefer:
-                for tname in types:
-                    if tname.lower() == p.lower():
-                        picked = tname
+            if pref_saved and pref_saved in types:
+                picked = pref_saved
+            else:
+                # Choose 'Character' or 'Unit' (or variants)
+                prefer = ["Character", "Characters", "Unit", "Units", "Student", "Students"]
+                for p in prefer:
+                    for tname in types:
+                        if tname.lower() == p.lower():
+                            picked = tname
+                            break
+                    if picked:
                         break
-                if picked:
-                    break
-            if not picked:
-                picked = types[0] if types else "Character"
+                if not picked:
+                    picked = types[0] if types else "Character"
             self._char_type = picked
             self.type_locked.setText(picked)
+            s.setValue("gacha/last_type", picked)
             # load entities
-            self.entity_combo.setEnabled(False)
+            self._set_picker_enabled(False)
             self.catalog.fetch_entities(picked, self, self._on_entities_loaded, self._on_entities_error)
         def on_err(msg: str):
             self._show_status(f"Gacha types not available; fallback in use. {msg}")
             on_types(self.catalog._load_types())
+        self._set_picker_enabled(False)
         self.catalog.fetch_types(self, on_types, on_err)
 
     def _on_entities_loaded(self, entities: list[dict]):
         self._entities = entities
         self._apply_filter()
-        self.entity_combo.setEnabled(True)
+        self._set_picker_enabled(True)
         # restore last selected entity
         s = self._settings()
         last_id = s.value("gacha/last_entity_id", "", str)
@@ -1052,7 +1078,7 @@ class GachaTab(QtWidgets.QWidget):
     def _on_entities_error(self, msg: str):
         self._entities = self.catalog._load_entities(self._char_type or "Character")
         self._apply_filter()
-        self.entity_combo.setEnabled(True)
+        self._set_picker_enabled(True)
         self._show_status(f"Gacha entity list unavailable; using fallback if any. {msg}")
 
     def _apply_filter(self):
