@@ -397,10 +397,12 @@ class CatalogModel(QtCore.QObject):
             raw = self._admin.list_types()
             types = self._normalize_types(raw)
             if types:
+                print(f"[CATALOG] types loaded: {types}")
                 with self._lock:
                     self._types = types
                 return list(types)
-        except Exception:
+        except Exception as e:
+            print(f"[CATALOG] types remote load failed: {e}")
             pass
         # try local file
         try:
@@ -409,13 +411,16 @@ class CatalogModel(QtCore.QObject):
                 if isinstance(data, dict):
                     types = sorted({str(k) for k in data.keys() if isinstance(k, str)})
                     if types:
+                        print(f"[CATALOG] types loaded from local file: {types}")
                         with self._lock:
                             self._types = types
                         return list(types)
-        except Exception:
+        except Exception as e:
+            print(f"[CATALOG] local types load failed: {e}")
             pass
         # final fallback
         fallback = ["Item", "Character"]
+        print(f"[CATALOG] types fallback: {fallback}")
         with self._lock:
             self._types = fallback
         return list(fallback)
@@ -429,10 +434,12 @@ class CatalogModel(QtCore.QObject):
         try:
             raw = self._admin.list_entities(type_name)
             entities = self._normalize_entities(raw, type_name)
+            print(f"[CATALOG] loaded {len(entities)} entities for type {type_name}")
             with self._lock:
                 self._entities[type_name] = entities
             return list(entities)
-        except Exception:
+        except Exception as e:
+            print(f"[CATALOG] entity remote load failed for {type_name}: {e}")
             pass
         # try local file
         try:
@@ -440,12 +447,15 @@ class CatalogModel(QtCore.QObject):
                 data = json.loads(self._local_catalog.read_text(encoding="utf-8"))
                 if isinstance(data, dict) and type_name in data and isinstance(data[type_name], list):
                     entities = self._normalize_entities(data[type_name], type_name)
+                    print(f"[CATALOG] loaded {len(entities)} entities for type {type_name} from local file")
                     with self._lock:
                         self._entities[type_name] = entities
                     return list(entities)
-        except Exception:
+        except Exception as e:
+            print(f"[CATALOG] entity local load failed for {type_name}: {e}")
             pass
         # empty but cache to avoid repeat storms
+        print(f"[CATALOG] no entities found for type {type_name}; caching empty list")
         with self._lock:
             self._entities[type_name] = []
         return []
@@ -642,8 +652,11 @@ class MailTab(QtWidgets.QWidget):
             for tname in allowed:
                 self.type_combo.addItem(tname)
             self.type_combo.setEnabled(True)
-            # restore last type
+            # restore last values
             s = self._settings()
+            filt = s.value("mail/filter", "", str)
+            if isinstance(filt, str):
+                self.filter_edit.setText(filt)
             last_type = s.value("mail/last_type", "", str)
             if last_type:
                 idx = self.type_combo.findText(last_type)
@@ -675,6 +688,8 @@ class MailTab(QtWidgets.QWidget):
             self.status_label.setText("")
 
     def _apply_entity_filter(self):
+        s = self._settings()
+        s.setValue("mail/filter", self.filter_edit.text())
         text = self.filter_edit.text().strip().lower()
         if not text:
             # reset to all
@@ -725,13 +740,21 @@ class MailTab(QtWidgets.QWidget):
             self._entities_current = []
             self._populate_entity_combo([])
             self.entity_combo.setEnabled(False)
+            self.picker_add.setEnabled(False)
             self._show_status("Attachments accept only item-like types.")
             return
+        print(f"[MAIL] loading entities for type {tname}")
+        self.entity_combo.clear()
+        self.entity_combo.addItem("Loading…")
+        self.entity_combo.setEnabled(False)
+        self._show_status("")
         self._set_picker_busy(True)
         def on_done(items: list[dict]):
+            print(f"[MAIL] entities ready for type {tname}: {len(items)}")
             self._entities_current = list(items)
             self._apply_entity_filter()
             self.entity_combo.setEnabled(True)
+            self.picker_add.setEnabled(True)
             self._set_picker_busy(False)
             # restore last entity id
             last_id = s.value("mail/last_entity_id", "", str)
@@ -746,11 +769,19 @@ class MailTab(QtWidgets.QWidget):
                     pass
             self._show_status("")
         def on_err(msg: str):
+            print(f"[MAIL] entities load failed for {tname}: {msg}")
             self._entities_current = self.catalog._load_entities(tname)
-            self._apply_entity_filter()
-            self.entity_combo.setEnabled(True)
+            if not self._entities_current:
+                self.entity_combo.clear()
+                self.entity_combo.setEnabled(False)
+                self.picker_add.setEnabled(False)
+                self._show_status(f"No entities found for {tname}.")
+            else:
+                self._apply_entity_filter()
+                self.entity_combo.setEnabled(True)
+                self.picker_add.setEnabled(True)
+                self._show_status(f"Failed to fetch from server; using fallback for {tname}.")
             self._set_picker_busy(False)
-            self._show_status(f"Failed to fetch entities for {tname}; using fallback if available. {msg}")
         self.catalog.fetch_entities(tname, self, on_done, on_err)
 
     def _refresh_current_type(self):
@@ -954,6 +985,8 @@ class GachaTab(QtWidgets.QWidget):
         group = QtWidgets.QButtonGroup(self)
         group.addButton(self.one_pull)
         group.addButton(self.ten_pull)
+        self.one_pull.toggled.connect(self._update_mode_controls)
+        self.ten_pull.toggled.connect(self._update_mode_controls)
         hb.addWidget(self.one_pull)
         hb.addWidget(self.ten_pull)
         hb.addStretch(1)
@@ -1015,11 +1048,20 @@ class GachaTab(QtWidgets.QWidget):
         self.set_btn.clicked.connect(self._set_override)
         self.clear_btn.clicked.connect(self._clear_override)
 
+        # Initialize mode control state
+        self._update_mode_controls()
         # Load catalog and restore settings
         QtCore.QTimer.singleShot(0, self._init_types_and_entities)
 
     def _settings(self) -> QtCore.QSettings:
         return QtCore.QSettings("ShittimServer", "AdminGUI")
+
+    def _update_mode_controls(self):
+        ten = self.ten_pull.isChecked()
+        # enable add/fill only for 10-pull mode and when picker enabled
+        can_pick = self.entity_combo.isEnabled()
+        self.add_btn.setEnabled(ten and can_pick)
+        self.fill_btn.setEnabled(ten and can_pick)
 
     def _set_picker_enabled(self, en: bool):
         for w in (self.filter_edit, self.entity_combo, self.add_btn, self.fill_btn):
@@ -1059,8 +1101,10 @@ class GachaTab(QtWidgets.QWidget):
 
     def _on_entities_loaded(self, entities: list[dict]):
         self._entities = entities
+        print(f"[GACHA] entities ready for type {self._char_type}: {len(entities)}")
         self._apply_filter()
         self._set_picker_enabled(True)
+        self._update_mode_controls()
         # restore last selected entity
         s = self._settings()
         last_id = s.value("gacha/last_entity_id", "", str)
@@ -1077,11 +1121,18 @@ class GachaTab(QtWidgets.QWidget):
 
     def _on_entities_error(self, msg: str):
         self._entities = self.catalog._load_entities(self._char_type or "Character")
+        if not self._entities:
+            self._set_controls_enabled(False)
+            self._set_picker_enabled(False)
+            self._show_status("Could not load character catalog from server.")
+            return
         self._apply_filter()
         self._set_picker_enabled(True)
         self._show_status(f"Gacha entity list unavailable; using fallback if any. {msg}")
 
     def _apply_filter(self):
+        s = self._settings()
+        s.setValue("gacha/filter", self.filter_edit.text())
         text = self.filter_edit.text().strip().lower()
         self.entity_combo.blockSignals(True)
         self.entity_combo.clear()
