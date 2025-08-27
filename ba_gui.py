@@ -34,6 +34,7 @@ import shutil
 import shlex
 from dataclasses import dataclass
 from urllib import request, parse, error
+from pathlib import Path
 
 from PySide6 import QtCore, QtGui, QtWidgets
 
@@ -88,6 +89,30 @@ class Http:
             raise HttpError(f"POST {url} -> {e.code}: {body}")
         except Exception as e:
             raise HttpError(f"POST {url} failed: {e}")
+
+# -----------------------------
+# Background worker
+# -----------------------------
+
+class FuncWorker(QtCore.QThread):
+    """
+    Minimal QThread wrapper to run a callable off the GUI thread.
+    """
+    result = QtCore.Signal(object)
+    error = QtCore.Signal(str)
+
+    def __init__(self, func: t.Callable, *args, parent: QtCore.QObject | None = None, **kwargs):
+        super().__init__(parent)
+        self._func = func
+        self._args = args
+        self._kwargs = kwargs
+
+    def run(self):
+        try:
+            res = self._func(*self._args, **self._kwargs)
+            self.result.emit(res)
+        except Exception as e:
+            self.error.emit(str(e))
 
 # -----------------------------
 # Admin Client (adjust routes here to fit your server)
@@ -148,6 +173,74 @@ class AdminClient:
 
     def patch_account(self, account_id: int, patch: dict[str, t.Any]) -> t.Any:
         return self.http_private.post_json(f"/admin/account/{account_id}", patch)
+
+    # ---- Catalog probing helpers (non-breaking) ----
+    def list_types(self) -> t.Any:
+        """
+        Probe for catalog types. Returns whatever the server provides (list/dict).
+        Raise HttpError if all HTTP options fail (model may attempt local file).
+        """
+        errors: list[str] = []
+        for path in ("/admin/catalog/types", "/admin/catalog", "/admin/items/types"):
+            try:
+                return self.http_private.get_json(path)
+            except Exception as e:
+                errors.append(str(e))
+        raise HttpError("All type routes failed: " + " | ".join(errors))
+
+    def list_entities(self, type_name: str) -> t.Any:
+        """
+        Probe for entities of a given type. Returns server-provided payload (list/dict).
+        Raises HttpError if all HTTP options fail (model may attempt local file).
+        """
+        tname = type_name
+        errors: list[str] = []
+        for path in (f"/admin/catalog/{tname}", f"/admin/catalog?type={parse.quote(tname)}",
+                     f"/admin/items?type={parse.quote(tname)}"):
+            try:
+                return self.http_private.get_json(path)
+            except Exception as e:
+                errors.append(str(e))
+        raise HttpError(f"All entity routes for '{tname}' failed: " + " | ".join(errors))
+
+    # ---- Gacha override helpers (non-breaking) ----
+    def set_gacha_override(self, account_id: int, ids: list[int]) -> t.Any:
+        """
+        Attempt to set upcoming pull override. Tries likely endpoints and key names.
+        """
+        body_variants = [
+            {"accountId": account_id, "unitIds": ids},
+            {"accountId": account_id, "characterIds": ids},
+            {"accountId": account_id, "studentIds": ids},
+        ]
+        paths = ["/admin/gacha/override", "/admin/gacha/set", "/admin/override/gacha"]
+        errors: list[str] = []
+        for p in paths:
+            for payload in body_variants:
+                try:
+                    return self.http_private.post_json(p, payload)
+                except HttpError as e:
+                    # 404/501: try next path; other errors also bubble to next
+                    errors.append(str(e))
+                    continue
+                except Exception as e:
+                    errors.append(str(e))
+                    continue
+        raise HttpError("All gacha override attempts failed: " + " | ".join(errors))
+
+    def clear_gacha_override(self, account_id: int) -> t.Any:
+        """
+        Attempt to clear override. Tries likely endpoints.
+        """
+        payload = {"accountId": account_id}
+        paths = ["/admin/gacha/clear", "/admin/gacha/override/clear", "/admin/override/gacha/clear"]
+        errors: list[str] = []
+        for p in paths:
+            try:
+                return self.http_private.post_json(p, payload)
+            except Exception as e:
+                errors.append(str(e))
+        raise HttpError("All gacha clear attempts failed: " + " | ".join(errors))
 
 # -----------------------------
 # Process Runner (mitmdump / dotnet)
@@ -256,12 +349,204 @@ class PrettyButton(QtWidgets.QPushButton):
         self.setMinimumHeight(36)
         self.setCursor(QtCore.Qt.PointingHandCursor)
 
+# -----------------------------
+# Catalog Model (types/entities cache + async fetch)
+# -----------------------------
+
+class CatalogModel(QtCore.QObject):
+    def __init__(self, admin: AdminClient, parent: QtCore.QObject | None = None):
+        super().__init__(parent)
+        self._admin = admin
+        self._types: list[str] | None = None
+        self._entities: dict[str, list[dict]] = {}
+        self._lock = threading.RLock()
+        self._local_catalog = (Path(__file__).parent / "game_catalog.json")
+
+    # cache control
+    def invalidate_type(self, type_name: str):
+        with self._lock:
+            self._entities.pop(type_name, None)
+
+    def invalidate_all(self):
+        with self._lock:
+            self._types = None
+            self._entities.clear()
+
+    # async API
+    def fetch_types(self, parent: QtCore.QObject, on_done: t.Callable[[list[str]], None], on_error: t.Callable[[str], None]):
+        worker = FuncWorker(self._load_types, parent=parent)
+        worker.result.connect(lambda data: on_done(t.cast(list[str], data)))
+        worker.error.connect(on_error)
+        worker.finished.connect(worker.deleteLater)
+        worker.start()
+
+    def fetch_entities(self, type_name: str, parent: QtCore.QObject, on_done: t.Callable[[list[dict]], None], on_error: t.Callable[[str], None]):
+        worker = FuncWorker(self._load_entities, type_name, parent=parent)
+        worker.result.connect(lambda data: on_done(t.cast(list[dict], data)))
+        worker.error.connect(on_error)
+        worker.finished.connect(worker.deleteLater)
+        worker.start()
+
+    # internal loaders (run in worker thread)
+    def _load_types(self) -> list[str]:
+        with self._lock:
+            if self._types is not None:
+                return list(self._types)
+        # try remote
+        try:
+            raw = self._admin.list_types()
+            types = self._normalize_types(raw)
+            if types:
+                with self._lock:
+                    self._types = types
+                return list(types)
+        except Exception:
+            pass
+        # try local file
+        try:
+            if self._local_catalog.exists():
+                data = json.loads(self._local_catalog.read_text(encoding="utf-8"))
+                if isinstance(data, dict):
+                    types = sorted({str(k) for k in data.keys() if isinstance(k, str)})
+                    if types:
+                        with self._lock:
+                            self._types = types
+                        return list(types)
+        except Exception:
+            pass
+        # final fallback
+        fallback = ["Item", "Character"]
+        with self._lock:
+            self._types = fallback
+        return list(fallback)
+
+    def _load_entities(self, type_name: str) -> list[dict]:
+        with self._lock:
+            cached = self._entities.get(type_name)
+            if cached is not None:
+                return list(cached)
+        # try remote
+        try:
+            raw = self._admin.list_entities(type_name)
+            entities = self._normalize_entities(raw, type_name)
+            with self._lock:
+                self._entities[type_name] = entities
+            return list(entities)
+        except Exception:
+            pass
+        # try local file
+        try:
+            if self._local_catalog.exists():
+                data = json.loads(self._local_catalog.read_text(encoding="utf-8"))
+                if isinstance(data, dict) and type_name in data and isinstance(data[type_name], list):
+                    entities = self._normalize_entities(data[type_name], type_name)
+                    with self._lock:
+                        self._entities[type_name] = entities
+                    return list(entities)
+        except Exception:
+            pass
+        # empty but cache to avoid repeat storms
+        with self._lock:
+            self._entities[type_name] = []
+        return []
+
+    @staticmethod
+    def _normalize_types(raw: t.Any) -> list[str]:
+        # list[str]
+        if isinstance(raw, list):
+            out: list[str] = []
+            for x in raw:
+                if isinstance(x, str):
+                    out.append(x.strip())
+                elif isinstance(x, dict):
+                    for k in ("type", "Type", "name", "Name"):
+                        if k in x and isinstance(x[k], str):
+                            out.append(x[k].strip())
+            out = [t for t in out if t]
+            return sorted(list(dict.fromkeys(out)))
+        # dict => keys as types
+        if isinstance(raw, dict):
+            keys = [str(k) for k in raw.keys()]
+            return sorted(list(dict.fromkeys(keys)))
+        return []
+
+    @staticmethod
+    def _normalize_entities(raw: t.Any, type_name: str) -> list[dict]:
+        def norm_entry(d: dict) -> dict | None:
+            # Find an ID
+            id_keys = ("id", "Id", "ID", "entityId", "itemId", "unitId", "characterId", "entity_id", "unit_id", "character_id")
+            name_keys = ("name", "Name", "canonicalName", "displayName", "dev_name", "devName", "title")
+            _id: int | None = None
+            if isinstance(d, dict):
+                for k in id_keys:
+                    if k in d:
+                        try:
+                            _id = int(d[k])
+                            break
+                        except Exception:
+                            continue
+                if _id is None and len(d) == 1:
+                    # maybe {"123":"Foo"}
+                    try:
+                        only_key = next(iter(d.keys()))
+                        _id = int(only_key)
+                    except Exception:
+                        pass
+                _name = None
+                for k in name_keys:
+                    if k in d and isinstance(d[k], (str, int)):
+                        _name = str(d[k])
+                        break
+                if _name is None and _id is not None:
+                    _name = str(_id)
+                if _id is None:
+                    return None
+                return {"id": int(_id), "name": str(_name)}
+            return None
+
+        out: list[dict] = []
+        if isinstance(raw, list):
+            for row in raw:
+                if isinstance(row, dict):
+                    ne = norm_entry(row)
+                    if ne:
+                        out.append(ne)
+                elif isinstance(row, (str, int)):
+                    # bare IDs
+                    try:
+                        iid = int(row)
+                        out.append({"id": iid, "name": str(iid)})
+                    except Exception:
+                        pass
+        elif isinstance(raw, dict):
+            for k, v in raw.items():
+                try:
+                    iid = int(k)
+                    name = v if isinstance(v, str) else str(iid)
+                    out.append({"id": iid, "name": name})
+                except Exception:
+                    # or dict entries
+                    if isinstance(v, dict):
+                        ne = norm_entry(v)
+                        if ne:
+                            out.append(ne)
+        # dedupe, stable
+        dedup: dict[int, dict] = {}
+        for e in out:
+            dedup[e["id"]] = e
+        out = list(dedup.values())
+        out.sort(key=lambda x: (x["name"].lower(), x["id"]))
+        return out
+
 # ---- Mail Tab ----
 
 class MailTab(QtWidgets.QWidget):
-    def __init__(self, admin: AdminClient, parent=None):
+    def __init__(self, admin: AdminClient, catalog: CatalogModel, parent=None):
         super().__init__(parent)
         self.admin = admin
+        self.catalog = catalog
+        self._entities_current: list[dict] = []
+        self._entities_filtered: list[dict] = []
 
         main = QtWidgets.QVBoxLayout(self)
         grid = QtWidgets.QGridLayout()
@@ -277,6 +562,26 @@ class MailTab(QtWidgets.QWidget):
         grid.addWidget(self.subject.edit, 1, 1)
         grid.addWidget(QtWidgets.QLabel("Body:"), 2, 0)
         grid.addWidget(self.body, 2, 1)
+
+        # Picker row
+        picker = QtWidgets.QHBoxLayout()
+        self.type_combo = QtWidgets.QComboBox(); self.type_combo.setEnabled(False)
+        self.type_refresh = QtWidgets.QToolButton(); self.type_refresh.setText("↻")
+        self.filter_edit = QtWidgets.QLineEdit(); self.filter_edit.setPlaceholderText("Filter…")
+        self.entity_combo = QtWidgets.QComboBox(); self.entity_combo.setEnabled(False)
+        self.qty_spin = QtWidgets.QSpinBox(); self.qty_spin.setRange(1, 10_000); self.qty_spin.setValue(1)
+        self.note_edit = QtWidgets.QLineEdit(); self.note_edit.setPlaceholderText("Note (optional)")
+        self.picker_add = PrettyButton("Add")
+
+        picker.addWidget(QtWidgets.QLabel("Add via picker:"))
+        picker.addWidget(self.type_combo, 1)
+        picker.addWidget(self.type_refresh)
+        picker.addWidget(self.filter_edit, 1)
+        picker.addWidget(self.entity_combo, 2)
+        picker.addWidget(QtWidgets.QLabel("Qty:"))
+        picker.addWidget(self.qty_spin)
+        picker.addWidget(self.note_edit, 1)
+        picker.addWidget(self.picker_add)
 
         # Attachments table
         self.table = QtWidgets.QTableWidget(0, 3)
@@ -295,13 +600,167 @@ class MailTab(QtWidgets.QWidget):
         btns.addStretch(1)
         btns.addWidget(send)
 
+        # inline status
+        self.status_label = QtWidgets.QLabel("")
+        self.status_label.setWordWrap(True)
+        self.status_label.hide()
+
         add.clicked.connect(self._add_row)
         rem.clicked.connect(self._remove_selected)
         send.clicked.connect(self._send)
 
+        self.type_combo.currentIndexChanged.connect(self._on_type_changed)
+        self.type_refresh.clicked.connect(self._refresh_current_type)
+        self.filter_edit.textChanged.connect(self._apply_entity_filter)
+        self.picker_add.clicked.connect(self._picker_add_clicked)
+
         main.addLayout(grid)
+        main.addLayout(picker)
         main.addWidget(self.table, 1)
+        main.addWidget(self.status_label)
         main.addLayout(btns)
+
+        # Load types async and restore settings
+        QtCore.QTimer.singleShot(0, self._init_types_and_settings)
+
+    # settings helpers
+    def _settings(self) -> QtCore.QSettings:
+        return QtCore.QSettings("ShittimServer", "AdminGUI")
+
+    def _init_types_and_settings(self):
+        # Load types and then restore last selections
+        self._set_picker_busy(True)
+        def on_done(types: list[str]):
+            self.type_combo.clear()
+            for tname in types:
+                self.type_combo.addItem(tname)
+            self.type_combo.setEnabled(True)
+            # restore last type
+            s = self._settings()
+            last_type = s.value("mail/last_type", "", str)
+            if last_type:
+                idx = self.type_combo.findText(last_type)
+                if idx >= 0:
+                    self.type_combo.setCurrentIndex(idx)
+            if self.type_combo.currentIndex() < 0 and self.type_combo.count() > 0:
+                self.type_combo.setCurrentIndex(0)
+            # trigger entity load
+            self._on_type_changed()
+            self._set_picker_busy(False)
+            self._show_status("")  # clear
+        def on_err(msg: str):
+            self._show_status(f"Catalog types not available; using local fallback/default. {msg}")
+            # still try to fill whatever we have (model already fell back)
+            on_done(self.catalog._load_types())
+            self._set_picker_busy(False)
+        self.catalog.fetch_types(self, on_done, on_err)
+
+    def _set_picker_busy(self, busy: bool):
+        for w in (self.type_combo, self.type_refresh, self.filter_edit, self.entity_combo, self.qty_spin, self.note_edit, self.picker_add):
+            w.setEnabled(not busy)
+
+    def _show_status(self, msg: str):
+        if msg:
+            self.status_label.setText(msg)
+            self.status_label.show()
+        else:
+            self.status_label.hide()
+            self.status_label.setText("")
+
+    def _apply_entity_filter(self):
+        text = self.filter_edit.text().strip().lower()
+        if not text:
+            # reset to all
+            self._populate_entity_combo(self._entities_current)
+            return
+        out: list[dict] = []
+        for e in self._entities_current:
+            if text in e["name"].lower() or text in str(e["id"]).lower():
+                out.append(e)
+        self._entities_filtered = out
+        self._populate_entity_combo(out)
+
+    def _populate_entity_combo(self, items: list[dict]):
+        # keep current selection if possible
+        current_id = self._current_entity_id()
+        self.entity_combo.blockSignals(True)
+        self.entity_combo.clear()
+        for e in items:
+            self.entity_combo.addItem(f"{e['name']} ({e['id']})", e["id"])
+        self.entity_combo.blockSignals(False)
+        # restore by id
+        if current_id is not None:
+            for i in range(self.entity_combo.count()):
+                if self.entity_combo.itemData(i) == current_id:
+                    self.entity_combo.setCurrentIndex(i)
+                    break
+
+    def _current_entity_id(self) -> int | None:
+        idx = self.entity_combo.currentIndex()
+        if idx < 0:
+            return None
+        try:
+            return int(self.entity_combo.itemData(idx))
+        except Exception:
+            return None
+
+    def _on_type_changed(self):
+        # persist last type
+        s = self._settings()
+        s.setValue("mail/last_type", self.type_combo.currentText())
+        # load entities async
+        tname = self.type_combo.currentText().strip()
+        if not tname:
+            return
+        self._set_picker_busy(True)
+        def on_done(items: list[dict]):
+            self._entities_current = list(items)
+            self._apply_entity_filter()
+            self.entity_combo.setEnabled(True)
+            self._set_picker_busy(False)
+            # restore last entity id
+            last_id = s.value("mail/last_entity_id", "", str)
+            if last_id:
+                try:
+                    lid = int(last_id)
+                    for i in range(self.entity_combo.count()):
+                        if self.entity_combo.itemData(i) == lid:
+                            self.entity_combo.setCurrentIndex(i)
+                            break
+                except Exception:
+                    pass
+            self._show_status("")
+        def on_err(msg: str):
+            self._entities_current = self.catalog._load_entities(tname)
+            self._apply_entity_filter()
+            self.entity_combo.setEnabled(True)
+            self._set_picker_busy(False)
+            self._show_status(f"Failed to fetch entities for {tname}; using fallback if available. {msg}")
+        self.catalog.fetch_entities(tname, self, on_done, on_err)
+
+    def _refresh_current_type(self):
+        tname = self.type_combo.currentText().strip()
+        if not tname:
+            return
+        self.catalog.invalidate_type(tname)
+        self._on_type_changed()
+
+    def _picker_add_clicked(self):
+        ent_id = self._current_entity_id()
+        if ent_id is None:
+            QtWidgets.QMessageBox.information(self, "Picker", "Choose an entity first.")
+            return
+        qty = self.qty_spin.value()
+        note = self.note_edit.text().strip()
+        # persist last entity id
+        s = self._settings()
+        s.setValue("mail/last_entity_id", str(ent_id))
+        # append a row
+        r = self.table.rowCount()
+        self.table.insertRow(r)
+        self.table.setItem(r, 0, QtWidgets.QTableWidgetItem(str(ent_id)))
+        self.table.setItem(r, 1, QtWidgets.QTableWidgetItem(str(qty)))
+        self.table.setItem(r, 2, QtWidgets.QTableWidgetItem(note))
 
     def _add_row(self):
         r = self.table.rowCount()
@@ -321,7 +780,7 @@ class MailTab(QtWidgets.QWidget):
             return
         subject = self.subject.text()
         body = self.body.toPlainText()
-        attachments = []
+        attachments: list[dict] = []
         for r in range(self.table.rowCount()):
             item_id = self.table.item(r, 0)
             count = self.table.item(r, 1)
@@ -455,6 +914,297 @@ class AccountTab(QtWidgets.QWidget):
         except Exception as e:
             QtWidgets.QMessageBox.critical(self, "Patch failed", str(e))
 
+# ---- Gacha Tab ----
+
+class GachaTab(QtWidgets.QWidget):
+    def __init__(self, admin: AdminClient, catalog: CatalogModel, parent=None):
+        super().__init__(parent)
+        self.admin = admin
+        self.catalog = catalog
+        self._char_type: str | None = None
+        self._entities: list[dict] = []
+
+        v = QtWidgets.QVBoxLayout(self)
+
+        # Account line
+        self.account = LabeledLine("Account ID:", "3218642")
+        v.addWidget(self.account)
+
+        # Mode selection
+        mode_box = QtWidgets.QGroupBox("Override Mode")
+        hb = QtWidgets.QHBoxLayout(mode_box)
+        self.one_pull = QtWidgets.QRadioButton("Next 1 pull")
+        self.ten_pull = QtWidgets.QRadioButton("Next 10 pull")
+        self.ten_pull.setChecked(True)
+        group = QtWidgets.QButtonGroup(self)
+        group.addButton(self.one_pull)
+        group.addButton(self.ten_pull)
+        hb.addWidget(self.one_pull)
+        hb.addWidget(self.ten_pull)
+        hb.addStretch(1)
+        v.addWidget(mode_box)
+
+        # Picker (type locked)
+        picker = QtWidgets.QHBoxLayout()
+        self.type_lbl = QtWidgets.QLabel("Type:")
+        self.type_locked = QtWidgets.QLineEdit()
+        self.type_locked.setReadOnly(True)
+        self.filter_edit = QtWidgets.QLineEdit(); self.filter_edit.setPlaceholderText("Filter…")
+        self.entity_combo = QtWidgets.QComboBox(); self.entity_combo.setEnabled(False)
+        self.add_btn = PrettyButton("Add")
+        self.fill_btn = PrettyButton("Fill x10")
+        picker.addWidget(self.type_lbl)
+        picker.addWidget(self.type_locked, 1)
+        picker.addWidget(self.filter_edit, 1)
+        picker.addWidget(self.entity_combo, 2)
+        picker.addWidget(self.add_btn)
+        picker.addWidget(self.fill_btn)
+        v.addLayout(picker)
+
+        # Preview table
+        self.table = QtWidgets.QTableWidget(0, 2)
+        self.table.setHorizontalHeaderLabels(["UnitId", "Name"])
+        self.table.horizontalHeader().setStretchLastSection(True)
+        self.table.verticalHeader().setVisible(False)
+        self.table.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.table.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        v.addWidget(self.table, 1)
+
+        # Remove button
+        row_btns = QtWidgets.QHBoxLayout()
+        self.remove_btn = PrettyButton("Remove Selected")
+        row_btns.addWidget(self.remove_btn)
+        row_btns.addStretch(1)
+        v.addLayout(row_btns)
+
+        # Action buttons
+        bottom = QtWidgets.QHBoxLayout()
+        self.set_btn = PrettyButton("Set Override")
+        self.clear_btn = PrettyButton("Clear Override")
+        bottom.addStretch(1)
+        bottom.addWidget(self.set_btn)
+        bottom.addWidget(self.clear_btn)
+        v.addLayout(bottom)
+
+        # Inline status/notice
+        self.status_label = QtWidgets.QLabel("")
+        self.status_label.setWordWrap(True)
+        self.status_label.hide()
+        v.addWidget(self.status_label)
+
+        # Wire events
+        self.filter_edit.textChanged.connect(self._apply_filter)
+        self.add_btn.clicked.connect(self._add_selected)
+        self.fill_btn.clicked.connect(self._fill_x10)
+        self.remove_btn.clicked.connect(self._remove_selected)
+        self.set_btn.clicked.connect(self._set_override)
+        self.clear_btn.clicked.connect(self._clear_override)
+
+        # Load catalog and restore settings
+        QtCore.QTimer.singleShot(0, self._init_types_and_entities)
+
+    def _settings(self) -> QtCore.QSettings:
+        return QtCore.QSettings("ShittimServer", "AdminGUI")
+
+    def _init_types_and_entities(self):
+        # pick a character-like type
+        def on_types(types: list[str]):
+            # Choose 'Character' or 'Unit' (or variants)
+            prefer = ["Character", "Characters", "Unit", "Units"]
+            picked = None
+            for p in prefer:
+                for tname in types:
+                    if tname.lower() == p.lower():
+                        picked = tname
+                        break
+                if picked:
+                    break
+            if not picked:
+                picked = types[0] if types else "Character"
+            self._char_type = picked
+            self.type_locked.setText(picked)
+            # load entities
+            self.entity_combo.setEnabled(False)
+            self.catalog.fetch_entities(picked, self, self._on_entities_loaded, self._on_entities_error)
+        def on_err(msg: str):
+            self._show_status(f"Gacha types not available; fallback in use. {msg}")
+            on_types(self.catalog._load_types())
+        self.catalog.fetch_types(self, on_types, on_err)
+
+    def _on_entities_loaded(self, entities: list[dict]):
+        self._entities = entities
+        self._apply_filter()
+        self.entity_combo.setEnabled(True)
+        # restore last selected entity
+        s = self._settings()
+        last_id = s.value("gacha/last_entity_id", "", str)
+        if last_id:
+            try:
+                lid = int(last_id)
+                for i in range(self.entity_combo.count()):
+                    if self.entity_combo.itemData(i) == lid:
+                        self.entity_combo.setCurrentIndex(i)
+                        break
+            except Exception:
+                pass
+        self._show_status("")
+
+    def _on_entities_error(self, msg: str):
+        self._entities = self.catalog._load_entities(self._char_type or "Character")
+        self._apply_filter()
+        self.entity_combo.setEnabled(True)
+        self._show_status(f"Gacha entity list unavailable; using fallback if any. {msg}")
+
+    def _apply_filter(self):
+        text = self.filter_edit.text().strip().lower()
+        self.entity_combo.blockSignals(True)
+        self.entity_combo.clear()
+        items = self._entities
+        if text:
+            items = [e for e in items if text in e["name"].lower() or text in str(e["id"]).lower()]
+        for e in items:
+            self.entity_combo.addItem(f"{e['name']} ({e['id']})", e["id"])
+        self.entity_combo.blockSignals(False)
+
+    def _selected_id(self) -> int | None:
+        idx = self.entity_combo.currentIndex()
+        if idx < 0:
+            return None
+        try:
+            return int(self.entity_combo.itemData(idx))
+        except Exception:
+            return None
+
+    def _add_selected(self):
+        ent = self._selected_id()
+        if ent is None:
+            QtWidgets.QMessageBox.information(self, "Gacha", "Select a character first.")
+            return
+        # persist last entity
+        s = self._settings()
+        s.setValue("gacha/last_entity_id", str(ent))
+        # add row if capacity allows
+        if self.ten_pull.isChecked() and self.table.rowCount() >= 10:
+            QtWidgets.QMessageBox.information(self, "Gacha", "You already have 10 rows.")
+            return
+        self._append_row(ent, self._name_for(ent))
+
+    def _fill_x10(self):
+        ent = self._selected_id()
+        if ent is None:
+            QtWidgets.QMessageBox.information(self, "Gacha", "Select a character to fill.")
+            return
+        self.table.setRowCount(0)
+        for _ in range(10):
+            self._append_row(ent, self._name_for(ent))
+
+    def _name_for(self, ent_id: int) -> str:
+        for e in self._entities:
+            if e["id"] == ent_id:
+                return e["name"]
+        return str(ent_id)
+
+    def _append_row(self, ent_id: int, name: str):
+        r = self.table.rowCount()
+        self.table.insertRow(r)
+        self.table.setItem(r, 0, QtWidgets.QTableWidgetItem(str(ent_id)))
+        self.table.setItem(r, 1, QtWidgets.QTableWidgetItem(name))
+
+    def _remove_selected(self):
+        for idx in sorted({i.row() for i in self.table.selectedIndexes()}, reverse=True):
+            self.table.removeRow(idx)
+
+    def _set_controls_enabled(self, en: bool):
+        for w in (self.account.edit, self.one_pull, self.ten_pull, self.filter_edit, self.entity_combo,
+                  self.add_btn, self.fill_btn, self.remove_btn, self.set_btn, self.clear_btn):
+            w.setEnabled(en)
+
+    def _show_status(self, msg: str):
+        if msg:
+            self.status_label.setText(msg)
+            self.status_label.show()
+        else:
+            self.status_label.hide()
+            self.status_label.setText("")
+
+    def _collect_ids(self) -> list[int]:
+        ids: list[int] = []
+        for r in range(self.table.rowCount()):
+            item = self.table.item(r, 0)
+            if item and item.text().strip():
+                try:
+                    ids.append(int(item.text().strip()))
+                except Exception:
+                    pass
+        return ids
+
+    def _set_override(self):
+        try:
+            account_id = int(self.account.text())
+        except Exception:
+            QtWidgets.QMessageBox.warning(self, "Gacha", "Account ID must be an integer")
+            return
+        expected = 1 if self.one_pull.isChecked() else 10
+        ids = self._collect_ids()
+        if self.one_pull.isChecked():
+            # allow auto from picker if table empty
+            if not ids:
+                sel = self._selected_id()
+                if sel is None:
+                    QtWidgets.QMessageBox.information(self, "Gacha", "Pick a character or add one row.")
+                    return
+                ids = [sel]
+        if len(ids) != expected:
+            QtWidgets.QMessageBox.information(self, "Gacha", f"Expected exactly {expected} row(s); you have {len(ids)}.")
+            return
+
+        self._set_controls_enabled(False)
+        def do_set():
+            return self.admin.set_gacha_override(account_id, ids)
+        worker = FuncWorker(do_set, parent=self)
+        def ok(res: object):
+            self._set_controls_enabled(True)
+            self._show_status("")
+            QtWidgets.QMessageBox.information(self, "Gacha", json.dumps(res, indent=2))
+        def err(msg: str):
+            self._set_controls_enabled(True)
+            self._show_status("")
+            # if backend does not advertise endpoints => disable tab controls
+            if "-> 404" in msg or "-> 501" in msg:
+                self._set_controls_enabled(False)
+                self._show_status("Backend does not advertise gacha override endpoints. Controls disabled.")
+            else:
+                QtWidgets.QMessageBox.critical(self, "Gacha", msg)
+        worker.result.connect(ok)
+        worker.error.connect(err)
+        worker.finished.connect(worker.deleteLater)
+        worker.start()
+
+    def _clear_override(self):
+        try:
+            account_id = int(self.account.text())
+        except Exception:
+            QtWidgets.QMessageBox.warning(self, "Gacha", "Account ID must be an integer")
+            return
+        self._set_controls_enabled(False)
+        worker = FuncWorker(lambda: self.admin.clear_gacha_override(account_id), parent=self)
+        def ok(res: object):
+            self._set_controls_enabled(True)
+            self._show_status("")
+            QtWidgets.QMessageBox.information(self, "Gacha", json.dumps(res, indent=2))
+        def err(msg: str):
+            self._set_controls_enabled(True)
+            self._show_status("")
+            if "-> 404" in msg or "-> 501" in msg:
+                self._set_controls_enabled(False)
+                self._show_status("Backend does not advertise gacha override endpoints. Controls disabled.")
+            else:
+                QtWidgets.QMessageBox.critical(self, "Gacha", msg)
+        worker.result.connect(ok)
+        worker.error.connect(err)
+        worker.finished.connect(worker.deleteLater)
+        worker.start()
+
 # ---- Server / MITM Tab ----
 
 class ServerTab(QtWidgets.QWidget):
@@ -513,6 +1263,9 @@ class ServerTab(QtWidgets.QWidget):
         v.addLayout(h)
         v.addWidget(self.log)
 
+        # Load persisted settings and wire change handlers
+        QtCore.QTimer.singleShot(0, self._load_and_wire_settings)
+
     def _append(self, line: str):
         self.log.appendPlainText(line)
 
@@ -564,6 +1317,29 @@ class ServerTab(QtWidgets.QWidget):
             self.dotnet_runner.terminate()
             self._append("[dotnet] terminating…")
 
+    # settings
+    def _settings(self) -> QtCore.QSettings:
+        return QtCore.QSettings("ShittimServer", "AdminGUI")
+
+    def _load_and_wire_settings(self):
+        s = self._settings()
+        # load
+        self.private_url.setText(s.value("server/private_base", self.private_url.text(), str))
+        self.control_url.setText(s.value("server/control_base", self.control_url.text(), str))
+        self.mitmdump.setText(s.value("server/mitmdump", self.mitmdump.text(), str))
+        self.addon.setText(s.value("server/addon", self.addon.text(), str))
+        self.listen_host.setText(s.value("server/listen_host", self.listen_host.text(), str))
+        self.listen_port.setText(s.value("server/listen_port", self.listen_port.text(), str))
+        self.dotnet_dir.setText(s.value("server/dotnet_dir", self.dotnet_dir.text(), str))
+        # wire
+        self.private_url.textChanged.connect(lambda v: s.setValue("server/private_base", v))
+        self.control_url.textChanged.connect(lambda v: s.setValue("server/control_base", v))
+        self.mitmdump.textChanged.connect(lambda v: s.setValue("server/mitmdump", v))
+        self.addon.textChanged.connect(lambda v: s.setValue("server/addon", v))
+        self.listen_host.textChanged.connect(lambda v: s.setValue("server/listen_host", v))
+        self.listen_port.textChanged.connect(lambda v: s.setValue("server/listen_port", v))
+        self.dotnet_dir.textChanged.connect(lambda v: s.setValue("server/dotnet_dir", v))
+
 # ---- Logs-only Tab ----
 
 class LogsTab(QtWidgets.QWidget):
@@ -588,24 +1364,32 @@ class MainWindow(QtWidgets.QMainWindow):
         self.resize(1080, 720)
         self.setWindowIcon(QtGui.QIcon.fromTheme("applications-games"))
 
-        # Global config + client
+        # Load settings first to seed config
+        settings = QtCore.QSettings("ShittimServer", "AdminGUI")
         cfg = AdminConfig()
+        cfg.private_base = settings.value("server/private_base", cfg.private_base, str)
+        cfg.control_base = settings.value("server/control_base", cfg.control_base, str)
+
+        # Global client + catalog model
         self.admin = AdminClient(cfg)
+        self.catalog = CatalogModel(self.admin, parent=self)
 
         # Tabs
         tabs = QtWidgets.QTabWidget()
         tabs.setDocumentMode(True)
         tabs.setTabPosition(QtWidgets.QTabWidget.North)
         tabs.setMovable(True)
-        self.mail_tab = MailTab(self.admin)
+        self.mail_tab = MailTab(self.admin, self.catalog)
         self.notice_tab = NoticeTab(self.admin)
         self.account_tab = AccountTab(self.admin)
+        self.gacha_tab = GachaTab(self.admin, self.catalog)
         self.server_tab = ServerTab(self.admin)
         self.logs_tab = LogsTab()
 
         tabs.addTab(self.mail_tab, "📬 Mail")
         tabs.addTab(self.notice_tab, "📣 Notices")
         tabs.addTab(self.account_tab, "👤 Account")
+        tabs.addTab(self.gacha_tab, "🎲 Gacha")
         tabs.addTab(self.server_tab, "🖧 Server / MITM")
         tabs.addTab(self.logs_tab, "📝 Logs")
 
