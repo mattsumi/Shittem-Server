@@ -2,6 +2,7 @@ using Microsoft.Data.Sqlite;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Linq;
 
 namespace BlueArchiveAPI.Catalog;
 
@@ -179,5 +180,27 @@ public sealed class EntityCatalog : IEntityCatalog
         var slug = outSb.ToString().Trim('-');
         while (slug.Contains("--")) slug = slug.Replace("--", "-");
         return slug;
+    }
+
+    // --- Added for admin catalog routes ---
+
+    public IReadOnlyList<string> GetTypes()
+    {
+        // Return distinct, sorted type names that exist in the catalog
+        return _byType.Keys
+            .Select(t => t.ToString())
+            .OrderBy(s => s, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+    }
+
+    public IReadOnlyList<Entity> GetEntities(EntityType type)
+    {
+        if (!_byType.TryGetValue(type, out var list) || list is null || list.Count == 0)
+            return Array.Empty<Entity>();
+        // Return a sorted copy (by name then id) to keep API output stable
+        return list
+            .OrderBy(e => e.CanonicalName, StringComparer.OrdinalIgnoreCase)
+            .ThenBy(e => e.Id)
+            .ToList();
     }
 }

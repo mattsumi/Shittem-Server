@@ -1,0 +1,39 @@
+2025-08-27 17:01:54.080 +01:00 [INF] Starting BlueArchiveAPI Gateway server
+2025-08-27 17:01:54.431 +01:00 [INF] Admin API enabled at http://0.0.0.0:7000/admin
+2025-08-27 17:01:54.963 +01:00 [INF] Now listening on: http://0.0.0.0:7000
+2025-08-27 17:01:54.993 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-08-27 17:01:55.050 +01:00 [INF] Hosting environment: Development
+2025-08-27 17:01:55.235 +01:00 [INF] Content root path: C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI
+2025-08-27 17:04:26.006 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/types - null null
+2025-08-27 17:04:26.006 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/types - null null
+2025-08-27 17:04:26.144 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/types - 404 0 null 144.6392ms
+2025-08-27 17:04:26.144 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/types - 404 0 null 144.5988ms
+2025-08-27 17:04:26.153 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog - null null
+2025-08-27 17:04:26.153 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog - null null
+2025-08-27 17:04:26.177 +01:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://127.0.0.1:7000/admin/catalog/types, Response status code: 404
+2025-08-27 17:04:26.177 +01:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://127.0.0.1:7000/admin/catalog/types, Response status code: 404
+2025-08-27 17:04:26.188 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog - 404 0 null 35.1185ms
+2025-08-27 17:04:26.188 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog - 404 0 null 35.0099ms
+2025-08-27 17:04:26.199 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/items/types - null null
+2025-08-27 17:04:26.199 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/items/types - null null
+2025-08-27 17:04:26.213 +01:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://127.0.0.1:7000/admin/catalog, Response status code: 404
+2025-08-27 17:04:26.223 +01:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://127.0.0.1:7000/admin/catalog, Response status code: 404
+2025-08-27 17:04:26.244 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/items/types - 404 0 null 45.1068ms
+2025-08-27 17:04:26.230 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/items/types - 404 0 null 30.7108ms
+2025-08-27 17:04:26.249 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Character - null null
+2025-08-27 17:04:26.311 +01:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://127.0.0.1:7000/admin/items/types, Response status code: 404
+2025-08-27 17:04:26.321 +01:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://127.0.0.1:7000/admin/items/types, Response status code: 404
+2025-08-27 17:04:26.328 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Character - 404 0 null 79.6154ms
+2025-08-27 17:04:26.333 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog?type=Character - null null
+2025-08-27 17:04:26.353 +01:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://127.0.0.1:7000/admin/catalog/Character, Response status code: 404
+2025-08-27 17:04:26.361 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog?type=Character - 404 0 null 27.9829ms
+2025-08-27 17:04:26.378 +01:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://127.0.0.1:7000/admin/catalog, Response status code: 404
+2025-08-27 17:04:26.366 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/items?type=Character - null null
+2025-08-27 17:04:26.394 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/items?type=Character - 404 0 null 28.2476ms
+2025-08-27 17:04:26.407 +01:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://127.0.0.1:7000/admin/items, Response status code: 404
+2025-08-27 17:05:26.612 +01:00 [INF] Request starting HTTP/1.1 POST http://127.0.0.1:7000/admin/notice - application/json 112
+2025-08-27 17:05:26.620 +01:00 [INF] Executing endpoint 'HTTP: POST /admin/notice'
+2025-08-27 17:05:26.733 +01:00 [INF] Writing value of type '<>f__AnonymousType2`2' as Json.
+2025-08-27 17:05:26.757 +01:00 [INF] Executed endpoint 'HTTP: POST /admin/notice'
+2025-08-27 17:05:26.760 +01:00 [INF] Request finished HTTP/1.1 POST http://127.0.0.1:7000/admin/notice - 200 null application/json; charset=utf-8 148.7231ms
+2025-08-27 18:11:40.316 +01:00 [INF] Application is shutting down...

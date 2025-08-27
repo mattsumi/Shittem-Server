@@ -75,11 +75,12 @@ builder.Services.AddAdminModule();
 builder.Services.AddSingleton(_ => EntityCatalog.LoadFrom(Path.Combine(AppContext.BaseDirectory, "catalog.sqlite")));
 builder.Services.AddControllers();
 
-var app = builder.Build();
-
+// Ensure data directory exists before building the app
 Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "data"));
 var catalogPath = Path.Combine(AppContext.BaseDirectory, "data", "catalog.sqlite");
-builder.Services.AddSingleton<IEntityCatalog>(_ => EntityCatalog.LoadFrom(catalogPath));
+
+var app = builder.Build();
+
 
 // Configure the HTTP request pipeline
 app.UseResponseCompression();

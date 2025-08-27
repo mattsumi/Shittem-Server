@@ -268,6 +268,107 @@ def build_mitmdump_cmd(executable_text: str, args: list[str]) -> list[str] | str
     # POSIX: argv is fine
     return [path, *args]
 
+
+# ---- Auto-detection helpers (non-blocking, small fixed search set) ----
+
+def _is_valid_mitmdump_text(text: str) -> bool:
+    """
+    Treat bare command names as valid when resolvable via PATH,
+    otherwise require an existing file path.
+    """
+    if not text:
+        return False
+    p = Path(text)
+    # Absolute or contains a path separator => must exist as a file
+    if p.is_absolute() or any((sep and sep in text) for sep in (os.sep, os.altsep)):
+        return p.is_file()
+    # Bare command name => check PATH
+    return shutil.which(text) is not None
+
+
+def detect_addon_path() -> str | None:
+    """
+    Look only in:
+    - repo/mitm/blue_archive_addon.py via Path(__file__).resolve().parents[1]
+    - CWD/mitm/blue_archive_addon.py
+    Return absolute path string or None.
+    """
+    try:
+        repo_candidate = Path(__file__).resolve().parents[1] / "mitm" / "blue_archive_addon.py"
+        if repo_candidate.is_file():
+            return str(repo_candidate)
+    except Exception:
+        pass
+    cwd_candidate = Path.cwd() / "mitm" / "blue_archive_addon.py"
+    if cwd_candidate.is_file():
+        return str(cwd_candidate)
+    return None
+
+
+def detect_mitmdump_path() -> str | None:
+    """
+    Prefer shutil.which('mitmdump'). If not found, check only a small set of known locations:
+    - <sys.executable>/../Scripts|bin/mitmdump(.exe)
+    - <sys.base_prefix>/Scripts|bin/mitmdump(.exe)
+    - On Windows, %PYTHONHOME%\\Scripts\\mitmdump.exe (if PYTHONHOME set)
+    - On Windows user installs (non-recursive immediate children):
+        %USERPROFILE%\\AppData\\Local\\Programs\\Python\\Python3*\\Scripts\\mitmdump.exe
+        %USERPROFILE%\\AppData\\Roaming\\Python\\Python3*\\Scripts\\mitmdump.exe
+    Return absolute path string or None.
+    """
+    windows = os.name == "nt"
+    exe_name = "mitmdump.exe" if windows else "mitmdump"
+
+    # 1) PATH
+    p = shutil.which("mitmdump")
+    if p:
+        return p
+    if windows:
+        p = shutil.which("mitmdump.exe")
+        if p:
+            return p
+
+    scripts_dir = "Scripts" if windows else "bin"
+    candidates: list[Path] = []
+
+    # 2) Near current interpreter
+    try:
+        candidates.append(Path(sys.executable).with_name(scripts_dir) / exe_name)
+    except Exception:
+        pass
+    try:
+        candidates.append(Path(sys.base_prefix) / scripts_dir / exe_name)
+    except Exception:
+        pass
+
+    # 3) PYTHONHOME
+    pyhome = os.environ.get("PYTHONHOME")
+    if pyhome:
+        candidates.append(Path(pyhome) / scripts_dir / exe_name)
+
+    # 4) Windows user installs (only immediate Python3* folders)
+    if windows:
+        user = os.environ.get("USERPROFILE", "")
+        if user:
+            for base in [
+                Path(user) / "AppData" / "Local" / "Programs" / "Python",
+                Path(user) / "AppData" / "Roaming" / "Python",
+            ]:
+                try:
+                    for d in base.glob("Python3*"):
+                        candidates.append(d / "Scripts" / "mitmdump.exe")
+                except Exception:
+                    pass
+
+    # Return first existing candidate
+    for c in candidates:
+        try:
+            if c.is_file():
+                return str(c)
+        except Exception:
+            continue
+    return None
+
 class ProcessRunner(QtCore.QObject):
     output = QtCore.Signal(str)
     stopped = QtCore.Signal()
@@ -1398,6 +1499,29 @@ class ServerTab(QtWidgets.QWidget):
         self.listen_host.setText(s.value("server/listen_host", self.listen_host.text(), str))
         self.listen_port.setText(s.value("server/listen_port", self.listen_port.text(), str))
         self.dotnet_dir.setText(s.value("server/dotnet_dir", self.dotnet_dir.text(), str))
+
+        # auto-detect only when empty or invalid, before wiring signals
+        cur_mitmdump = self.mitmdump.text().strip()
+        if (not cur_mitmdump) or (not _is_valid_mitmdump_text(cur_mitmdump)):
+            detected = detect_mitmdump_path()
+            if detected:
+                self.mitmdump.setText(detected)
+                s.setValue("server/mitmdump", detected)
+                print(f"[AUTO] mitmdump detected at: {detected}")
+            else:
+                print("[AUTO] mitmdump not found")
+
+        cur_addon = self.addon.text().strip()
+        addon_ok = bool(cur_addon) and Path(cur_addon).is_file()
+        if not addon_ok:
+            detected_addon = detect_addon_path()
+            if detected_addon:
+                self.addon.setText(detected_addon)
+                s.setValue("server/addon", detected_addon)
+                print(f"[AUTO] addon detected at: {detected_addon}")
+            else:
+                print("[AUTO] addon not found")
+
         # wire
         self.private_url.textChanged.connect(lambda v: s.setValue("server/private_base", v))
         self.control_url.textChanged.connect(lambda v: s.setValue("server/control_base", v))
