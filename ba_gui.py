@@ -405,25 +405,13 @@ class CatalogModel(QtCore.QObject):
             print(f"[CATALOG] types remote load failed: {e}")
             pass
         # try local file
-        try:
-            if self._local_catalog.exists():
-                data = json.loads(self._local_catalog.read_text(encoding="utf-8"))
-                if isinstance(data, dict):
-                    types = sorted({str(k) for k in data.keys() if isinstance(k, str)})
-                    if types:
-                        print(f"[CATALOG] types loaded from local file: {types}")
-                        with self._lock:
-                            self._types = types
-                        return list(types)
-        except Exception as e:
-            print(f"[CATALOG] local types load failed: {e}")
-            pass
+        # Backend SQL is authoritative; no local fallback
+        pass
         # final fallback
-        fallback = ["Item", "Character"]
-        print(f"[CATALOG] types fallback: {fallback}")
+        print(f"[CATALOG] no types available from backend.")
         with self._lock:
-            self._types = fallback
-        return list(fallback)
+            self._types = []
+        return []
 
     def _load_entities(self, type_name: str) -> list[dict]:
         with self._lock:
@@ -442,18 +430,8 @@ class CatalogModel(QtCore.QObject):
             print(f"[CATALOG] entity remote load failed for {type_name}: {e}")
             pass
         # try local file
-        try:
-            if self._local_catalog.exists():
-                data = json.loads(self._local_catalog.read_text(encoding="utf-8"))
-                if isinstance(data, dict) and type_name in data and isinstance(data[type_name], list):
-                    entities = self._normalize_entities(data[type_name], type_name)
-                    print(f"[CATALOG] loaded {len(entities)} entities for type {type_name} from local file")
-                    with self._lock:
-                        self._entities[type_name] = entities
-                    return list(entities)
-        except Exception as e:
-            print(f"[CATALOG] entity local load failed for {type_name}: {e}")
-            pass
+        # Backend SQL is authoritative; no local fallback
+        pass
         # empty but cache to avoid repeat storms
         print(f"[CATALOG] no entities found for type {type_name}; caching empty list")
         with self._lock:
@@ -507,10 +485,11 @@ class CatalogModel(QtCore.QObject):
                     if k in d and isinstance(d[k], (str, int)):
                         _name = str(d[k])
                         break
-                if _name is None and _id is not None:
-                    _name = str(_id)
                 if _id is None:
                     return None
+                # safe label if missing/empty
+                if _name is None or not str(_name).strip():
+                    _name = f"(Unnamed) [{_id}]"
                 return {"id": int(_id), "name": str(_name)}
             return None
 
@@ -645,10 +624,15 @@ class MailTab(QtWidgets.QWidget):
             # Only allow item-like types for attachments; exclude characters/units/students
             allowed = [t for t in types if not any(w in t.lower() for w in ("character", "characters", "unit", "units", "student", "students"))]
             if not allowed:
-                # Prefer explicit item/consumable-like names
-                allowed = [t for t in types if ("item" in t.lower() or "consum" in t.lower())]
+                # Prefer explicit item/consumable/currency-like names
+                allowed = [t for t in types if ("item" in t.lower() or "consum" in t.lower() or "currency" in t.lower())]
             if not allowed:
-                allowed = list(types)
+                self._show_status("No mail-eligible types available from backend.")
+                self.type_combo.setEnabled(False)
+                self.entity_combo.setEnabled(False)
+                self.picker_add.setEnabled(False)
+                self._set_picker_busy(False)
+                return
             for tname in allowed:
                 self.type_combo.addItem(tname)
             self.type_combo.setEnabled(True)
@@ -669,9 +653,11 @@ class MailTab(QtWidgets.QWidget):
             self._set_picker_busy(False)
             self._show_status("")
         def on_err(msg: str):
-            self._show_status(f"Catalog types not available; using local fallback/default. {msg}")
-            # still try to fill whatever we have (model already fell back)
-            on_done(self.catalog._load_types())
+            self._show_status(f"Could not load types from backend. {msg}")
+            self.type_combo.clear()
+            self.type_combo.setEnabled(False)
+            self.entity_combo.setEnabled(False)
+            self.picker_add.setEnabled(False)
             self._set_picker_busy(False)
         self.catalog.fetch_types(self, on_done, on_err)
 
@@ -1092,10 +1078,14 @@ class GachaTab(QtWidgets.QWidget):
             s.setValue("gacha/last_type", picked)
             # load entities
             self._set_picker_enabled(False)
+            self.entity_combo.clear()
+            self.entity_combo.addItem("Loading…")
+            self.entity_combo.setEnabled(False)
             self.catalog.fetch_entities(picked, self, self._on_entities_loaded, self._on_entities_error)
         def on_err(msg: str):
-            self._show_status(f"Gacha types not available; fallback in use. {msg}")
-            on_types(self.catalog._load_types())
+            self._show_status(f"Could not load character types from backend. {msg}")
+            self._set_controls_enabled(False)
+            self._set_picker_enabled(False)
         self._set_picker_enabled(False)
         self.catalog.fetch_types(self, on_types, on_err)
 
