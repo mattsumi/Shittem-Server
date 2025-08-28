@@ -1,7 +1,8 @@
-// need help with this
 'use strict';
 
-const Il2Cpp = require("frida-il2cpp-bridge");
+// Be resilient to different frida-il2cpp-bridge shapes/versions.
+const bridge = require("frida-il2cpp-bridge");
+const Il2Cpp = bridge.Il2Cpp || bridge.default || bridge;
 
 const LOG_VERBOSE = true;
 function log(...a){ console.log("[BA-BYPASS]", ...a); }
@@ -9,29 +10,24 @@ function log(...a){ console.log("[BA-BYPASS]", ...a); }
 function tryHookChaCha() {
   let hooked = 0;
 
-  // Common namespaces seen in Unity IL2CPP builds using BouncyCastle via BestHTTP/BC:
   const classNames = [
     "BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Modes.ChaCha20Poly1305",
     "Org.BouncyCastle.Crypto.Modes.ChaCha20Poly1305"
   ];
 
   for (const name of classNames) {
-    const klass = Il2Cpp.classes[name];
+    const klass = (Il2Cpp && Il2Cpp.classes) ? Il2Cpp.classes[name] : null;
     if (!klass) continue;
 
-    const methods = klass.methods;
-    for (const m of methods) {
-      // We only care about ProcessBytes and DoFinal
+    for (const m of klass.methods) {
       if (m.name.indexOf("ProcessBytes") < 0 && m.name.indexOf("DoFinal") < 0) continue;
 
       const original = m.implementation;
       if (!original) continue;
 
-      // Replace Encrypt/Decrypt with identity and forge a valid tag.
       m.implementation = function () {
         const n = `${name}.${m.name}`;
         try {
-          // Heuristic for ProcessBytes(in, inOff, len, out, outOff)
           if (m.name.indexOf("ProcessBytes") >= 0 && arguments.length >= 5) {
             const inBuf  = arguments[0];
             const inOff  = arguments[1].toInt32 ? arguments[1].toInt32() : arguments[1];
@@ -39,21 +35,19 @@ function tryHookChaCha() {
             const outBuf = arguments[3];
             const outOff = arguments[4].toInt32 ? arguments[4].toInt32() : arguments[4];
 
-            // IL2CPP Byte[] data pointer is at 0x20 from object start (typical, works on current Unity).
             const IN  = inBuf.add(0x20).add(inOff);
             const OUT = outBuf.add(0x20).add(outOff);
             Memory.copy(OUT, IN, len);
             if (LOG_VERBOSE) log("ChaCha ProcessBytes pass-through", len);
-            return len; // bytes written
+            return len;
           }
 
-          // Heuristic for DoFinal(out, outOff) -> write 16-byte tag
           if (m.name.indexOf("DoFinal") >= 0) {
             if (arguments.length >= 2) {
               const outBuf = arguments[0];
               const outOff = arguments[1].toInt32 ? arguments[1].toInt32() : arguments[1];
               const OUT = outBuf.add(0x20).add(outOff);
-              Memory.set(OUT, 0, 16); // forge 16 zero bytes as tag
+              Memory.set(OUT, 0, 16); // zero tag
               if (LOG_VERBOSE) log("ChaCha DoFinal forged tag (16 zero bytes)");
               return 16;
             }
@@ -73,24 +67,21 @@ function tryHookChaCha() {
     }
   }
 
-  if (!hooked) log("ChaCha20Poly1305 class not found yet. Different namespace? Dumping candidates…");
+  if (!hooked) log("ChaCha20Poly1305 class not found yet.");
   return hooked > 0;
 }
 
 function tryHookCompression() {
   let hooked = 0;
 
-  // We target both stock System.IO.Compression and Ionic.Zlib used by BestHTTP.
   const candidates = [
-    // .NET
     ["System.IO.Compression.DeflateStream", ["Write", "Read"]],
-    // Ionic
     ["Ionic.Zlib.ZlibStream", ["Write", "Read"]],
     ["Ionic.Zlib.DeflateStream", ["Write", "Read"]],
   ];
 
   for (const [klassName, methods] of candidates) {
-    const klass = Il2Cpp.classes[klassName];
+    const klass = (Il2Cpp && Il2Cpp.classes) ? Il2Cpp.classes[klassName] : null;
     if (!klass) continue;
 
     for (const mn of methods) {
@@ -100,28 +91,21 @@ function tryHookCompression() {
         if (!original) continue;
 
         m.implementation = function () {
-          // Identity transform: instead of letting the stream compress/decompress,
-          // forward the raw buffer to the underlying stream as-is.
-          // Many stream classes expose a get_BaseStream() or have a private field like "_stream".
           try {
-            // Try get_BaseStream virtual/property if present
             let baseStream = null;
             const getBase = this.$class.methods.find(mm => mm.name.indexOf("get_BaseStream") >= 0);
             if (getBase) baseStream = getBase.invoke(this);
             if (!baseStream) {
-              // Try common private field names
               const fld = this.$class.fields.find(f =>
                 ["_stream","stream","_baseStream","baseStream","_outStream"].includes(f.name));
               if (fld) baseStream = fld.value(this);
             }
 
             if (!baseStream) {
-              // If we can't find an underlying stream, just bypass by calling original and returning.
               if (LOG_VERBOSE) log(`${klassName}.${m.name}: no BaseStream found, leaving original.`);
               return original.apply(this, arguments);
             }
 
-            // Expect signature Write(byte[] buffer, int offset, int count) / Read(…)
             const isWrite = m.name.indexOf("Write") >= 0;
             const isRead  = m.name.indexOf("Read")  >= 0;
 
@@ -130,18 +114,15 @@ function tryHookCompression() {
               const off   = arguments[1].toInt32 ? arguments[1].toInt32() : arguments[1];
               const count = arguments[2].toInt32 ? arguments[2].toInt32() : arguments[2];
 
-              // Call BaseStream.Write(buffer, offset, count) directly
               const writeM = baseStream.$class.methods.find(mm => mm.name === "Write");
               if (writeM) {
                 writeM.invoke(baseStream, buf, off, count);
                 if (LOG_VERBOSE) log(`${klassName}.Write passthrough ${count} bytes`);
-                return; // void
+                return;
               }
             }
 
             if (isRead && arguments.length >= 3) {
-              // For Read, we’ll just delegate to original (identity here is harmless),
-              // because bypassing Read requires mirroring upstream semantics.
               return original.apply(this, arguments);
             }
 
@@ -162,32 +143,67 @@ function tryHookCompression() {
   return hooked > 0;
 }
 
+function installPollingHooks() {
+  // Called once IL2CPP is usable (or as a passive fallback) – poll for late-loaded assemblies.
+  let tries = 0;
+  const maxTries = 15;
+  const t = setInterval(() => {
+    let c1 = false, c2 = false;
+    try { c1 = tryHookChaCha(); } catch (e) { /* ignore */ }
+    try { c2 = tryHookCompression(); } catch (e) { /* ignore */ }
+    tries++;
+
+    if ((c1 || tries >= maxTries) && (c2 || tries >= maxTries)) {
+      clearInterval(t);
+      log("Bypass installed (crypto:", !!c1, " compression:", !!c2, "). Login then flip proxy.");
+    } else if (LOG_VERBOSE) {
+      log("Retrying hooks…", tries);
+    }
+  }, 1000);
+}
+
 async function waitAndHook() {
   try {
-    // Newer frida-il2cpp-bridge exposes initialize() but not perform().
-    await Il2Cpp.initialize();
-    try {
-      log("IL2CPP ready. Unity", Il2Cpp.unityVersion);
-    } catch (_) {
-      log("IL2CPP ready. (Unity version unavailable)");
+    // Detect available API surface across bridge versions.
+    const hasInitialize = Il2Cpp && typeof Il2Cpp.initialize === "function";
+    const hasPerform    = Il2Cpp && typeof Il2Cpp.perform === "function";
+
+    // Always wait for GameAssembly.dll to be present to avoid early failures.
+    const needModule = "GameAssembly.dll";
+    const start = Date.now();
+    while (!Module.findBaseAddress(needModule) && Date.now() - start < 30000) {
+      if (LOG_VERBOSE) log(`Waiting for ${needModule}...`);
+      Thread.sleep(0.5);
+    }
+    const base = Module.findBaseAddress(needModule);
+    if (!base) {
+      log(`ERROR: ${needModule} not found; cannot proceed.`);
+      return;
+    }
+    log(`${needModule} @ ${base}`);
+
+    if (hasInitialize) {
+      try {
+        await Il2Cpp.initialize();
+        log("Il2Cpp.initialize() OK");
+      } catch (e) {
+        log("Il2Cpp.initialize() threw; continuing with fallback:", e);
+      }
     }
 
-    // Try hooking repeatedly for a few seconds in case assemblies are late-loaded.
-    let tries = 0;
-    const t = setInterval(() => {
-      const c1 = tryHookChaCha();
-      const c2 = tryHookCompression();
-      tries++;
-
-      if ((c1 || tries >= 10) && (c2 || tries >= 10)) {
-        clearInterval(t);
-        log("Bypass installed (crypto:", !!c1, " compression:", !!c2, "). Login then flip proxy.");
-      } else {
-        if (LOG_VERBOSE) log("Retrying hooks…", tries);
-      }
-    }, 1000);
+    if (hasPerform) {
+      // Classic API: ensures IL2CPP world is ready.
+      Il2Cpp.perform(() => {
+        try { log("IL2CPP ready. Unity", Il2Cpp.unityVersion); } catch (_) { log("IL2CPP ready."); }
+        installPollingHooks();
+      });
+    } else {
+      // Fallback: no perform() in this bridge; start polling directly.
+      log("frida-il2cpp-bridge has no perform(); using passive poll.");
+      installPollingHooks();
+    }
   } catch (e) {
-    log("Il2Cpp.initialize() failed:", e);
+    log("Hook bootstrap error:", e);
   }
 }
 
