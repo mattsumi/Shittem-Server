@@ -13,7 +13,6 @@ def slug(s: str) -> str:
 
 def detect_type(path: str) -> int:
     p = path.lower()
-    # tweak these rules to your bundle naming
     if "student" in p or "character" in p:
         return 1
     if "currency" in p:
@@ -26,7 +25,7 @@ def detect_type(path: str) -> int:
         return 5
     if "gacha" in p and ("group" in p or "pool" in p or "table" in p):
         return 6
-    return 0  # unknown => skip
+    return 0
 
 ID_KEYS      = ["Id","ID","id","CharacterId","StudentId","ItemId","CurrencyId","WeaponId"]
 NAME_KEYS    = ["NameEn","NameEN","Name","name","DisplayName","LocalizedName"]

@@ -37,3 +37,915 @@
 2025-08-27 17:05:26.757 +01:00 [INF] Executed endpoint 'HTTP: POST /admin/notice'
 2025-08-27 17:05:26.760 +01:00 [INF] Request finished HTTP/1.1 POST http://127.0.0.1:7000/admin/notice - 200 null application/json; charset=utf-8 148.7231ms
 2025-08-27 18:11:40.316 +01:00 [INF] Application is shutting down...
+2025-08-27 18:13:01.828 +01:00 [INF] Starting BlueArchiveAPI Gateway server
+2025-08-27 18:13:02.265 +01:00 [INF] Admin API enabled at http://0.0.0.0:7000/admin
+2025-08-27 18:13:02.801 +01:00 [INF] Now listening on: http://0.0.0.0:7000
+2025-08-27 18:13:02.829 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-08-27 18:13:03.104 +01:00 [INF] Hosting environment: Development
+2025-08-27 18:13:03.110 +01:00 [INF] Content root path: C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI
+2025-08-27 18:13:12.162 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/types - null null
+2025-08-27 18:13:12.162 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/types - null null
+2025-08-27 18:13:12.306 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 18:13:12.306 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 18:13:12.360 +01:00 [INF] Route matched with {action = "Get", controller = "AdminCatalog"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.ActionResult`1[System.Collections.Generic.IEnumerable`1[System.Object]] Get(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 18:13:12.360 +01:00 [INF] Route matched with {action = "Get", controller = "AdminCatalog"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.ActionResult`1[System.Collections.Generic.IEnumerable`1[System.Object]] Get(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 18:13:14.434 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI) in 2054.1585ms
+2025-08-27 18:13:14.434 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI) in 2044.7051ms
+2025-08-27 18:13:14.457 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 18:13:14.457 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 18:13:14.475 +01:00 [ERR] An unhandled exception has occurred while executing the request.
+Microsoft.Data.Sqlite.SqliteException (0x80004005): SQLite Error 1: 'no such table: entity'.
+   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at BlueArchiveAPI.Catalog.EntityCatalog.LoadCore(SqliteConnection cn) in C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI\Catalog\EntityCatalog.cs:line 66
+   at BlueArchiveAPI.Catalog.EntityCatalog..ctor(String sqlitePath) in C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI\Catalog\EntityCatalog.cs:line 38
+   at Program.<>c.<<Main>$>b__0_2(IServiceProvider sp) in C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI\Program.cs:line 63
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSiteMain(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitRootCache(ServiceCallSite callSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSite(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.Resolve(ServiceCallSite callSite, ServiceProviderEngineScope scope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.CreateServiceAccessor(ServiceIdentifier serviceIdentifier)
+   at System.Collections.Concurrent.ConcurrentDictionary`2.GetOrAdd(TKey key, Func`2 valueFactory)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(ServiceIdentifier serviceIdentifier, ServiceProviderEngineScope serviceProviderEngineScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.GetService(Type serviceType)
+   at lambda_method17(Closure, IServiceProvider, Object[])
+   at Microsoft.AspNetCore.Mvc.Controllers.ControllerFactoryProvider.<>c__DisplayClass6_0.<CreateControllerFactory>g__CreateController|0(ControllerContext controllerContext)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.ResponseCompression.ResponseCompressionMiddleware.InvokeCore(HttpContext context)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-08-27 18:13:14.477 +01:00 [ERR] An unhandled exception has occurred while executing the request.
+Microsoft.Data.Sqlite.SqliteException (0x80004005): SQLite Error 1: 'no such table: entity'.
+   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at BlueArchiveAPI.Catalog.EntityCatalog.LoadCore(SqliteConnection cn) in C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI\Catalog\EntityCatalog.cs:line 66
+   at BlueArchiveAPI.Catalog.EntityCatalog..ctor(String sqlitePath) in C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI\Catalog\EntityCatalog.cs:line 38
+   at Program.<>c.<<Main>$>b__0_2(IServiceProvider sp) in C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI\Program.cs:line 63
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSiteMain(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitRootCache(ServiceCallSite callSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSite(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.Resolve(ServiceCallSite callSite, ServiceProviderEngineScope scope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.CreateServiceAccessor(ServiceIdentifier serviceIdentifier)
+   at System.Collections.Concurrent.ConcurrentDictionary`2.GetOrAdd(TKey key, Func`2 valueFactory)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(ServiceIdentifier serviceIdentifier, ServiceProviderEngineScope serviceProviderEngineScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.GetService(Type serviceType)
+   at lambda_method16(Closure, IServiceProvider, Object[])
+   at Microsoft.AspNetCore.Mvc.Controllers.ControllerFactoryProvider.<>c__DisplayClass6_0.<CreateControllerFactory>g__CreateController|0(ControllerContext controllerContext)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.ResponseCompression.ResponseCompressionMiddleware.InvokeCore(HttpContext context)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Routing.EndpointRoutingMiddleware.<Invoke>g__AwaitMatcher|10_0(EndpointRoutingMiddleware middleware, HttpContext httpContext, Task`1 matcherTask)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-08-27 18:13:14.766 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/types - 500 null text/plain; charset=utf-8 2609.6584ms
+2025-08-27 18:13:14.815 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/types - 500 null text/plain; charset=utf-8 2659.5545ms
+2025-08-27 18:13:14.790 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog - null null
+2025-08-27 18:13:14.833 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog - null null
+2025-08-27 18:13:14.867 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 18:13:14.868 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 18:13:14.878 +01:00 [INF] Route matched with {action = "Get", controller = "AdminCatalog"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.ActionResult`1[System.Collections.Generic.IEnumerable`1[System.Object]] Get(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 18:13:14.882 +01:00 [INF] Route matched with {action = "Get", controller = "AdminCatalog"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.ActionResult`1[System.Collections.Generic.IEnumerable`1[System.Object]] Get(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 18:13:14.891 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI) in 2.066ms
+2025-08-27 18:13:14.908 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI) in 2.149ms
+2025-08-27 18:13:14.916 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 18:13:14.932 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 18:13:14.952 +01:00 [ERR] An unhandled exception has occurred while executing the request.
+Microsoft.Data.Sqlite.SqliteException (0x80004005): SQLite Error 1: 'no such table: entity'.
+   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at BlueArchiveAPI.Catalog.EntityCatalog.LoadCore(SqliteConnection cn) in C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI\Catalog\EntityCatalog.cs:line 66
+   at BlueArchiveAPI.Catalog.EntityCatalog..ctor(String sqlitePath) in C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI\Catalog\EntityCatalog.cs:line 38
+   at Program.<>c.<<Main>$>b__0_2(IServiceProvider sp) in C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI\Program.cs:line 63
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSiteMain(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitRootCache(ServiceCallSite callSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSite(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.Resolve(ServiceCallSite callSite, ServiceProviderEngineScope scope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.CreateServiceAccessor(ServiceIdentifier serviceIdentifier)
+   at System.Collections.Concurrent.ConcurrentDictionary`2.GetOrAdd(TKey key, Func`2 valueFactory)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(ServiceIdentifier serviceIdentifier, ServiceProviderEngineScope serviceProviderEngineScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.GetService(Type serviceType)
+   at lambda_method19(Closure, IServiceProvider, Object[])
+   at Microsoft.AspNetCore.Mvc.Controllers.ControllerFactoryProvider.<>c__DisplayClass6_0.<CreateControllerFactory>g__CreateController|0(ControllerContext controllerContext)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.ResponseCompression.ResponseCompressionMiddleware.InvokeCore(HttpContext context)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-08-27 18:13:14.967 +01:00 [ERR] An unhandled exception has occurred while executing the request.
+Microsoft.Data.Sqlite.SqliteException (0x80004005): SQLite Error 1: 'no such table: entity'.
+   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at BlueArchiveAPI.Catalog.EntityCatalog.LoadCore(SqliteConnection cn) in C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI\Catalog\EntityCatalog.cs:line 66
+   at BlueArchiveAPI.Catalog.EntityCatalog..ctor(String sqlitePath) in C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI\Catalog\EntityCatalog.cs:line 38
+   at Program.<>c.<<Main>$>b__0_2(IServiceProvider sp) in C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI\Program.cs:line 63
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSiteMain(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitRootCache(ServiceCallSite callSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSite(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.Resolve(ServiceCallSite callSite, ServiceProviderEngineScope scope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.CreateServiceAccessor(ServiceIdentifier serviceIdentifier)
+   at System.Collections.Concurrent.ConcurrentDictionary`2.GetOrAdd(TKey key, Func`2 valueFactory)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(ServiceIdentifier serviceIdentifier, ServiceProviderEngineScope serviceProviderEngineScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.GetService(Type serviceType)
+   at lambda_method19(Closure, IServiceProvider, Object[])
+   at Microsoft.AspNetCore.Mvc.Controllers.ControllerFactoryProvider.<>c__DisplayClass6_0.<CreateControllerFactory>g__CreateController|0(ControllerContext controllerContext)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.ResponseCompression.ResponseCompressionMiddleware.InvokeCore(HttpContext context)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-08-27 18:13:15.163 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog - 500 null text/plain; charset=utf-8 373.5707ms
+2025-08-27 18:13:15.191 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/items/types - null null
+2025-08-27 18:13:15.194 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog - 500 null text/plain; charset=utf-8 361.1576ms
+2025-08-27 18:13:15.205 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/items/types - null null
+2025-08-27 18:13:15.229 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 18:13:15.255 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 18:13:15.263 +01:00 [INF] Route matched with {action = "Get", controller = "AdminCatalog"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.ActionResult`1[System.Collections.Generic.IEnumerable`1[System.Object]] Get(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 18:13:15.266 +01:00 [INF] Route matched with {action = "Get", controller = "AdminCatalog"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.ActionResult`1[System.Collections.Generic.IEnumerable`1[System.Object]] Get(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 18:13:15.275 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI) in 1.6384ms
+2025-08-27 18:13:15.289 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 18:13:15.290 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI) in 1.7649ms
+2025-08-27 18:13:15.293 +01:00 [ERR] An unhandled exception has occurred while executing the request.
+Microsoft.Data.Sqlite.SqliteException (0x80004005): SQLite Error 1: 'no such table: entity'.
+   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at BlueArchiveAPI.Catalog.EntityCatalog.LoadCore(SqliteConnection cn) in C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI\Catalog\EntityCatalog.cs:line 66
+   at BlueArchiveAPI.Catalog.EntityCatalog..ctor(String sqlitePath) in C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI\Catalog\EntityCatalog.cs:line 38
+   at Program.<>c.<<Main>$>b__0_2(IServiceProvider sp) in C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI\Program.cs:line 63
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSiteMain(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitRootCache(ServiceCallSite callSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSite(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.Resolve(ServiceCallSite callSite, ServiceProviderEngineScope scope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.CreateServiceAccessor(ServiceIdentifier serviceIdentifier)
+   at System.Collections.Concurrent.ConcurrentDictionary`2.GetOrAdd(TKey key, Func`2 valueFactory)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(ServiceIdentifier serviceIdentifier, ServiceProviderEngineScope serviceProviderEngineScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.GetService(Type serviceType)
+   at lambda_method21(Closure, IServiceProvider, Object[])
+   at Microsoft.AspNetCore.Mvc.Controllers.ControllerFactoryProvider.<>c__DisplayClass6_0.<CreateControllerFactory>g__CreateController|0(ControllerContext controllerContext)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.ResponseCompression.ResponseCompressionMiddleware.InvokeCore(HttpContext context)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-08-27 18:13:15.299 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 18:13:15.364 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/items/types - 500 null text/plain; charset=utf-8 173.4337ms
+2025-08-27 18:13:15.369 +01:00 [ERR] An unhandled exception has occurred while executing the request.
+Microsoft.Data.Sqlite.SqliteException (0x80004005): SQLite Error 1: 'no such table: entity'.
+   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at BlueArchiveAPI.Catalog.EntityCatalog.LoadCore(SqliteConnection cn) in C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI\Catalog\EntityCatalog.cs:line 66
+   at BlueArchiveAPI.Catalog.EntityCatalog..ctor(String sqlitePath) in C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI\Catalog\EntityCatalog.cs:line 38
+   at Program.<>c.<<Main>$>b__0_2(IServiceProvider sp) in C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI\Program.cs:line 63
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSiteMain(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitRootCache(ServiceCallSite callSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSite(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.Resolve(ServiceCallSite callSite, ServiceProviderEngineScope scope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.CreateServiceAccessor(ServiceIdentifier serviceIdentifier)
+   at System.Collections.Concurrent.ConcurrentDictionary`2.GetOrAdd(TKey key, Func`2 valueFactory)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(ServiceIdentifier serviceIdentifier, ServiceProviderEngineScope serviceProviderEngineScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.GetService(Type serviceType)
+   at lambda_method23(Closure, IServiceProvider, Object[])
+   at Microsoft.AspNetCore.Mvc.Controllers.ControllerFactoryProvider.<>c__DisplayClass6_0.<CreateControllerFactory>g__CreateController|0(ControllerContext controllerContext)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.ResponseCompression.ResponseCompressionMiddleware.InvokeCore(HttpContext context)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-08-27 18:13:15.395 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Character - null null
+2025-08-27 18:13:15.629 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/items/types - 500 null text/plain; charset=utf-8 423.8276ms
+2025-08-27 18:13:15.671 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 18:13:15.710 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.ActionResult`1[System.Collections.Generic.IEnumerable`1[System.Object]] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 18:13:15.784 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 4.5578ms
+2025-08-27 18:13:15.791 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 18:13:15.795 +01:00 [ERR] An unhandled exception has occurred while executing the request.
+Microsoft.Data.Sqlite.SqliteException (0x80004005): SQLite Error 1: 'no such table: entity'.
+   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at BlueArchiveAPI.Catalog.EntityCatalog.LoadCore(SqliteConnection cn) in C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI\Catalog\EntityCatalog.cs:line 66
+   at BlueArchiveAPI.Catalog.EntityCatalog..ctor(String sqlitePath) in C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI\Catalog\EntityCatalog.cs:line 38
+   at Program.<>c.<<Main>$>b__0_2(IServiceProvider sp) in C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI\Program.cs:line 63
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSiteMain(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitRootCache(ServiceCallSite callSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSite(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.Resolve(ServiceCallSite callSite, ServiceProviderEngineScope scope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.CreateServiceAccessor(ServiceIdentifier serviceIdentifier)
+   at System.Collections.Concurrent.ConcurrentDictionary`2.GetOrAdd(TKey key, Func`2 valueFactory)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(ServiceIdentifier serviceIdentifier, ServiceProviderEngineScope serviceProviderEngineScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.GetService(Type serviceType)
+   at lambda_method25(Closure, IServiceProvider, Object[])
+   at Microsoft.AspNetCore.Mvc.Controllers.ControllerFactoryProvider.<>c__DisplayClass6_0.<CreateControllerFactory>g__CreateController|0(ControllerContext controllerContext)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.ResponseCompression.ResponseCompressionMiddleware.InvokeCore(HttpContext context)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-08-27 18:13:15.850 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Character - 500 null text/plain; charset=utf-8 455.2244ms
+2025-08-27 18:13:15.859 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog?type=Character - null null
+2025-08-27 18:13:15.882 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 18:13:15.884 +01:00 [INF] Route matched with {action = "Get", controller = "AdminCatalog"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.ActionResult`1[System.Collections.Generic.IEnumerable`1[System.Object]] Get(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 18:13:15.903 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI) in 4.7818ms
+2025-08-27 18:13:15.914 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 18:13:15.917 +01:00 [ERR] An unhandled exception has occurred while executing the request.
+Microsoft.Data.Sqlite.SqliteException (0x80004005): SQLite Error 1: 'no such table: entity'.
+   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at BlueArchiveAPI.Catalog.EntityCatalog.LoadCore(SqliteConnection cn) in C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI\Catalog\EntityCatalog.cs:line 66
+   at BlueArchiveAPI.Catalog.EntityCatalog..ctor(String sqlitePath) in C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI\Catalog\EntityCatalog.cs:line 38
+   at Program.<>c.<<Main>$>b__0_2(IServiceProvider sp) in C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI\Program.cs:line 63
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSiteMain(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitRootCache(ServiceCallSite callSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSite(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.Resolve(ServiceCallSite callSite, ServiceProviderEngineScope scope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.CreateServiceAccessor(ServiceIdentifier serviceIdentifier)
+   at System.Collections.Concurrent.ConcurrentDictionary`2.GetOrAdd(TKey key, Func`2 valueFactory)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(ServiceIdentifier serviceIdentifier, ServiceProviderEngineScope serviceProviderEngineScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.GetService(Type serviceType)
+   at lambda_method19(Closure, IServiceProvider, Object[])
+   at Microsoft.AspNetCore.Mvc.Controllers.ControllerFactoryProvider.<>c__DisplayClass6_0.<CreateControllerFactory>g__CreateController|0(ControllerContext controllerContext)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.ResponseCompression.ResponseCompressionMiddleware.InvokeCore(HttpContext context)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-08-27 18:13:15.964 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog?type=Character - 500 null text/plain; charset=utf-8 104.2704ms
+2025-08-27 18:13:15.987 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/items?type=Character - null null
+2025-08-27 18:13:16.023 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 18:13:16.032 +01:00 [INF] Route matched with {action = "Get", controller = "AdminCatalog"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.ActionResult`1[System.Collections.Generic.IEnumerable`1[System.Object]] Get(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 18:13:16.047 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI) in 3.9396ms
+2025-08-27 18:13:16.052 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 18:13:16.060 +01:00 [ERR] An unhandled exception has occurred while executing the request.
+Microsoft.Data.Sqlite.SqliteException (0x80004005): SQLite Error 1: 'no such table: entity'.
+   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at BlueArchiveAPI.Catalog.EntityCatalog.LoadCore(SqliteConnection cn) in C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI\Catalog\EntityCatalog.cs:line 66
+   at BlueArchiveAPI.Catalog.EntityCatalog..ctor(String sqlitePath) in C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI\Catalog\EntityCatalog.cs:line 38
+   at Program.<>c.<<Main>$>b__0_2(IServiceProvider sp) in C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI\Program.cs:line 63
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSiteMain(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitRootCache(ServiceCallSite callSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSite(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.Resolve(ServiceCallSite callSite, ServiceProviderEngineScope scope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.CreateServiceAccessor(ServiceIdentifier serviceIdentifier)
+   at System.Collections.Concurrent.ConcurrentDictionary`2.GetOrAdd(TKey key, Func`2 valueFactory)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(ServiceIdentifier serviceIdentifier, ServiceProviderEngineScope serviceProviderEngineScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.GetService(Type serviceType)
+   at lambda_method27(Closure, IServiceProvider, Object[])
+   at Microsoft.AspNetCore.Mvc.Controllers.ControllerFactoryProvider.<>c__DisplayClass6_0.<CreateControllerFactory>g__CreateController|0(ControllerContext controllerContext)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.ResponseCompression.ResponseCompressionMiddleware.InvokeCore(HttpContext context)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-08-27 18:13:16.152 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/items?type=Character - 500 null text/plain; charset=utf-8 165.1382ms
+2025-08-27 18:14:09.710 +01:00 [INF] Application is shutting down...
+2025-08-27 19:03:56.998 +01:00 [INF] Starting BlueArchiveAPI Gateway server
+2025-08-27 19:03:57.185 +01:00 [INF] Admin API enabled at http://0.0.0.0:7000/admin
+2025-08-27 19:03:57.475 +01:00 [INF] Now listening on: http://0.0.0.0:7000
+2025-08-27 19:03:57.481 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-08-27 19:03:57.482 +01:00 [INF] Hosting environment: Development
+2025-08-27 19:03:57.485 +01:00 [INF] Content root path: C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI
+2025-08-27 19:05:45.991 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/types - null null
+2025-08-27 19:05:45.991 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/types - null null
+2025-08-27 19:05:46.081 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 19:05:46.081 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 19:05:46.115 +01:00 [INF] Route matched with {action = "Get", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Get(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 19:05:46.115 +01:00 [INF] Route matched with {action = "Get", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Get(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 19:05:46.339 +01:00 [INF] [ADMIN][CATALOG] types=3
+2025-08-27 19:05:46.339 +01:00 [INF] [ADMIN][CATALOG] types=3
+2025-08-27 19:05:46.349 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-08-27 19:05:46.349 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-08-27 19:05:46.401 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI) in 271.9772ms
+2025-08-27 19:05:46.401 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI) in 274.9866ms
+2025-08-27 19:05:46.408 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 19:05:46.410 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 19:05:46.417 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/types - 200 null application/json; charset=utf-8 429.3539ms
+2025-08-27 19:05:46.420 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/types - 200 null application/json; charset=utf-8 433.6546ms
+2025-08-27 19:05:46.426 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Student - null null
+2025-08-27 19:05:46.430 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Currency - null null
+2025-08-27 19:05:46.434 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Currency - null null
+2025-08-27 19:05:46.457 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 19:05:46.458 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 19:05:46.466 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 19:05:46.483 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 19:05:46.484 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 19:05:46.488 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 19:05:46.511 +01:00 [INF] [ADMIN][CATALOG] Currency entities=1
+2025-08-27 19:05:46.511 +01:00 [INF] [ADMIN][CATALOG] Currency entities=1
+2025-08-27 19:05:46.512 +01:00 [INF] [ADMIN][CATALOG] Student entities=2
+2025-08-27 19:05:46.516 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BlueArchiveAPI.Catalog.EntityDto, BlueArchiveAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-08-27 19:05:46.519 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BlueArchiveAPI.Catalog.EntityDto, BlueArchiveAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-08-27 19:05:46.523 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BlueArchiveAPI.Catalog.EntityDto, BlueArchiveAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-08-27 19:05:46.543 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 54.696ms
+2025-08-27 19:05:46.543 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 43.3668ms
+2025-08-27 19:05:46.544 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 49.634ms
+2025-08-27 19:05:46.548 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 19:05:46.552 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 19:05:46.555 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 19:05:46.559 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Student - 200 null application/json; charset=utf-8 132.4122ms
+2025-08-27 19:05:46.564 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Currency - 200 null application/json; charset=utf-8 130.0456ms
+2025-08-27 19:05:46.567 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Currency - 200 null application/json; charset=utf-8 137.1237ms
+2025-08-27 19:05:52.377 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Item - null null
+2025-08-27 19:05:52.380 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 19:05:52.382 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 19:05:52.386 +01:00 [INF] [ADMIN][CATALOG] Item entities=2
+2025-08-27 19:05:52.389 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BlueArchiveAPI.Catalog.EntityDto, BlueArchiveAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-08-27 19:05:52.391 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 6.0421ms
+2025-08-27 19:05:52.393 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 19:05:52.395 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Item - 200 null application/json; charset=utf-8 17.6865ms
+2025-08-27 20:23:24.656 +01:00 [INF] Starting BlueArchiveAPI Gateway server
+2025-08-27 20:23:24.832 +01:00 [INF] Admin API enabled at http://0.0.0.0:7000/admin
+2025-08-27 20:23:25.055 +01:00 [INF] Now listening on: http://0.0.0.0:7000
+2025-08-27 20:23:25.060 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-08-27 20:23:25.062 +01:00 [INF] Hosting environment: Development
+2025-08-27 20:23:25.064 +01:00 [INF] Content root path: C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI
+2025-08-27 20:23:36.026 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/types - null null
+2025-08-27 20:23:36.026 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/types - null null
+2025-08-27 20:23:36.112 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 20:23:36.112 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 20:23:36.151 +01:00 [INF] Route matched with {action = "Get", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Get(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 20:23:36.151 +01:00 [INF] Route matched with {action = "Get", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Get(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 20:23:36.351 +01:00 [INF] [ADMIN][CATALOG] types=6
+2025-08-27 20:23:36.351 +01:00 [INF] [ADMIN][CATALOG] types=6
+2025-08-27 20:23:36.365 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-08-27 20:23:36.365 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-08-27 20:23:36.430 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI) in 264.3717ms
+2025-08-27 20:23:36.430 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI) in 267.2037ms
+2025-08-27 20:23:36.439 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 20:23:36.440 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 20:23:36.447 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/types - 200 null application/json; charset=utf-8 423.7691ms
+2025-08-27 20:23:36.448 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/types - 200 null application/json; charset=utf-8 425.7057ms
+2025-08-27 20:23:36.459 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Currency - null null
+2025-08-27 20:23:36.460 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Currency - null null
+2025-08-27 20:23:36.485 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Student - null null
+2025-08-27 20:23:36.489 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:23:36.491 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:23:36.497 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:23:36.516 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 20:23:36.517 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 20:23:36.524 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 20:23:36.558 +01:00 [INF] [ADMIN][CATALOG] Student entities=0
+2025-08-27 20:23:36.558 +01:00 [INF] [ADMIN][CATALOG] Currency entities=0
+2025-08-27 20:23:36.558 +01:00 [INF] [ADMIN][CATALOG] Currency entities=0
+2025-08-27 20:23:36.561 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BlueArchiveAPI.Catalog.EntityDto, BlueArchiveAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-08-27 20:23:36.563 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BlueArchiveAPI.Catalog.EntityDto, BlueArchiveAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-08-27 20:23:36.566 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BlueArchiveAPI.Catalog.EntityDto, BlueArchiveAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-08-27 20:23:36.581 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 46.2976ms
+2025-08-27 20:23:36.581 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 53.8272ms
+2025-08-27 20:23:36.581 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 40.4704ms
+2025-08-27 20:23:36.584 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:23:36.592 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Currency - 200 null application/json; charset=utf-8 132.8514ms
+2025-08-27 20:23:36.589 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:23:36.587 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:23:36.638 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Student - 200 null application/json; charset=utf-8 152.6025ms
+2025-08-27 20:23:36.653 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Currency - 200 null application/json; charset=utf-8 193.0724ms
+2025-08-27 20:23:40.923 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Weapon - null null
+2025-08-27 20:23:40.927 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:23:40.929 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 20:23:40.934 +01:00 [INF] [ADMIN][CATALOG] Weapon entities=0
+2025-08-27 20:23:40.936 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BlueArchiveAPI.Catalog.EntityDto, BlueArchiveAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-08-27 20:23:40.940 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 7.815ms
+2025-08-27 20:23:40.944 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:23:40.946 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Weapon - 200 null application/json; charset=utf-8 22.1858ms
+2025-08-27 20:24:35.421 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/GachaGroup - null null
+2025-08-27 20:24:35.425 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:24:35.427 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 20:24:35.432 +01:00 [INF] [ADMIN][CATALOG] GachaGroup entities=0
+2025-08-27 20:24:35.434 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BlueArchiveAPI.Catalog.EntityDto, BlueArchiveAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-08-27 20:24:35.437 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 6.5897ms
+2025-08-27 20:24:35.440 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:24:35.442 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/GachaGroup - 200 null application/json; charset=utf-8 20.4598ms
+2025-08-27 20:25:02.736 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/GachaGroup - null null
+2025-08-27 20:25:02.739 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:25:02.741 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 20:25:02.745 +01:00 [INF] [ADMIN][CATALOG] GachaGroup entities=0
+2025-08-27 20:25:02.748 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BlueArchiveAPI.Catalog.EntityDto, BlueArchiveAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-08-27 20:25:02.751 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 7.7425ms
+2025-08-27 20:25:02.753 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:25:02.755 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/GachaGroup - 200 null application/json; charset=utf-8 19.7397ms
+2025-08-27 20:25:18.120 +01:00 [INF] Application is shutting down...
+2025-08-27 20:39:38.941 +01:00 [INF] Starting BlueArchiveAPI Gateway server
+2025-08-27 20:39:39.055 +01:00 [INF] Admin API enabled at http://0.0.0.0:7000/admin
+2025-08-27 20:39:39.240 +01:00 [INF] Now listening on: http://0.0.0.0:7000
+2025-08-27 20:39:39.247 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-08-27 20:39:39.250 +01:00 [INF] Hosting environment: Development
+2025-08-27 20:39:39.252 +01:00 [INF] Content root path: C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI
+2025-08-27 20:39:44.344 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/types - null null
+2025-08-27 20:39:44.344 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/types - null null
+2025-08-27 20:39:44.430 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 20:39:44.430 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 20:39:44.466 +01:00 [INF] Route matched with {action = "Get", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Get(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 20:39:44.466 +01:00 [INF] Route matched with {action = "Get", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Get(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 20:39:44.659 +01:00 [INF] [ADMIN][CATALOG] types=4
+2025-08-27 20:39:44.659 +01:00 [INF] [ADMIN][CATALOG] types=4
+2025-08-27 20:39:44.669 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-08-27 20:39:44.669 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-08-27 20:39:44.710 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI) in 232.8787ms
+2025-08-27 20:39:44.710 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI) in 229.7024ms
+2025-08-27 20:39:44.721 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 20:39:44.720 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 20:39:44.726 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/types - 200 null application/json; charset=utf-8 385.4884ms
+2025-08-27 20:39:44.727 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/types - 200 null application/json; charset=utf-8 387.0126ms
+2025-08-27 20:39:44.738 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Student - null null
+2025-08-27 20:39:44.734 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Currency - null null
+2025-08-27 20:39:44.743 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Currency - null null
+2025-08-27 20:39:44.769 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:39:44.769 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:39:44.772 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:39:44.786 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 20:39:44.788 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 20:39:44.791 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 20:39:44.827 +01:00 [INF] [ADMIN][CATALOG] Currency entities=16
+2025-08-27 20:39:44.828 +01:00 [INF] [ADMIN][CATALOG] Currency entities=16
+2025-08-27 20:39:44.829 +01:00 [INF] [ADMIN][CATALOG] Student entities=1064
+2025-08-27 20:39:44.831 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BlueArchiveAPI.Catalog.EntityDto, BlueArchiveAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-08-27 20:39:44.833 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BlueArchiveAPI.Catalog.EntityDto, BlueArchiveAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-08-27 20:39:44.836 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BlueArchiveAPI.Catalog.EntityDto, BlueArchiveAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-08-27 20:39:44.851 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 45.0737ms
+2025-08-27 20:39:44.851 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 59.2944ms
+2025-08-27 20:39:44.853 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 56.0785ms
+2025-08-27 20:39:44.855 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:39:44.859 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:39:44.861 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:39:44.863 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Currency - 200 null application/json; charset=utf-8 120.5154ms
+2025-08-27 20:39:44.866 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Currency - 200 null application/json; charset=utf-8 131.349ms
+2025-08-27 20:39:44.868 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Student - 200 null application/json; charset=utf-8 130.2693ms
+2025-08-27 20:40:24.748 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/GachaGroup - null null
+2025-08-27 20:40:24.752 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:40:24.755 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 20:40:24.771 +01:00 [INF] [ADMIN][CATALOG] GachaGroup entities=2459
+2025-08-27 20:40:24.775 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BlueArchiveAPI.Catalog.EntityDto, BlueArchiveAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-08-27 20:40:24.786 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 27.7917ms
+2025-08-27 20:40:24.791 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:40:24.796 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/GachaGroup - 200 null application/json; charset=utf-8 47.5141ms
+2025-08-27 20:40:30.436 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Gear - null null
+2025-08-27 20:40:30.440 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:40:30.442 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 20:40:30.446 +01:00 [INF] [ADMIN][CATALOG] Gear entities=67
+2025-08-27 20:40:30.449 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BlueArchiveAPI.Catalog.EntityDto, BlueArchiveAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-08-27 20:40:30.451 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 6.1298ms
+2025-08-27 20:40:30.453 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:40:30.457 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Gear - 200 null application/json; charset=utf-8 21.0058ms
+2025-08-27 20:41:05.051 +01:00 [INF] Application is shutting down...
+2025-08-27 20:41:20.333 +01:00 [INF] Starting BlueArchiveAPI Gateway server
+2025-08-27 20:41:20.455 +01:00 [INF] Admin API enabled at http://0.0.0.0:7000/admin
+2025-08-27 20:41:20.630 +01:00 [INF] Now listening on: http://0.0.0.0:7000
+2025-08-27 20:41:20.636 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-08-27 20:41:20.637 +01:00 [INF] Hosting environment: Development
+2025-08-27 20:41:20.640 +01:00 [INF] Content root path: C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI
+2025-08-27 20:41:25.318 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/types - null null
+2025-08-27 20:41:25.318 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/types - null null
+2025-08-27 20:41:25.449 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 20:41:25.451 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 20:41:25.514 +01:00 [INF] Route matched with {action = "Get", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Get(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 20:41:25.514 +01:00 [INF] Route matched with {action = "Get", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Get(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 20:41:25.676 +01:00 [INF] [ADMIN][CATALOG] types=6
+2025-08-27 20:41:25.676 +01:00 [INF] [ADMIN][CATALOG] types=6
+2025-08-27 20:41:25.693 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-08-27 20:41:25.693 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-08-27 20:41:25.755 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI) in 220.6352ms
+2025-08-27 20:41:25.755 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI) in 226.4103ms
+2025-08-27 20:41:25.764 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 20:41:25.765 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 20:41:25.776 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/types - 200 null application/json; charset=utf-8 461.9557ms
+2025-08-27 20:41:25.777 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/types - 200 null application/json; charset=utf-8 463.3464ms
+2025-08-27 20:41:25.790 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Currency - null null
+2025-08-27 20:41:25.789 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Currency - null null
+2025-08-27 20:41:25.793 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Student - null null
+2025-08-27 20:41:25.821 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:41:25.823 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:41:25.830 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:41:25.854 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 20:41:25.854 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 20:41:25.857 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 20:41:25.905 +01:00 [INF] [ADMIN][CATALOG] Student entities=0
+2025-08-27 20:41:25.905 +01:00 [INF] [ADMIN][CATALOG] Currency entities=0
+2025-08-27 20:41:25.905 +01:00 [INF] [ADMIN][CATALOG] Currency entities=0
+2025-08-27 20:41:25.912 +01:00 [INF] Executing OkObjectResult, writing value of type 'BlueArchiveAPI.Catalog.EntityDto[]'.
+2025-08-27 20:41:25.914 +01:00 [INF] Executing OkObjectResult, writing value of type 'BlueArchiveAPI.Catalog.EntityDto[]'.
+2025-08-27 20:41:25.919 +01:00 [INF] Executing OkObjectResult, writing value of type 'BlueArchiveAPI.Catalog.EntityDto[]'.
+2025-08-27 20:41:25.935 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 68.2887ms
+2025-08-27 20:41:25.935 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 51.1191ms
+2025-08-27 20:41:25.935 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 61.7077ms
+2025-08-27 20:41:25.939 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:41:25.943 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:41:25.946 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:41:25.949 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Currency - 200 null application/json; charset=utf-8 159.3063ms
+2025-08-27 20:41:25.953 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Student - 200 null application/json; charset=utf-8 160.4136ms
+2025-08-27 20:41:25.961 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Currency - 200 null application/json; charset=utf-8 171.8484ms
+2025-08-27 20:41:37.230 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/GachaGroup - null null
+2025-08-27 20:41:37.234 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:41:37.236 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 20:41:37.241 +01:00 [INF] [ADMIN][CATALOG] GachaGroup entities=0
+2025-08-27 20:41:37.244 +01:00 [INF] Executing OkObjectResult, writing value of type 'BlueArchiveAPI.Catalog.EntityDto[]'.
+2025-08-27 20:41:37.247 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 6.5225ms
+2025-08-27 20:41:37.250 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:41:37.251 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/GachaGroup - 200 null application/json; charset=utf-8 21.4928ms
+2025-08-27 20:41:38.466 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Gear - null null
+2025-08-27 20:41:38.470 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:41:38.472 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 20:41:38.478 +01:00 [INF] [ADMIN][CATALOG] Gear entities=0
+2025-08-27 20:41:38.481 +01:00 [INF] Executing OkObjectResult, writing value of type 'BlueArchiveAPI.Catalog.EntityDto[]'.
+2025-08-27 20:41:38.485 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 7.722ms
+2025-08-27 20:41:38.487 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:41:38.491 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Gear - 200 null application/json; charset=utf-8 25.3993ms
+2025-08-27 20:41:39.544 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Item - null null
+2025-08-27 20:41:39.551 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:41:39.555 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 20:41:39.561 +01:00 [INF] [ADMIN][CATALOG] Item entities=0
+2025-08-27 20:41:39.564 +01:00 [INF] Executing OkObjectResult, writing value of type 'BlueArchiveAPI.Catalog.EntityDto[]'.
+2025-08-27 20:41:39.567 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 7.6456ms
+2025-08-27 20:41:39.570 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:41:39.573 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Item - 200 null application/json; charset=utf-8 28.2982ms
+2025-08-27 20:41:42.213 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Weapon - null null
+2025-08-27 20:41:42.216 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:41:42.218 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 20:41:42.221 +01:00 [INF] [ADMIN][CATALOG] Weapon entities=0
+2025-08-27 20:41:42.223 +01:00 [INF] Executing OkObjectResult, writing value of type 'BlueArchiveAPI.Catalog.EntityDto[]'.
+2025-08-27 20:41:42.225 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 4.732ms
+2025-08-27 20:41:42.226 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:41:42.227 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Weapon - 200 null application/json; charset=utf-8 14.0297ms
+2025-08-27 20:41:55.949 +01:00 [INF] Application is shutting down...
+2025-08-27 20:45:13.751 +01:00 [INF] Starting BlueArchiveAPI Gateway server
+2025-08-27 20:45:13.945 +01:00 [INF] Admin API enabled at http://0.0.0.0:7000/admin
+2025-08-27 20:45:14.162 +01:00 [INF] Now listening on: http://0.0.0.0:7000
+2025-08-27 20:45:14.171 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-08-27 20:45:14.173 +01:00 [INF] Hosting environment: Development
+2025-08-27 20:45:14.176 +01:00 [INF] Content root path: C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI
+2025-08-27 20:45:18.293 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/types - null null
+2025-08-27 20:45:18.523 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/types - null null
+2025-08-27 20:45:18.792 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 20:45:18.792 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 20:45:18.854 +01:00 [INF] Route matched with {action = "Get", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Get(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 20:45:18.854 +01:00 [INF] Route matched with {action = "Get", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Get(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 20:45:19.113 +01:00 [INF] [ADMIN][CATALOG] types=4
+2025-08-27 20:45:19.113 +01:00 [INF] [ADMIN][CATALOG] types=4
+2025-08-27 20:45:19.124 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-08-27 20:45:19.124 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-08-27 20:45:19.163 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI) in 296.2183ms
+2025-08-27 20:45:19.163 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI) in 282.7123ms
+2025-08-27 20:45:19.171 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 20:45:19.172 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 20:45:19.178 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/types - 200 null application/json; charset=utf-8 891.7162ms
+2025-08-27 20:45:19.180 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/types - 200 null application/json; charset=utf-8 654.6045ms
+2025-08-27 20:45:19.185 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Student - null null
+2025-08-27 20:45:19.185 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Currency - null null
+2025-08-27 20:45:19.190 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Currency - null null
+2025-08-27 20:45:19.205 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:45:19.205 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:45:19.209 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:45:19.222 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 20:45:19.224 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 20:45:19.230 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 20:45:19.254 +01:00 [INF] [ADMIN][CATALOG] Currency entities=16
+2025-08-27 20:45:19.254 +01:00 [INF] [ADMIN][CATALOG] Currency entities=16
+2025-08-27 20:45:19.254 +01:00 [INF] [ADMIN][CATALOG] Student entities=1064
+2025-08-27 20:45:19.256 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BlueArchiveAPI.Catalog.EntityDto, BlueArchiveAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-08-27 20:45:19.258 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BlueArchiveAPI.Catalog.EntityDto, BlueArchiveAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-08-27 20:45:19.260 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BlueArchiveAPI.Catalog.EntityDto, BlueArchiveAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-08-27 20:45:19.273 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 34.9273ms
+2025-08-27 20:45:19.273 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 43.9347ms
+2025-08-27 20:45:19.274 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 48.9516ms
+2025-08-27 20:45:19.275 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:45:19.278 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:45:19.280 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 20:45:19.282 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Currency - 200 null application/json; charset=utf-8 92.183ms
+2025-08-27 20:45:19.285 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Currency - 200 null application/json; charset=utf-8 99.6413ms
+2025-08-27 20:45:19.288 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Student - 200 null application/json; charset=utf-8 102.9331ms
+2025-08-27 20:46:44.555 +01:00 [INF] Starting BlueArchiveAPI Gateway server
+2025-08-27 20:46:44.643 +01:00 [INF] Admin API enabled at http://0.0.0.0:7000/admin
+2025-08-27 20:46:44.774 +01:00 [INF] Now listening on: http://0.0.0.0:7000
+2025-08-27 20:46:44.778 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-08-27 20:46:44.779 +01:00 [INF] Hosting environment: Development
+2025-08-27 20:46:44.779 +01:00 [INF] Content root path: C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI
+2025-08-27 21:38:12.438 +01:00 [INF] Starting BlueArchiveAPI Gateway server
+2025-08-27 21:38:12.579 +01:00 [INF] Admin API enabled at http://0.0.0.0:7000/admin
+2025-08-27 21:38:12.857 +01:00 [INF] Now listening on: http://0.0.0.0:7000
+2025-08-27 21:38:12.863 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-08-27 21:38:12.865 +01:00 [INF] Hosting environment: Development
+2025-08-27 21:38:12.867 +01:00 [INF] Content root path: C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI
+2025-08-27 21:38:23.410 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/types - null null
+2025-08-27 21:38:23.410 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/types - null null
+2025-08-27 21:38:23.496 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 21:38:23.496 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 21:38:23.534 +01:00 [INF] Route matched with {action = "Get", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Get(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 21:38:23.534 +01:00 [INF] Route matched with {action = "Get", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Get(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 21:38:23.542 +01:00 [INF] Using catalog database at: C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI\data\catalog.sqlite
+2025-08-27 21:38:23.844 +01:00 [INF] [ADMIN][CATALOG] types=4
+2025-08-27 21:38:23.844 +01:00 [INF] [ADMIN][CATALOG] types=4
+2025-08-27 21:38:23.860 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-08-27 21:38:23.860 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-08-27 21:38:23.916 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI) in 368.8911ms
+2025-08-27 21:38:23.916 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI) in 372.5031ms
+2025-08-27 21:38:23.924 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 21:38:23.926 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 21:38:23.932 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/types - 200 null application/json; charset=utf-8 525.5415ms
+2025-08-27 21:38:23.932 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/types - 200 null application/json; charset=utf-8 525.5382ms
+2025-08-27 21:38:23.939 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Currency - null null
+2025-08-27 21:38:23.940 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Currency - null null
+2025-08-27 21:38:23.944 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Student - null null
+2025-08-27 21:38:24.008 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 21:38:23.981 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 21:38:23.977 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 21:38:24.029 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 21:38:24.029 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 21:38:24.032 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 21:38:24.098 +01:00 [INF] [ADMIN][CATALOG] Currency entities=16
+2025-08-27 21:38:24.098 +01:00 [INF] [ADMIN][CATALOG] Currency entities=16
+2025-08-27 21:38:24.100 +01:00 [INF] [ADMIN][CATALOG] Student entities=1064
+2025-08-27 21:38:24.102 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BlueArchiveAPI.Catalog.EntityDto, BlueArchiveAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-08-27 21:38:24.107 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BlueArchiveAPI.Catalog.EntityDto, BlueArchiveAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-08-27 21:38:24.111 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BlueArchiveAPI.Catalog.EntityDto, BlueArchiveAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-08-27 21:38:24.135 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 92.1255ms
+2025-08-27 21:38:24.135 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 74.6414ms
+2025-08-27 21:38:24.139 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 86.5001ms
+2025-08-27 21:38:24.144 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 21:38:24.147 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 21:38:24.150 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 21:38:24.154 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Currency - 200 null application/json; charset=utf-8 214.2864ms
+2025-08-27 21:38:24.158 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Currency - 200 null application/json; charset=utf-8 219.6479ms
+2025-08-27 21:38:24.161 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Student - 200 null application/json; charset=utf-8 216.5512ms
+2025-08-27 21:38:27.383 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Gear - null null
+2025-08-27 21:38:27.388 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 21:38:27.391 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 21:38:27.402 +01:00 [INF] [ADMIN][CATALOG] Gear entities=67
+2025-08-27 21:38:27.408 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BlueArchiveAPI.Catalog.EntityDto, BlueArchiveAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-08-27 21:38:27.412 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 13.0307ms
+2025-08-27 21:38:27.415 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 21:38:27.417 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/Gear - 200 null application/json; charset=utf-8 34.0363ms
+2025-08-27 21:39:02.677 +01:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/GachaGroup - null null
+2025-08-27 21:39:02.681 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 21:39:02.684 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 21:39:02.690 +01:00 [INF] [ADMIN][CATALOG] GachaGroup entities=2459
+2025-08-27 21:39:02.692 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BlueArchiveAPI.Catalog.EntityDto, BlueArchiveAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-08-27 21:39:02.700 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 13.9911ms
+2025-08-27 21:39:02.703 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 21:39:02.705 +01:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:7000/admin/catalog/GachaGroup - 200 null application/json; charset=utf-8 28.4556ms
+2025-08-27 21:39:13.582 +01:00 [INF] Application is shutting down...
+2025-08-27 21:40:13.312 +01:00 [INF] Starting BlueArchiveAPI Gateway server
+2025-08-27 21:40:13.483 +01:00 [INF] Admin API enabled at http://0.0.0.0:7000/admin
+2025-08-27 21:40:13.769 +01:00 [INF] Now listening on: http://0.0.0.0:7000
+2025-08-27 21:40:13.782 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-08-27 21:40:13.785 +01:00 [INF] Hosting environment: Development
+2025-08-27 21:40:13.788 +01:00 [INF] Content root path: C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI
+2025-08-27 21:41:21.974 +01:00 [INF] Application is shutting down...
+2025-08-27 21:42:03.176 +01:00 [INF] Starting BlueArchiveAPI Gateway server
+2025-08-27 21:42:03.337 +01:00 [INF] Admin API enabled at http://0.0.0.0:7000/admin
+2025-08-27 21:42:03.566 +01:00 [INF] Now listening on: http://0.0.0.0:7000
+2025-08-27 21:42:03.574 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-08-27 21:42:03.576 +01:00 [INF] Hosting environment: Development
+2025-08-27 21:42:03.579 +01:00 [INF] Content root path: C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI
+2025-08-27 21:42:12.632 +01:00 [INF] Request starting HTTP/1.1 GET http://localhost:7000/admin/catalog/types - null null
+2025-08-27 21:42:12.709 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 21:42:12.747 +01:00 [INF] Route matched with {action = "Get", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Get(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 21:42:12.755 +01:00 [INF] Using catalog database at: C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI\data\catalog.sqlite
+2025-08-27 21:42:12.936 +01:00 [INF] [ADMIN][CATALOG] types=4
+2025-08-27 21:42:12.947 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-08-27 21:42:12.979 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI) in 219.8652ms
+2025-08-27 21:42:12.987 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 21:42:12.992 +01:00 [INF] Request finished HTTP/1.1 GET http://localhost:7000/admin/catalog/types - 200 null application/json; charset=utf-8 363.0821ms
+2025-08-27 21:42:26.601 +01:00 [INF] Request starting HTTP/1.1 GET http://localhost:7000/admin/catalog/Student - null null
+2025-08-27 21:42:26.620 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 21:42:26.640 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 21:42:26.701 +01:00 [INF] [ADMIN][CATALOG] Student entities=1064
+2025-08-27 21:42:26.705 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BlueArchiveAPI.Catalog.EntityDto, BlueArchiveAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-08-27 21:42:26.729 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 79.7071ms
+2025-08-27 21:42:26.732 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 21:42:26.735 +01:00 [INF] Request finished HTTP/1.1 GET http://localhost:7000/admin/catalog/Student - 200 null application/json; charset=utf-8 134.7988ms
+2025-08-27 21:42:40.025 +01:00 [INF] Request starting HTTP/1.1 GET http://localhost:7000/admin/catalog/Currency - null null
+2025-08-27 21:42:40.036 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 21:42:40.038 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 21:42:40.046 +01:00 [INF] [ADMIN][CATALOG] Currency entities=16
+2025-08-27 21:42:40.051 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BlueArchiveAPI.Catalog.EntityDto, BlueArchiveAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-08-27 21:42:40.055 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 12.0885ms
+2025-08-27 21:42:40.060 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 21:42:40.064 +01:00 [INF] Request finished HTTP/1.1 GET http://localhost:7000/admin/catalog/Currency - 200 null application/json; charset=utf-8 37.2028ms
+2025-08-27 21:42:57.379 +01:00 [INF] Request starting HTTP/1.1 POST http://localhost:7000/admin/catalog/rebuild - application/x-www-form-urlencoded 0
+2025-08-27 21:42:57.393 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Rebuild (BlueArchiveAPI)'
+2025-08-27 21:42:57.404 +01:00 [INF] Route matched with {action = "Rebuild", controller = "AdminCatalog"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Rebuild() on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 21:42:57.440 +01:00 [INF] [ADMIN][CATALOG] rebuilt curated table with 0 entries
+2025-08-27 21:42:57.443 +01:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType6`1[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-08-27 21:42:57.471 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.Rebuild (BlueArchiveAPI) in 58.8736ms
+2025-08-27 21:42:57.475 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Rebuild (BlueArchiveAPI)'
+2025-08-27 21:42:57.496 +01:00 [INF] Request finished HTTP/1.1 POST http://localhost:7000/admin/catalog/rebuild - 200 null application/json; charset=utf-8 116.9841ms
+2025-08-27 22:53:38.709 +01:00 [INF] Starting BlueArchiveAPI Gateway server
+2025-08-27 22:53:38.807 +01:00 [INF] Admin API enabled at http://0.0.0.0:7000/admin
+2025-08-27 22:53:39.111 +01:00 [INF] Now listening on: http://0.0.0.0:7000
+2025-08-27 22:53:39.116 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-08-27 22:53:39.119 +01:00 [INF] Hosting environment: Development
+2025-08-27 22:53:39.120 +01:00 [INF] Content root path: C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI
+2025-08-27 22:53:52.516 +01:00 [INF] Application is shutting down...
+2025-08-27 22:54:55.070 +01:00 [INF] Starting BlueArchiveAPI Gateway server
+2025-08-27 22:54:55.262 +01:00 [INF] Admin API enabled at http://0.0.0.0:7000/admin
+2025-08-27 22:54:55.420 +01:00 [INF] Now listening on: http://0.0.0.0:7000
+2025-08-27 22:54:55.426 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-08-27 22:54:55.429 +01:00 [INF] Hosting environment: Development
+2025-08-27 22:54:55.431 +01:00 [INF] Content root path: C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI
+2025-08-27 22:54:58.006 +01:00 [INF] Request starting HTTP/1.1 GET http://localhost:7000/admin/catalog/types - null null
+2025-08-27 22:54:58.075 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 22:54:58.105 +01:00 [INF] Route matched with {action = "Get", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Get(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 22:54:58.114 +01:00 [INF] Using catalog database at: C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI\data\catalog.sqlite
+2025-08-27 22:54:58.316 +01:00 [INF] [ADMIN][CATALOG] types=4
+2025-08-27 22:54:58.325 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-08-27 22:54:58.360 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI) in 242.1293ms
+2025-08-27 22:54:58.369 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 22:54:58.375 +01:00 [INF] Request finished HTTP/1.1 GET http://localhost:7000/admin/catalog/types - 200 null application/json; charset=utf-8 371.2449ms
+2025-08-27 22:54:58.465 +01:00 [INF] Request starting HTTP/1.1 GET http://localhost:7000/admin/catalog/Student - null null
+2025-08-27 22:54:58.480 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 22:54:58.500 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 22:54:58.550 +01:00 [INF] [ADMIN][CATALOG] Student entities=1064
+2025-08-27 22:54:58.555 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BlueArchiveAPI.Catalog.EntityDto, BlueArchiveAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-08-27 22:54:58.577 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 70.5214ms
+2025-08-27 22:54:58.581 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 22:54:58.585 +01:00 [INF] Request finished HTTP/1.1 GET http://localhost:7000/admin/catalog/Student - 200 null application/json; charset=utf-8 119.814ms
+2025-08-27 22:54:59.069 +01:00 [INF] Request starting HTTP/1.1 GET http://localhost:7000/admin/catalog/Currency - null null
+2025-08-27 22:54:59.107 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 22:54:59.111 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 22:54:59.123 +01:00 [INF] [ADMIN][CATALOG] Currency entities=16
+2025-08-27 22:54:59.127 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BlueArchiveAPI.Catalog.EntityDto, BlueArchiveAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-08-27 22:54:59.134 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 13.7576ms
+2025-08-27 22:54:59.139 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 22:54:59.147 +01:00 [INF] Request finished HTTP/1.1 GET http://localhost:7000/admin/catalog/Currency - 200 null application/json; charset=utf-8 77.7597ms
+2025-08-27 22:54:59.663 +01:00 [INF] Request starting HTTP/1.1 GET http://localhost:7000/admin/catalog/Gear - null null
+2025-08-27 22:54:59.802 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 22:54:59.806 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 22:54:59.841 +01:00 [INF] [ADMIN][CATALOG] Gear entities=67
+2025-08-27 22:54:59.885 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BlueArchiveAPI.Catalog.EntityDto, BlueArchiveAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-08-27 22:54:59.890 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 51.8182ms
+2025-08-27 22:54:59.894 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 22:54:59.897 +01:00 [INF] Request finished HTTP/1.1 GET http://localhost:7000/admin/catalog/Gear - 200 null application/json; charset=utf-8 233.3154ms
+2025-08-27 22:54:59.922 +01:00 [INF] Request starting HTTP/1.1 GET http://localhost:7000/admin/catalog/Weapon - null null
+2025-08-27 22:54:59.935 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 22:54:59.941 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 22:54:59.966 +01:00 [INF] [ADMIN][CATALOG] Weapon entities=0
+2025-08-27 22:54:59.978 +01:00 [INF] Executing OkObjectResult, writing value of type 'BlueArchiveAPI.Catalog.EntityDto[]'.
+2025-08-27 22:54:59.990 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 27.6881ms
+2025-08-27 22:54:59.995 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 22:54:59.999 +01:00 [INF] Request finished HTTP/1.1 GET http://localhost:7000/admin/catalog/Weapon - 200 null application/json; charset=utf-8 76.0973ms
+2025-08-27 22:55:00.009 +01:00 [INF] Request starting HTTP/1.1 GET http://localhost:7000/admin/catalog/GachaGroup - null null
+2025-08-27 22:55:00.061 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 22:55:00.070 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 22:55:00.232 +01:00 [INF] [ADMIN][CATALOG] GachaGroup entities=2459
+2025-08-27 22:55:00.245 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BlueArchiveAPI.Catalog.EntityDto, BlueArchiveAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-08-27 22:55:00.254 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 37.5824ms
+2025-08-27 22:55:00.258 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 22:55:00.261 +01:00 [INF] Request finished HTTP/1.1 GET http://localhost:7000/admin/catalog/GachaGroup - 200 null application/json; charset=utf-8 252.7685ms
+2025-08-27 22:55:00.372 +01:00 [INF] Request starting HTTP/1.1 POST http://localhost:7000/admin/catalog/rebuild - application/x-www-form-urlencoded 0
+2025-08-27 22:55:00.408 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Rebuild (BlueArchiveAPI)'
+2025-08-27 22:55:00.420 +01:00 [INF] Route matched with {action = "Rebuild", controller = "AdminCatalog"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Rebuild() on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 22:55:00.455 +01:00 [INF] [ADMIN][CATALOG] rebuilt curated table with 0 entries
+2025-08-27 22:55:00.459 +01:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType6`1[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-08-27 22:55:00.480 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.Rebuild (BlueArchiveAPI) in 42.1098ms
+2025-08-27 22:55:00.484 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Rebuild (BlueArchiveAPI)'
+2025-08-27 22:55:00.488 +01:00 [INF] Request finished HTTP/1.1 POST http://localhost:7000/admin/catalog/rebuild - 200 null application/json; charset=utf-8 115.996ms
+2025-08-27 23:31:49.723 +01:00 [INF] Starting BlueArchiveAPI Gateway server
+2025-08-27 23:31:49.867 +01:00 [INF] Admin API enabled at http://0.0.0.0:7000/admin
+2025-08-27 23:31:50.087 +01:00 [INF] Now listening on: http://0.0.0.0:7000
+2025-08-27 23:31:50.096 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-08-27 23:31:50.101 +01:00 [INF] Hosting environment: Development
+2025-08-27 23:31:50.103 +01:00 [INF] Content root path: C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI
+2025-08-27 23:31:55.095 +01:00 [INF] Request starting HTTP/1.1 GET http://localhost:7000/admin/catalog/types - null null
+2025-08-27 23:31:55.173 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 23:31:55.210 +01:00 [INF] Route matched with {action = "Get", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Get(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 23:31:55.220 +01:00 [INF] Using catalog database at: C:\Users\tomda\Documents\Shittim-Server\BlueArchiveAPI\BlueArchiveAPI\data\catalog.sqlite
+2025-08-27 23:31:55.444 +01:00 [INF] [ADMIN][CATALOG] types=4
+2025-08-27 23:31:55.453 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-08-27 23:31:55.482 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI) in 259.3273ms
+2025-08-27 23:31:55.490 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Get (BlueArchiveAPI)'
+2025-08-27 23:31:55.495 +01:00 [INF] Request finished HTTP/1.1 GET http://localhost:7000/admin/catalog/types - 200 null application/json; charset=utf-8 400.8263ms
+2025-08-27 23:31:55.608 +01:00 [INF] Request starting HTTP/1.1 GET http://localhost:7000/admin/catalog/Student - null null
+2025-08-27 23:31:55.661 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 23:31:55.695 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 23:31:55.844 +01:00 [INF] [ADMIN][CATALOG] Student entities=1064
+2025-08-27 23:31:55.865 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BlueArchiveAPI.Catalog.EntityDto, BlueArchiveAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-08-27 23:31:55.959 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 251.8365ms
+2025-08-27 23:31:56.011 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 23:31:56.036 +01:00 [INF] Request finished HTTP/1.1 GET http://localhost:7000/admin/catalog/Student - 200 null application/json; charset=utf-8 427.2912ms
+2025-08-27 23:31:56.645 +01:00 [INF] Request starting HTTP/1.1 GET http://localhost:7000/admin/catalog/Currency - null null
+2025-08-27 23:31:56.690 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 23:31:56.706 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 23:31:56.724 +01:00 [INF] [ADMIN][CATALOG] Currency entities=16
+2025-08-27 23:31:56.733 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BlueArchiveAPI.Catalog.EntityDto, BlueArchiveAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-08-27 23:31:56.738 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 20.2391ms
+2025-08-27 23:31:56.746 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 23:31:56.750 +01:00 [INF] Request finished HTTP/1.1 GET http://localhost:7000/admin/catalog/Currency - 200 null application/json; charset=utf-8 105.6443ms
+2025-08-27 23:31:56.886 +01:00 [INF] Request starting HTTP/1.1 GET http://localhost:7000/admin/catalog/Gear - null null
+2025-08-27 23:31:56.924 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 23:31:56.949 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 23:31:56.968 +01:00 [INF] [ADMIN][CATALOG] Gear entities=67
+2025-08-27 23:31:56.978 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BlueArchiveAPI.Catalog.EntityDto, BlueArchiveAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-08-27 23:31:56.987 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 28.4572ms
+2025-08-27 23:31:56.992 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 23:31:56.997 +01:00 [INF] Request finished HTTP/1.1 GET http://localhost:7000/admin/catalog/Gear - 200 null application/json; charset=utf-8 111.2259ms
+2025-08-27 23:31:57.029 +01:00 [INF] Request starting HTTP/1.1 GET http://localhost:7000/admin/catalog/Weapon - null null
+2025-08-27 23:31:57.051 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 23:31:57.056 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 23:31:57.082 +01:00 [INF] [ADMIN][CATALOG] Weapon entities=0
+2025-08-27 23:31:57.098 +01:00 [INF] Executing OkObjectResult, writing value of type 'BlueArchiveAPI.Catalog.EntityDto[]'.
+2025-08-27 23:31:57.143 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 65.6307ms
+2025-08-27 23:31:57.148 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 23:31:57.154 +01:00 [INF] Request finished HTTP/1.1 GET http://localhost:7000/admin/catalog/Weapon - 200 null application/json; charset=utf-8 125.1807ms
+2025-08-27 23:31:57.165 +01:00 [INF] Request starting HTTP/1.1 GET http://localhost:7000/admin/catalog/GachaGroup - null null
+2025-08-27 23:31:57.172 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 23:31:57.175 +01:00 [INF] Route matched with {action = "GetByPath", controller = "AdminCatalog"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetByPath(System.String, System.Threading.CancellationToken) on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 23:31:57.192 +01:00 [INF] [ADMIN][CATALOG] GachaGroup entities=2459
+2025-08-27 23:31:57.216 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BlueArchiveAPI.Catalog.EntityDto, BlueArchiveAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-08-27 23:31:57.280 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI) in 98.7423ms
+2025-08-27 23:31:57.306 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.GetByPath (BlueArchiveAPI)'
+2025-08-27 23:31:57.310 +01:00 [INF] Request finished HTTP/1.1 GET http://localhost:7000/admin/catalog/GachaGroup - 200 null application/json; charset=utf-8 145.1905ms
+2025-08-27 23:31:57.486 +01:00 [INF] Request starting HTTP/1.1 POST http://localhost:7000/admin/catalog/rebuild - application/x-www-form-urlencoded 0
+2025-08-27 23:31:57.513 +01:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Rebuild (BlueArchiveAPI)'
+2025-08-27 23:31:57.543 +01:00 [INF] Route matched with {action = "Rebuild", controller = "AdminCatalog"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Rebuild() on controller BlueArchiveAPI.Controllers.AdminCatalogController (BlueArchiveAPI).
+2025-08-27 23:31:57.594 +01:00 [INF] [ADMIN][CATALOG] rebuilt curated table with 0 entries
+2025-08-27 23:31:57.598 +01:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType6`1[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-08-27 23:31:57.627 +01:00 [INF] Executed action BlueArchiveAPI.Controllers.AdminCatalogController.Rebuild (BlueArchiveAPI) in 72.9359ms
+2025-08-27 23:31:57.641 +01:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.AdminCatalogController.Rebuild (BlueArchiveAPI)'
+2025-08-27 23:31:57.646 +01:00 [INF] Request finished HTTP/1.1 POST http://localhost:7000/admin/catalog/rebuild - 200 null application/json; charset=utf-8 159.5222ms

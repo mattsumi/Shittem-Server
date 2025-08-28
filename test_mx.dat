@@ -1,0 +1,685 @@
+            {
+                "startedDateTime": "2025-08-26T14:46:45.936983+00:00",
+                "time": 90.87252616882324,
+                "request": {
+                    "method": "POST",
+                    "url": "https://nxm-eu-bagl.nexon.com:5000/api/gateway",
+                    "httpVersion": "HTTP/2.0",
+                    "cookies": [
+                        {
+                            "name": "AWSALB",
+                            "value": "HIyTde4H6jk8ppRZR405Xq/RBBNEkVKzkLTFnUqKIXK0nCYqJ/CLmPeKxdkTk3G81WH2MP5tOUUqcS+tvYjtcSY188sw2odSUVLZipr0kn7DjPfr/LvH+gfGZXJDhZUO4AktJlJYfLhAtLzUHvBl4YbyH1XFPbgzYHe99VZjXbMX0bmU/+0xAzxBjuy4Qw=="
+                        },
+                        {
+                            "name": "AWSALBCORS",
+                            "value": "HIyTde4H6jk8ppRZR405Xq/RBBNEkVKzkLTFnUqKIXK0nCYqJ/CLmPeKxdkTk3G81WH2MP5tOUUqcS+tvYjtcSY188sw2odSUVLZipr0kn7DjPfr/LvH+gfGZXJDhZUO4AktJlJYfLhAtLzUHvBl4YbyH1XFPbgzYHe99VZjXbMX0bmU/+0xAzxBjuy4Qw=="
+                        },
+                        {
+                            "name": "uuid",
+                            "value": "aabc133d-69bd-4b78-811f-95508e4235e7"
+                        }
+                    ],
+                    "headers": [
+                        {
+                            "name": "mx",
+                            "value": "1"
+                        },
+                        {
+                            "name": "accept-encoding",
+                            "value": "gzip"
+                        },
+                        {
+                            "name": "bundle-version",
+                            "value": "370197|370197|370197"
+                        },
+                        {
+                            "name": "user-agent",
+                            "value": "BestHTTP/2 v2.4.0"
+                        },
+                        {
+                            "name": "content-type",
+                            "value": "multipart/form-data; boundary=BestHTTP_HTTPMultiPartForm_B0D4F90"
+                        },
+                        {
+                            "name": "content-length",
+                            "value": "406"
+                        },
+                        {
+                            "name": "cookie",
+                            "value": "AWSALB=HIyTde4H6jk8ppRZR405Xq/RBBNEkVKzkLTFnUqKIXK0nCYqJ/CLmPeKxdkTk3G81WH2MP5tOUUqcS+tvYjtcSY188sw2odSUVLZipr0kn7DjPfr/LvH+gfGZXJDhZUO4AktJlJYfLhAtLzUHvBl4YbyH1XFPbgzYHe99VZjXbMX0bmU/+0xAzxBjuy4Qw==; AWSALBCORS=HIyTde4H6jk8ppRZR405Xq/RBBNEkVKzkLTFnUqKIXK0nCYqJ/CLmPeKxdkTk3G81WH2MP5tOUUqcS+tvYjtcSY188sw2odSUVLZipr0kn7DjPfr/LvH+gfGZXJDhZUO4AktJlJYfLhAtLzUHvBl4YbyH1XFPbgzYHe99VZjXbMX0bmU/+0xAzxBjuy4Qw==; uuid=aabc133d-69bd-4b78-811f-95508e4235e7"
+                        }
+                    ],
+                    "queryString": [],
+                    "headersSize": 720,
+                    "bodySize": 406,
+                    "postData": {
+                        "mimeType": "multipart/form-data; boundary=BestHTTP_HTTPMultiPartForm_B0D4F90",
+                        "text": "--BestHTTP_HTTPMultiPartForm_B0D4F90\r\nContent-Disposition: form-data; name=\"mx\"; filename=\"mx.dat\"\r\nContent-Type: application/octet-stream\r\nContent-Length: 201\r\n\r\n&\u008f/N%\u00ae\u00ef\u0000\u0013\u00d9\u00d9\u00d9\u00c6R\u00d1\u00d9<\u000ft\u00b1\u00d9&\u0094T\u0094\u00d2[\u0099\u00cd\u00d9&\u0012bcIC\u00b52\u009b\u00de\u00e8\u00f3p\u00f9\u000b\u00c9V\u00a7e\u0089k\u00a48w\u00bb\\&\u00e4\u00f6\u0098\u001eX\u00b8?\u00da>W\u00d5L\r[\u0085\u00eb\u00d1\u0002\u00dfL`\u00e7J?X\u00f9\u0084\u00189[\u00c3\u008cL\u00ce4\u0015\u007f2H\u0018\u00e7\u000e\u00ec\u0091\u001e\u00cc\u001b*\u00b4\u001e>\u00c7Z\u0091\u00feq\u00d4\u0011\u0082\u00073\u0000Q\u00882_\r\u00d8\u0086\u00f9\u00e6\u00c9M\u00fc,\u0013\u001d\u0001\u00d4\u0001\u009c\f%\u00a8\u00c4\u0018\u00e4N\u0018\u00b0\u00951W\u00d3\u00fd\u00b5+#i\u0006W\u009c\u00cf\u00bd\u009c\u0014 H\u00f6\u00f5b\u00b6\u00efL&o\u00b1\u0090\u009aDw\u00afvQ\u00a1A\u007f\u00bb\u00d4\u00ca\"\u00ec&\u00b3\n\u00cem\u0084\u00be\u00cd\u0013\u00d9\u00d9\u00d9\r\n--BestHTTP_HTTPMultiPartForm_B0D4F90--\r\n",
+                        "params": []
+                    }
+                },
+                "response": {
+                    "status": 200,
+                    "statusText": "",
+                    "httpVersion": "HTTP/2.0",
+                    "cookies": [
+                        {
+                            "name": "AWSALB",
+                            "value": "SMn6+ZfDK51vHKGpRb1wW8y//BX0e2Dutk2apsBLSKa8tyg4F5zXPF/pMOaVpPdhZ7j0FYcQO55o1p69iGElsSv0jGRUKbvYmtifcMNEEmv1EiyD3AXgl+Oi7eZlNY4a8bAJyPLCRFE37i9QWyePkNExkqACcabiLwfDpiJyNv7QI+lr/RLk93jpL2NKgA==",
+                            "path": "/",
+                            "domain": "",
+                            "httpOnly": false,
+                            "secure": false
+                        },
+                        {
+                            "name": "AWSALBCORS",
+                            "value": "SMn6+ZfDK51vHKGpRb1wW8y//BX0e2Dutk2apsBLSKa8tyg4F5zXPF/pMOaVpPdhZ7j0FYcQO55o1p69iGElsSv0jGRUKbvYmtifcMNEEmv1EiyD3AXgl+Oi7eZlNY4a8bAJyPLCRFE37i9QWyePkNExkqACcabiLwfDpiJyNv7QI+lr/RLk93jpL2NKgA==",
+                            "path": "/",
+                            "domain": "",
+                            "httpOnly": false,
+                            "secure": true,
+                            "sameSite": "None"
+                        }
+                    ],
+                    "headers": [
+                        {
+                            "name": "date",
+                            "value": "Tue, 26 Aug 2025 14:46:45 GMT"
+                        },
+                        {
+                            "name": "content-type",
+                            "value": "application/json; charset=utf-8"
+                        },
+                        {
+                            "name": "set-cookie",
+                            "value": "AWSALB=SMn6+ZfDK51vHKGpRb1wW8y//BX0e2Dutk2apsBLSKa8tyg4F5zXPF/pMOaVpPdhZ7j0FYcQO55o1p69iGElsSv0jGRUKbvYmtifcMNEEmv1EiyD3AXgl+Oi7eZlNY4a8bAJyPLCRFE37i9QWyePkNExkqACcabiLwfDpiJyNv7QI+lr/RLk93jpL2NKgA==; Expires=Tue, 02 Sep 2025 14:46:45 GMT; Path=/"
+                        },
+                        {
+                            "name": "set-cookie",
+                            "value": "AWSALBCORS=SMn6+ZfDK51vHKGpRb1wW8y//BX0e2Dutk2apsBLSKa8tyg4F5zXPF/pMOaVpPdhZ7j0FYcQO55o1p69iGElsSv0jGRUKbvYmtifcMNEEmv1EiyD3AXgl+Oi7eZlNY4a8bAJyPLCRFE37i9QWyePkNExkqACcabiLwfDpiJyNv7QI+lr/RLk93jpL2NKgA==; Expires=Tue, 02 Sep 2025 14:46:45 GMT; Path=/; SameSite=None; Secure"
+                        },
+                        {
+                            "name": "server",
+                            "value": "Kestrel"
+                        },
+                        {
+                            "name": "content-encoding",
+                            "value": "gzip"
+                        },
+                        {
+                            "name": "vary",
+                            "value": "Accept-Encoding"
+                        },
+                        {
+                            "name": "strict-transport-security",
+                            "value": "max-age=2592000"
+                        }
+                    ],
+                    "content": {
+                        "size": 143,
+                        "compression": 26,
+                        "mimeType": "application/json; charset=utf-8",
+                        "text": "{\"protocol\":\"NetworkTime_Sync\",\"packet\":\"{\\\"Protocol\\\":3,\\\"ReceiveTick\\\":638918488050000000,\\\"EchoSendTick\\\":638918488058973992,\\\"ServerTimeTicks\\\":638918488050000000}\"}"
+                    },
+                    "redirectURL": "",
+                    "headersSize": 810,
+                    "bodySize": 143
+                },
+                "cache": {},
+                "timings": {
+                    "connect": -1.0,
+                    "ssl": -1.0,
+                    "send": 19.4704532623291,
+                    "receive": 5.569219589233398,
+                    "wait": 65.83285331726074
+                },
+                "serverIPAddress": "52.59.87.26"
+            },
+            {
+                "startedDateTime": "2025-08-26T14:46:51.549640+00:00",
+                "time": 61.19394302368164,
+                "request": {
+                    "method": "POST",
+                    "url": "https://nxm-eu-bagl.nexon.com:5000/api/gateway",
+                    "httpVersion": "HTTP/2.0",
+                    "cookies": [
+                        {
+                            "name": "AWSALB",
+                            "value": "SMn6+ZfDK51vHKGpRb1wW8y//BX0e2Dutk2apsBLSKa8tyg4F5zXPF/pMOaVpPdhZ7j0FYcQO55o1p69iGElsSv0jGRUKbvYmtifcMNEEmv1EiyD3AXgl+Oi7eZlNY4a8bAJyPLCRFE37i9QWyePkNExkqACcabiLwfDpiJyNv7QI+lr/RLk93jpL2NKgA=="
+                        },
+                        {
+                            "name": "AWSALBCORS",
+                            "value": "SMn6+ZfDK51vHKGpRb1wW8y//BX0e2Dutk2apsBLSKa8tyg4F5zXPF/pMOaVpPdhZ7j0FYcQO55o1p69iGElsSv0jGRUKbvYmtifcMNEEmv1EiyD3AXgl+Oi7eZlNY4a8bAJyPLCRFE37i9QWyePkNExkqACcabiLwfDpiJyNv7QI+lr/RLk93jpL2NKgA=="
+                        },
+                        {
+                            "name": "uuid",
+                            "value": "aabc133d-69bd-4b78-811f-95508e4235e7"
+                        }
+                    ],
+                    "headers": [
+                        {
+                            "name": "mx",
+                            "value": "1"
+                        },
+                        {
+                            "name": "accept-encoding",
+                            "value": "gzip"
+                        },
+                        {
+                            "name": "bundle-version",
+                            "value": "370197|370197|370197"
+                        },
+                        {
+                            "name": "user-agent",
+                            "value": "BestHTTP/2 v2.4.0"
+                        },
+                        {
+                            "name": "content-type",
+                            "value": "multipart/form-data; boundary=BestHTTP_HTTPMultiPartForm_ED7F2810"
+                        },
+                        {
+                            "name": "content-length",
+                            "value": "470"
+                        },
+                        {
+                            "name": "cookie",
+                            "value": "AWSALB=SMn6+ZfDK51vHKGpRb1wW8y//BX0e2Dutk2apsBLSKa8tyg4F5zXPF/pMOaVpPdhZ7j0FYcQO55o1p69iGElsSv0jGRUKbvYmtifcMNEEmv1EiyD3AXgl+Oi7eZlNY4a8bAJyPLCRFE37i9QWyePkNExkqACcabiLwfDpiJyNv7QI+lr/RLk93jpL2NKgA==; AWSALBCORS=SMn6+ZfDK51vHKGpRb1wW8y//BX0e2Dutk2apsBLSKa8tyg4F5zXPF/pMOaVpPdhZ7j0FYcQO55o1p69iGElsSv0jGRUKbvYmtifcMNEEmv1EiyD3AXgl+Oi7eZlNY4a8bAJyPLCRFE37i9QWyePkNExkqACcabiLwfDpiJyNv7QI+lr/RLk93jpL2NKgA==; uuid=aabc133d-69bd-4b78-811f-95508e4235e7"
+                        }
+                    ],
+                    "queryString": [],
+                    "headersSize": 721,
+                    "bodySize": 470,
+                    "postData": {
+                        "mimeType": "multipart/form-data; boundary=BestHTTP_HTTPMultiPartForm_ED7F2810",
+                        "text": "--BestHTTP_HTTPMultiPartForm_ED7F2810\r\nContent-Disposition: form-data; name=\"mx\"; filename=\"mx.dat\"\r\nContent-Type: application/octet-stream\r\nContent-Length: 263\r\n\r\n\u00d51K\u00d9\u00b9|av\u00e9\u00d8\u00d9\u00d9\u00c6R\u00d1\u00d92\u000ft\u00b1\u00d9&\u0094\u0017\u0088\u00b6[\u00e9\u00cd_8&\u00ab\u00b7\\t\u00cd\u00b1h\u0010\u00f7U\u00bdJ\u00e1\u00caz\u00f5\u001d\u0012\u00db\u00be\u000b\u0011\u0003\\\u00cf[\u00ea'.\u00b8\u00efN\u0004Ge>\u0010\u00aeX\u00b4\u00beEp\u0095\u00d2[\u00ca\u009b\u00e5\u00115\u00d7\u00bcdH\u00b3ce\u0012\u000f{\u00de\u0082\u00ec\u00c1Nr\u00d6\u00dd\u00d8M\t\u0001\u00feP\u0096\u00a0\u0097\u009a\u00c8\u00e8\u00c8J^\u00a0\u00c1\u00fe\u00d8\u00bc)\u0082\u00bfc\u001f\u00c8]\u00c6\u0005i\u00cd\u00b4\\c\u008f#\u00d1\u001b\u00ac$}\u00f4\u0082\\\u0003d\u00a4'Y\u0015Z\u00c4\u0003pI\u00bcR.\u00bd\u00fc\u00b4\u00da\u00fb\u00fd]\u009cE\u00de]\u008a\u001b \u00d4\u0012\bcf\u008c\u00a2m\u008f\u00c0d\u001f\u00eaQ\u00d2\u00f5s\u0013-\u00034h\u00c2i\u001230B\u00df\u00d0Rq\u00deB\u00e8\u00ee\u00fe\r\n/\u008d\u00ef2\f*\u0081\u00c7\u00cf^k\u00b85L\u00e4\u0017\u0091v\u000b\u00a3'\u00ec\u00eax\u00c0C[fE\u00ea\u001aO\u009cH\u00e5\u0018\fbB&m2\u00ee\u00c9\u00cc`4\u00e9\u00d8\u00d9\u00d9\r\n--BestHTTP_HTTPMultiPartForm_ED7F2810--\r\n",
+                        "params": []
+                    }
+                },
+                "response": {
+                    "status": 200,
+                    "statusText": "",
+                    "httpVersion": "HTTP/2.0",
+                    "cookies": [
+                        {
+                            "name": "AWSALB",
+                            "value": "iH14bNvIcfAgO7esaNduYcfmcOW8A2uPr9Cz6bLHzO2zg4IHqVg3bp/KfhGV2D17YYD/Kjs5swEqlO/Ypx0P64FyM9FbUqU/hmASrmgHA76C2/g1c8qvq5erGeqG8w9NqRTNWze039c7qVnnllW3dBY11kPfn3QFCnsWaxRnqLmPRqeCGyMHQ3tRWk+8qQ==",
+                            "path": "/",
+                            "domain": "",
+                            "httpOnly": false,
+                            "secure": false
+                        },
+                        {
+                            "name": "AWSALBCORS",
+                            "value": "iH14bNvIcfAgO7esaNduYcfmcOW8A2uPr9Cz6bLHzO2zg4IHqVg3bp/KfhGV2D17YYD/Kjs5swEqlO/Ypx0P64FyM9FbUqU/hmASrmgHA76C2/g1c8qvq5erGeqG8w9NqRTNWze039c7qVnnllW3dBY11kPfn3QFCnsWaxRnqLmPRqeCGyMHQ3tRWk+8qQ==",
+                            "path": "/",
+                            "domain": "",
+                            "httpOnly": false,
+                            "secure": true,
+                            "sameSite": "None"
+                        }
+                    ],
+                    "headers": [
+                        {
+                            "name": "date",
+                            "value": "Tue, 26 Aug 2025 14:46:51 GMT"
+                        },
+                        {
+                            "name": "content-type",
+                            "value": "application/json; charset=utf-8"
+                        },
+                        {
+                            "name": "set-cookie",
+                            "value": "AWSALB=iH14bNvIcfAgO7esaNduYcfmcOW8A2uPr9Cz6bLHzO2zg4IHqVg3bp/KfhGV2D17YYD/Kjs5swEqlO/Ypx0P64FyM9FbUqU/hmASrmgHA76C2/g1c8qvq5erGeqG8w9NqRTNWze039c7qVnnllW3dBY11kPfn3QFCnsWaxRnqLmPRqeCGyMHQ3tRWk+8qQ==; Expires=Tue, 02 Sep 2025 14:46:51 GMT; Path=/"
+                        },
+                        {
+                            "name": "set-cookie",
+                            "value": "AWSALBCORS=iH14bNvIcfAgO7esaNduYcfmcOW8A2uPr9Cz6bLHzO2zg4IHqVg3bp/KfhGV2D17YYD/Kjs5swEqlO/Ypx0P64FyM9FbUqU/hmASrmgHA76C2/g1c8qvq5erGeqG8w9NqRTNWze039c7qVnnllW3dBY11kPfn3QFCnsWaxRnqLmPRqeCGyMHQ3tRWk+8qQ==; Expires=Tue, 02 Sep 2025 14:46:51 GMT; Path=/; SameSite=None; Secure"
+                        },
+                        {
+                            "name": "server",
+                            "value": "Kestrel"
+                        },
+                        {
+                            "name": "content-encoding",
+                            "value": "gzip"
+                        },
+                        {
+                            "name": "vary",
+                            "value": "Accept-Encoding"
+                        },
+                        {
+                            "name": "strict-transport-security",
+                            "value": "max-age=2592000"
+                        }
+                    ],
+                    "content": {
+                        "size": 1022,
+                        "compression": 3147,
+                        "mimeType": "application/json; charset=utf-8",
+                        "text": "{\"protocol\":\"Mail_List\",\"packet\":\"{\\\"Protocol\\\":7000,\\\"MailDBs\\\":[{\\\"ServerId\\\":62744797,\\\"AccountServerId\\\":3218642,\\\"Type\\\":11,\\\"UniqueId\\\":-1,\\\"Sender\\\":\\\"UI_MAILBOX_POST_SENDER_ARONA\\\",\\\"LocalizedSender\\\":{\\\"Kr\\\":\\\"UI_MAILBOX_POST_SENDER_ARONA\\\",\\\"En\\\":\\\"UI_MAILBOX_POST_SENDER_ARONA\\\",\\\"Th\\\":\\\"UI_MAILBOX_POST_SENDER_ARONA\\\",\\\"Tw\\\":\\\"UI_MAILBOX_POST_SENDER_ARONA\\\"},\\\"Comment\\\":\\\"UI_MAILBOX_CLAN_ATTENDANCE_REWARD_MESSAGE_NORMAL\\\",\\\"LocalizedComment\\\":{\\\"Kr\\\":\\\"UI_MAILBOX_CLAN_ATTENDANCE_REWARD_MESSAGE_NORMAL\\\",\\\"En\\\":\\\"UI_MAILBOX_CLAN_ATTENDANCE_REWARD_MESSAGE_NORMAL\\\",\\\"Th\\\":\\\"UI_MAILBOX_CLAN_ATTENDANCE_REWARD_MESSAGE_NORMAL\\\",\\\"Tw\\\":\\\"UI_MAILBOX_CLAN_ATTENDANCE_REWARD_MESSAGE_NORMAL\\\"},\\\"SendDate\\\":\\\"2025-08-26T20:33:05\\\",\\\"ExpireDate\\\":\\\"2025-09-02T20:33:05\\\",\\\"ParcelInfos\\\":[{\\\"Key\\\":{\\\"Type\\\":2,\\\"Id\\\":5},\\\"Amount\\\":10,\\\"Multiplier\\\":{\\\"rawValue\\\":10000},\\\"Probability\\\":{\\\"rawValue\\\":10000}}]},{\\\"ServerId\\\":62744630,\\\"AccountServerId\\\":3218642,\\\"UniqueId\\\":-1,\\\"Sender\\\":\\\"\uc0ec\ub808 \uad00\ub9ac\uc0ac\ubb34\uc18c\\\",\\\"LocalizedSender\\\":{\\\"Kr\\\":\\\"\uc0ec\ub808 \uad00\ub9ac\uc0ac\ubb34\uc18c\\\",\\\"En\\\":\\\"Schale\\\",\\\"Th\\\":\\\"\u0e2a\u0e33\u0e19\u0e31\u0e01\u0e07\u0e32\u0e19\u0e08\u0e31\u0e14\u0e01\u0e32\u0e23\u0e0a\u0e32\u0e40\u0e25\u0e48\u0e15\u0e4c\\\",\\\"Tw\\\":\\\"\u590f\u840a\u7ba1\u7406\u4e8b\u52d9\u6240\\\"},\\\"Comment\\\":\\\"\uc810\uac80 \uc885\ub8cc \ubcf4\uc0c1\uc785\ub2c8\ub2e4.\\\",\\\"LocalizedComment\\\":{\\\"Kr\\\":\\\"\uc810\uac80 \uc885\ub8cc \ubcf4\uc0c1\uc785\ub2c8\ub2e4.\\\",\\\"En\\\":\\\"Maintenance Complete!\\\",\\\"Th\\\":\\\"\u0e02\u0e2d\u0e07\u0e23\u0e32\u0e07\u0e27\u0e31\u0e25\u0e1b\u0e34\u0e14\u0e1b\u0e23\u0e31\u0e1a\u0e1b\u0e23\u0e38\u0e07\u0e40\u0e0b\u0e34\u0e23\u0e4c\u0e1f\u0e40\u0e27\u0e2d\u0e23\u0e4c\\\",\\\"Tw\\\":\\\"\u5b9a\u671f\u7dad\u8b77\u88dc\u511f\\\"},\\\"SendDate\\\":\\\"2025-08-26T20:27:52\\\",\\\"ExpireDate\\\":\\\"2025-09-02T20:27:52\\\",\\\"ParcelInfos\\\":[{\\\"Key\\\":{\\\"Type\\\":2,\\\"Id\\\":3},\\\"Amount\\\":360,\\\"Multiplier\\\":{\\\"rawValue\\\":10000},\\\"Probability\\\":{\\\"rawValue\\\":10000}}]},{\\\"ServerId\\\":62744620,\\\"AccountServerId\\\":3218642,\\\"Type\\\":10,\\\"UniqueId\\\":-1,\\\"Sender\\\":\\\"UI_MAILBOX_POST_SENDER_ARONA\\\",\\\"LocalizedSender\\\":{\\\"Kr\\\":\\\"UI_MAILBOX_POST_SENDER_ARONA\\\",\\\"En\\\":\\\"UI_MAILBOX_POST_SENDER_ARONA\\\",\\\"Th\\\":\\\"UI_MAILBOX_POST_SENDER_ARONA\\\",\\\"Tw\\\":\\\"UI_MAILBOX_POST_SENDER_ARONA\\\"},\\\"Comment\\\":\\\"UI_MAILBOX_EXPIRY_CHANGE_ITEM\\\",\\\"LocalizedComment\\\":{\\\"Kr\\\":\\\"UI_MAILBOX_EXPIRY_CHANGE_ITEM\\\",\\\"En\\\":\\\"UI_MAILBOX_EXPIRY_CHANGE_ITEM\\\",\\\"Th\\\":\\\"UI_MAILBOX_EXPIRY_CHANGE_ITEM\\\",\\\"Tw\\\":\\\"UI_MAILBOX_EXPIRY_CHANGE_ITEM\\\"},\\\"SendDate\\\":\\\"2025-08-26T20:27:31\\\",\\\"ExpireDate\\\":\\\"2025-09-02T20:27:31\\\",\\\"ParcelInfos\\\":[{\\\"Key\\\":{\\\"Type\\\":4,\\\"Id\\\":1},\\\"Amount\\\":30,\\\"Multiplier\\\":{\\\"rawValue\\\":10000},\\\"Probability\\\":{\\\"rawValue\\\":10000}}]},{\\\"ServerId\\\":62731203,\\\"AccountServerId\\\":3218642,\\\"Type\\\":1,\\\"UniqueId\\\":1,\\\"Sender\\\":\\\"UI_MAILBOX_POST_SENDER_ARONA\\\",\\\"LocalizedSender\\\":{\\\"Kr\\\":\\\"UI_MAILBOX_POST_SENDER_ARONA\\\",\\\"En\\\":\\\"UI_MAILBOX_POST_SENDER_ARONA\\\",\\\"Th\\\":\\\"UI_MAILBOX_POST_SENDER_ARONA\\\",\\\"Tw\\\":\\\"UI_MAILBOX_POST_SENDER_ARONA\\\"},\\\"Comment\\\":\\\"UI_MAILBOX_ATTENDANCE_REWARD_MESSAGE_NORMAL\\\",\\\"LocalizedComment\\\":{\\\"Kr\\\":\\\"UI_MAILBOX_ATTENDANCE_REWARD_MESSAGE_NORMAL\\\",\\\"En\\\":\\\"UI_MAILBOX_ATTENDANCE_REWARD_MESSAGE_NORMAL\\\",\\\"Th\\\":\\\"UI_MAILBOX_ATTENDANCE_REWARD_MESSAGE_NORMAL\\\",\\\"Tw\\\":\\\"UI_MAILBOX_ATTENDANCE_REWARD_MESSAGE_NORMAL\\\"},\\\"SendDate\\\":\\\"2025-08-26T08:56:59\\\",\\\"ExpireDate\\\":\\\"2025-09-02T08:56:59\\\",\\\"ParcelInfos\\\":[{\\\"Key\\\":{\\\"Type\\\":2,\\\"Id\\\":3},\\\"Amount\\\":50,\\\"Multiplier\\\":{\\\"rawValue\\\":10000},\\\"Probability\\\":{\\\"rawValue\\\":10000}}]},{\\\"ServerId\\\":62711634,\\\"AccountServerId\\\":3218642,\\\"Type\\\":1,\\\"UniqueId\\\":1,\\\"Sender\\\":\\\"UI_MAILBOX_POST_SENDER_ARONA\\\",\\\"LocalizedSender\\\":{\\\"Kr\\\":\\\"UI_MAILBOX_POST_SENDER_ARONA\\\",\\\"En\\\":\\\"UI_MAILBOX_POST_SENDER_ARONA\\\",\\\"Th\\\":\\\"UI_MAILBOX_POST_SENDER_ARONA\\\",\\\"Tw\\\":\\\"UI_MAILBOX_POST_SENDER_ARONA\\\"},\\\"Comment\\\":\\\"UI_MAILBOX_ATTENDANCE_REWARD_MESSAGE_NORMAL\\\",\\\"LocalizedComment\\\":{\\\"Kr\\\":\\\"UI_MAILBOX_ATTENDANCE_REWARD_MESSAGE_NORMAL\\\",\\\"En\\\":\\\"UI_MAILBOX_ATTENDANCE_REWARD_MESSAGE_NORMAL\\\",\\\"Th\\\":\\\"UI_MAILBOX_ATTENDANCE_REWARD_MESSAGE_NORMAL\\\",\\\"Tw\\\":\\\"UI_MAILBOX_ATTENDANCE_REWARD_MESSAGE_NORMAL\\\"},\\\"SendDate\\\":\\\"2025-08-25T07:32:09\\\",\\\"ExpireDate\\\":\\\"2025-09-01T07:32:09\\\",\\\"ParcelInfos\\\":[{\\\"Key\\\":{\\\"Type\\\":2,\\\"Id\\\":1},\\\"Amount\\\":20000,\\\"Multiplier\\\":{\\\"rawValue\\\":10000},\\\"Probability\\\":{\\\"rawValue\\\":10000}}]}],\\\"Count\\\":5,\\\"ServerTimeTicks\\\":638918488110000000,\\\"ServerNotification\\\":8}\"}"
+                    },
+                    "redirectURL": "",
+                    "headersSize": 810,
+                    "bodySize": 1022
+                },
+                "cache": {},
+                "timings": {
+                    "connect": -1.0,
+                    "ssl": -1.0,
+                    "send": 5.957841873168945,
+                    "receive": 3.23486328125,
+                    "wait": 52.001237869262695
+                },
+                "serverIPAddress": "52.59.87.26"
+            },
+            {
+                "startedDateTime": "2025-08-26T14:46:53.479972+00:00",
+                "time": 161.03005409240723,
+                "request": {
+                    "method": "POST",
+                    "url": "https://nxm-eu-bagl.nexon.com:5000/api/gateway",
+                    "httpVersion": "HTTP/2.0",
+                    "cookies": [
+                        {
+                            "name": "AWSALB",
+                            "value": "iH14bNvIcfAgO7esaNduYcfmcOW8A2uPr9Cz6bLHzO2zg4IHqVg3bp/KfhGV2D17YYD/Kjs5swEqlO/Ypx0P64FyM9FbUqU/hmASrmgHA76C2/g1c8qvq5erGeqG8w9NqRTNWze039c7qVnnllW3dBY11kPfn3QFCnsWaxRnqLmPRqeCGyMHQ3tRWk+8qQ=="
+                        },
+                        {
+                            "name": "AWSALBCORS",
+                            "value": "iH14bNvIcfAgO7esaNduYcfmcOW8A2uPr9Cz6bLHzO2zg4IHqVg3bp/KfhGV2D17YYD/Kjs5swEqlO/Ypx0P64FyM9FbUqU/hmASrmgHA76C2/g1c8qvq5erGeqG8w9NqRTNWze039c7qVnnllW3dBY11kPfn3QFCnsWaxRnqLmPRqeCGyMHQ3tRWk+8qQ=="
+                        },
+                        {
+                            "name": "uuid",
+                            "value": "aabc133d-69bd-4b78-811f-95508e4235e7"
+                        }
+                    ],
+                    "headers": [
+                        {
+                            "name": "mx",
+                            "value": "1"
+                        },
+                        {
+                            "name": "accept-encoding",
+                            "value": "gzip"
+                        },
+                        {
+                            "name": "bundle-version",
+                            "value": "370197|370197|370197"
+                        },
+                        {
+                            "name": "user-agent",
+                            "value": "BestHTTP/2 v2.4.0"
+                        },
+                        {
+                            "name": "content-type",
+                            "value": "multipart/form-data; boundary=BestHTTP_HTTPMultiPartForm_98D7CE38"
+                        },
+                        {
+                            "name": "content-length",
+                            "value": "449"
+                        },
+                        {
+                            "name": "cookie",
+                            "value": "AWSALB=iH14bNvIcfAgO7esaNduYcfmcOW8A2uPr9Cz6bLHzO2zg4IHqVg3bp/KfhGV2D17YYD/Kjs5swEqlO/Ypx0P64FyM9FbUqU/hmASrmgHA76C2/g1c8qvq5erGeqG8w9NqRTNWze039c7qVnnllW3dBY11kPfn3QFCnsWaxRnqLmPRqeCGyMHQ3tRWk+8qQ==; AWSALBCORS=iH14bNvIcfAgO7esaNduYcfmcOW8A2uPr9Cz6bLHzO2zg4IHqVg3bp/KfhGV2D17YYD/Kjs5swEqlO/Ypx0P64FyM9FbUqU/hmASrmgHA76C2/g1c8qvq5erGeqG8w9NqRTNWze039c7qVnnllW3dBY11kPfn3QFCnsWaxRnqLmPRqeCGyMHQ3tRWk+8qQ==; uuid=aabc133d-69bd-4b78-811f-95508e4235e7"
+                        }
+                    ],
+                    "queryString": [],
+                    "headersSize": 721,
+                    "bodySize": 449,
+                    "postData": {
+                        "mimeType": "multipart/form-data; boundary=BestHTTP_HTTPMultiPartForm_98D7CE38",
+                        "text": "--BestHTTP_HTTPMultiPartForm_98D7CE38\r\nContent-Disposition: form-data; name=\"mx\"; filename=\"mx.dat\"\r\nContent-Type: application/octet-stream\r\nContent-Length: 242\r\n\r\n\u00a3[fCPh\u00b6L\u00d7\u00d8\u00d9\u00d9\u00c6R\u00d1\u00d94\u000ft\u00b1\u00d9&\u0094W\u0084\u00b2\u001b\u00e9\u00c1\\&\u0012\u00a2\u00b2\u00b9 \u00f1\u00b6\u00edi\u00d2\u0088\u00efR\u00c2U\u0000\u0088\u00bd5\u00fb\u00b4\u0006\bi\u00f5\u00c0\u0094\u00f2\u00e3(fv\u0013\u00dd6G\u00da>\u00e5E\u00fae\u00adhV\u00ac-\u00b9\u00ed>K\u0018j\u00ac\u00a7\u009a\u0004Wce\u0090\u00b9\u0007\u00883\u00f5\n\u00ea\u0014\u00f7YS&ZeY\u00cbKr\u00ea\u00d1X\u00f3\"\u00b9i)W\u009b&/\u008aa\u00b6\u00db\u00fa\u00c1e\u008b{\t\u0001\u0013Vh6\u00df\u00bbikp\u00dcz\u00e1\u000e\u0093x9\u00c5\u0088\u00aa\u00df\u00a0\u00f3\u00f1,\u00b9\u00e7t\u0096\u00ba\u00b0\u009a\u00f0`\u00c1\u000f\u00ad\u00d9\u00aa]\u00a0\u0084\u001e\u00f8-\u000e\u0086:\u0083S\u00f0\u00bf>b\"\u00fb\u00a7\u0088\u00d9\u00da\u0092\u0002w\u008e\u00d6\"\u00b3\u00e2\u0006\u008f\u00f4;\u00ca\u0007\u0094!9O\u00145\u00ae\u00cb\u008c\u0005l|\u00a7\u00e5=\u00c8\u00ce\u00bc\u00e0d^\u00cab\u00e3\u00b6\u00b5~\u00e6|\f:\u0003\u00d7\u00d8\u00d9\u00d9\r\n--BestHTTP_HTTPMultiPartForm_98D7CE38--\r\n",
+                        "params": []
+                    }
+                },
+                "response": {
+                    "status": 200,
+                    "statusText": "",
+                    "httpVersion": "HTTP/2.0",
+                    "cookies": [
+                        {
+                            "name": "AWSALB",
+                            "value": "kZA9if24yJURO4+JwAJrlgWWK8T6Z4mCyY8NsAELKT7SvktF7Ec7yzxPazTdj9ZTKMJWrh444YBzuAIZi3TUcBDwKx0Lkkj6jrruGaQW2LbFU9COI+398Q1IZB4vIqZ+5T8QApEg93PNpD0tt3cC1tM3qdY+kGmZjZ619M41UD4Fp4YKS5xmfjqET80fAA==",
+                            "path": "/",
+                            "domain": "",
+                            "httpOnly": false,
+                            "secure": false
+                        },
+                        {
+                            "name": "AWSALBCORS",
+                            "value": "kZA9if24yJURO4+JwAJrlgWWK8T6Z4mCyY8NsAELKT7SvktF7Ec7yzxPazTdj9ZTKMJWrh444YBzuAIZi3TUcBDwKx0Lkkj6jrruGaQW2LbFU9COI+398Q1IZB4vIqZ+5T8QApEg93PNpD0tt3cC1tM3qdY+kGmZjZ619M41UD4Fp4YKS5xmfjqET80fAA==",
+                            "path": "/",
+                            "domain": "",
+                            "httpOnly": false,
+                            "secure": true,
+                            "sameSite": "None"
+                        }
+                    ],
+                    "headers": [
+                        {
+                            "name": "date",
+                            "value": "Tue, 26 Aug 2025 14:46:53 GMT"
+                        },
+                        {
+                            "name": "content-type",
+                            "value": "application/json; charset=utf-8"
+                        },
+                        {
+                            "name": "set-cookie",
+                            "value": "AWSALB=kZA9if24yJURO4+JwAJrlgWWK8T6Z4mCyY8NsAELKT7SvktF7Ec7yzxPazTdj9ZTKMJWrh444YBzuAIZi3TUcBDwKx0Lkkj6jrruGaQW2LbFU9COI+398Q1IZB4vIqZ+5T8QApEg93PNpD0tt3cC1tM3qdY+kGmZjZ619M41UD4Fp4YKS5xmfjqET80fAA==; Expires=Tue, 02 Sep 2025 14:46:53 GMT; Path=/"
+                        },
+                        {
+                            "name": "set-cookie",
+                            "value": "AWSALBCORS=kZA9if24yJURO4+JwAJrlgWWK8T6Z4mCyY8NsAELKT7SvktF7Ec7yzxPazTdj9ZTKMJWrh444YBzuAIZi3TUcBDwKx0Lkkj6jrruGaQW2LbFU9COI+398Q1IZB4vIqZ+5T8QApEg93PNpD0tt3cC1tM3qdY+kGmZjZ619M41UD4Fp4YKS5xmfjqET80fAA==; Expires=Tue, 02 Sep 2025 14:46:53 GMT; Path=/; SameSite=None; Secure"
+                        },
+                        {
+                            "name": "server",
+                            "value": "Kestrel"
+                        },
+                        {
+                            "name": "content-encoding",
+                            "value": "gzip"
+                        },
+                        {
+                            "name": "vary",
+                            "value": "Accept-Encoding"
+                        },
+                        {
+                            "name": "strict-transport-security",
+                            "value": "max-age=2592000"
+                        }
+                    ],
+                    "content": {
+                        "size": 952,
+                        "compression": 2394,
+                        "mimeType": "application/json; charset=utf-8",
+                        "text": "{\"protocol\":\"Mail_Receive\",\"packet\":\"{\\\"Protocol\\\":7002,\\\"MailServerIds\\\":[62711634,62731203,62744620,62744630,62744797],\\\"ParcelResultDB\\\":{\\\"AccountCurrencyDB\\\":{\\\"AccountLevel\\\":57,\\\"AcademyLocationRankSum\\\":31,\\\"CurrencyDict\\\":{\\\"Gem\\\":1227,\\\"GemPaid\\\":0,\\\"GemBonus\\\":1227,\\\"Gold\\\":23944242,\\\"ActionPoint\\\":404,\\\"AcademyTicket\\\":5,\\\"ArenaTicket\\\":5,\\\"RaidTicket\\\":3,\\\"WeekDungeonChaserATicket\\\":0,\\\"WeekDungeonChaserBTicket\\\":0,\\\"WeekDungeonChaserCTicket\\\":0,\\\"SchoolDungeonATicket\\\":0,\\\"SchoolDungeonBTicket\\\":0,\\\"SchoolDungeonCTicket\\\":0,\\\"TimeAttackDungeonTicket\\\":3,\\\"MasterCoin\\\":2020,\\\"WorldRaidTicketA\\\":40,\\\"WorldRaidTicketB\\\":40,\\\"WorldRaidTicketC\\\":40,\\\"ChaserTotalTicket\\\":6,\\\"SchoolDungeonTotalTicket\\\":6,\\\"EliminateTicketA\\\":5,\\\"EliminateTicketB\\\":6,\\\"EliminateTicketC\\\":6,\\\"EliminateTicketD\\\":6},\\\"UpdateTimeDict\\\":{\\\"ActionPoint\\\":\\\"2025-08-26T23:46:53\\\",\\\"AcademyTicket\\\":\\\"2025-08-20T04:01:51\\\",\\\"ArenaTicket\\\":\\\"2025-08-19T07:50:31\\\",\\\"RaidTicket\\\":\\\"2025-08-12T04:28:39\\\",\\\"WeekDungeonChaserATicket\\\":\\\"2025-06-30T06:27:11\\\",\\\"WeekDungeonChaserBTicket\\\":\\\"2025-06-30T06:27:11\\\",\\\"WeekDungeonChaserCTicket\\\":\\\"2025-06-30T06:27:11\\\",\\\"SchoolDungeonATicket\\\":\\\"2025-06-30T06:27:11\\\",\\\"SchoolDungeonBTicket\\\":\\\"2025-06-30T06:27:11\\\",\\\"SchoolDungeonCTicket\\\":\\\"2025-06-30T06:27:11\\\",\\\"TimeAttackDungeonTicket\\\":\\\"2025-08-14T04:40:10\\\",\\\"MasterCoin\\\":\\\"2025-06-30T06:27:11\\\",\\\"WorldRaidTicketA\\\":\\\"2025-06-30T06:27:11\\\",\\\"WorldRaidTicketB\\\":\\\"2025-06-30T06:27:11\\\",\\\"WorldRaidTicketC\\\":\\\"2025-06-30T06:27:11\\\",\\\"ChaserTotalTicket\\\":\\\"2025-08-12T04:28:39\\\",\\\"SchoolDungeonTotalTicket\\\":\\\"2025-08-24T07:29:54\\\",\\\"EliminateTicketA\\\":\\\"2025-08-26T08:56:27\\\",\\\"EliminateTicketB\\\":\\\"2025-08-26T08:56:27\\\",\\\"EliminateTicketC\\\":\\\"2025-08-26T08:56:27\\\",\\\"EliminateTicketD\\\":\\\"2025-08-26T08:56:27\\\"}},\\\"ItemDBs\\\":{\\\"112141523\\\":{\\\"Type\\\":4,\\\"ServerId\\\":112141523,\\\"UniqueId\\\":1,\\\"StackCount\\\":70}},\\\"DisplaySequence\\\":[{\\\"Key\\\":{\\\"Type\\\":2,\\\"Id\\\":1},\\\"Amount\\\":20000,\\\"Multiplier\\\":{\\\"rawValue\\\":10000},\\\"Probability\\\":{\\\"rawValue\\\":10000}},{\\\"Key\\\":{\\\"Type\\\":2,\\\"Id\\\":3},\\\"Amount\\\":50,\\\"Multiplier\\\":{\\\"rawValue\\\":10000},\\\"Probability\\\":{\\\"rawValue\\\":10000}},{\\\"Key\\\":{\\\"Type\\\":4,\\\"Id\\\":1},\\\"Amount\\\":30,\\\"Multiplier\\\":{\\\"rawValue\\\":10000},\\\"Probability\\\":{\\\"rawValue\\\":10000}},{\\\"Key\\\":{\\\"Type\\\":2,\\\"Id\\\":3},\\\"Amount\\\":360,\\\"Multiplier\\\":{\\\"rawValue\\\":10000},\\\"Probability\\\":{\\\"rawValue\\\":10000}},{\\\"Key\\\":{\\\"Type\\\":2,\\\"Id\\\":5},\\\"Amount\\\":10,\\\"Multiplier\\\":{\\\"rawValue\\\":10000},\\\"Probability\\\":{\\\"rawValue\\\":10000}}],\\\"ParcelForMission\\\":[{\\\"Key\\\":{\\\"Type\\\":2,\\\"Id\\\":1},\\\"Amount\\\":20000,\\\"Multiplier\\\":{\\\"rawValue\\\":10000},\\\"Probability\\\":{\\\"rawValue\\\":10000}},{\\\"Key\\\":{\\\"Type\\\":2,\\\"Id\\\":3},\\\"Amount\\\":50,\\\"Multiplier\\\":{\\\"rawValue\\\":10000},\\\"Probability\\\":{\\\"rawValue\\\":10000}},{\\\"Key\\\":{\\\"Type\\\":4,\\\"Id\\\":1},\\\"Amount\\\":30,\\\"Multiplier\\\":{\\\"rawValue\\\":10000},\\\"Probability\\\":{\\\"rawValue\\\":10000}},{\\\"Key\\\":{\\\"Type\\\":2,\\\"Id\\\":3},\\\"Amount\\\":360,\\\"Multiplier\\\":{\\\"rawValue\\\":10000},\\\"Probability\\\":{\\\"rawValue\\\":10000}},{\\\"Key\\\":{\\\"Type\\\":2,\\\"Id\\\":5},\\\"Amount\\\":10,\\\"Multiplier\\\":{\\\"rawValue\\\":10000},\\\"Probability\\\":{\\\"rawValue\\\":10000}}]},\\\"ServerTimeTicks\\\":638918488130000000,\\\"ServerNotification\\\":8,\\\"MissionProgressDBs\\\":[{\\\"MissionUniqueId\\\":82017,\\\"StartTime\\\":\\\"2025-07-01T19:56:33\\\",\\\"ProgressParameters\\\":{\\\"0\\\":63727636}}]}\"}"
+                    },
+                    "redirectURL": "",
+                    "headersSize": 810,
+                    "bodySize": 952
+                },
+                "cache": {},
+                "timings": {
+                    "connect": -1.0,
+                    "ssl": -1.0,
+                    "send": 14.689445495605469,
+                    "receive": 4.886627197265625,
+                    "wait": 141.45398139953613
+                },
+                "serverIPAddress": "52.59.87.26"
+            },
+            {
+                "startedDateTime": "2025-08-26T14:46:53.743612+00:00",
+                "time": 84.69867706298828,
+                "request": {
+                    "method": "POST",
+                    "url": "https://nxm-eu-bagl.nexon.com:5000/api/gateway",
+                    "httpVersion": "HTTP/2.0",
+                    "cookies": [
+                        {
+                            "name": "AWSALB",
+                            "value": "kZA9if24yJURO4+JwAJrlgWWK8T6Z4mCyY8NsAELKT7SvktF7Ec7yzxPazTdj9ZTKMJWrh444YBzuAIZi3TUcBDwKx0Lkkj6jrruGaQW2LbFU9COI+398Q1IZB4vIqZ+5T8QApEg93PNpD0tt3cC1tM3qdY+kGmZjZ619M41UD4Fp4YKS5xmfjqET80fAA=="
+                        },
+                        {
+                            "name": "AWSALBCORS",
+                            "value": "kZA9if24yJURO4+JwAJrlgWWK8T6Z4mCyY8NsAELKT7SvktF7Ec7yzxPazTdj9ZTKMJWrh444YBzuAIZi3TUcBDwKx0Lkkj6jrruGaQW2LbFU9COI+398Q1IZB4vIqZ+5T8QApEg93PNpD0tt3cC1tM3qdY+kGmZjZ619M41UD4Fp4YKS5xmfjqET80fAA=="
+                        },
+                        {
+                            "name": "uuid",
+                            "value": "aabc133d-69bd-4b78-811f-95508e4235e7"
+                        }
+                    ],
+                    "headers": [
+                        {
+                            "name": "mx",
+                            "value": "1"
+                        },
+                        {
+                            "name": "accept-encoding",
+                            "value": "gzip"
+                        },
+                        {
+                            "name": "bundle-version",
+                            "value": "370197|370197|370197"
+                        },
+                        {
+                            "name": "user-agent",
+                            "value": "BestHTTP/2 v2.4.0"
+                        },
+                        {
+                            "name": "content-type",
+                            "value": "multipart/form-data; boundary=BestHTTP_HTTPMultiPartForm_37E92D48"
+                        },
+                        {
+                            "name": "content-length",
+                            "value": "475"
+                        },
+                        {
+                            "name": "cookie",
+                            "value": "AWSALB=kZA9if24yJURO4+JwAJrlgWWK8T6Z4mCyY8NsAELKT7SvktF7Ec7yzxPazTdj9ZTKMJWrh444YBzuAIZi3TUcBDwKx0Lkkj6jrruGaQW2LbFU9COI+398Q1IZB4vIqZ+5T8QApEg93PNpD0tt3cC1tM3qdY+kGmZjZ619M41UD4Fp4YKS5xmfjqET80fAA==; AWSALBCORS=kZA9if24yJURO4+JwAJrlgWWK8T6Z4mCyY8NsAELKT7SvktF7Ec7yzxPazTdj9ZTKMJWrh444YBzuAIZi3TUcBDwKx0Lkkj6jrruGaQW2LbFU9COI+398Q1IZB4vIqZ+5T8QApEg93PNpD0tt3cC1tM3qdY+kGmZjZ619M41UD4Fp4YKS5xmfjqET80fAA==; uuid=aabc133d-69bd-4b78-811f-95508e4235e7"
+                        }
+                    ],
+                    "queryString": [],
+                    "headersSize": 721,
+                    "bodySize": 475,
+                    "postData": {
+                        "mimeType": "multipart/form-data; boundary=BestHTTP_HTTPMultiPartForm_37E92D48",
+                        "text": "--BestHTTP_HTTPMultiPartForm_37E92D48\r\nContent-Disposition: form-data; name=\"mx\"; filename=\"mx.dat\"\r\nContent-Type: application/octet-stream\r\nContent-Length: 268\r\n\r\n\u009aS\u00c65\u00b9|av\u00ef\u00d8\u00d9\u00d9\u00c6R\u00d1\u00d94\u000ft\u00b1\u00d9&\u0094\u0016\u0088\u0096Z\u00e9\u00c9\u00de)6\u00abv\u00ba\u0083\u00d3m\t\u001d^\u00bc\u009d\u009e?K\u00bc\u001aI\u00e4\u00cf\u00e1|\u00c8\u0082\u009a\u00d2\u0000\u0085/\u00044{\u00eag\u0087'.\"\u0006D\u00b8\u00e2\u00c1\u00be\u00c3\nZ9]I\u00d9\u00d3b\u009a\u0000\u00b7}+J\u008e\u0000\u0082\u00d5\u00b9r\u00ff:\u0093,X\u00f9Y\u00cbC\u0015\u0090\u00e3~e}HQ@\u0091\u0011\u0084\u00cf\u00fc\u00b0\u0091\u00c0%\u00ff\u00d2\u0004;\u00c8\u00ddz\u00e5\u00d5\u0080\u00cd\u0086\u0010\u00c5\u00b4Zc\u008c#\u00d4]\u00c2\u009f\u00b6\u00f7\u00a2\\\u0003d\u00a5'ig\u00ae^\u000f\u00fe\u00bd\u0004:\u00f4kKo\u00da\u00c8\u00c8\u001b\u00bb\u0017\u009a\u001b\u00f08\u0000\u00cc\u00f2\bcf\u0002/\u00b1t\u00eb\u00a3T\u00fe\u00c9\u00be\u0081\u00edT\u00c0l\u0002:\u00e98\u0089m\u00a7B_\u00f0R\u00b0\u00d9B\u00ba\u00b0\u0007\u0088\"\u00d6\u00ab\u0000t\u008eV\u001e#i\u00e1\r\u00c4\u00ba\u00165\u00a7\u009f\u009fLn\u0000\u000e\u0015\u009d\u00bf3\u00f3'\u00ad\u00f3\u00d5\u0082\u008f\u008c#\u00d9N9\u00bf'\n\u00f7\u0006\u0007\u000e)\u00eb\u00ef\u00d8\u00d9\u00d9\r\n--BestHTTP_HTTPMultiPartForm_37E92D48--\r\n",
+                        "params": []
+                    }
+                },
+                "response": {
+                    "status": 200,
+                    "statusText": "",
+                    "httpVersion": "HTTP/2.0",
+                    "cookies": [
+                        {
+                            "name": "AWSALB",
+                            "value": "tsn1skg6fnLjjFaOvKP9VpM26h0TXPzQ/sYih1B4XVq+dHdESJYLVqUSjmiO78Zv5//BVaMlkSXUisX5hnFpwjebIwmthzNy/jIgA3aoo+tYmiE28noBH3S4dtHoDXFtX/buIwF15E1kxsmA2LMPXy3wtiwN0wtDXptNbwX04Snn7onkDvcJB5EOBYm0LA==",
+                            "path": "/",
+                            "domain": "",
+                            "httpOnly": false,
+                            "secure": false
+                        },
+                        {
+                            "name": "AWSALBCORS",
+                            "value": "tsn1skg6fnLjjFaOvKP9VpM26h0TXPzQ/sYih1B4XVq+dHdESJYLVqUSjmiO78Zv5//BVaMlkSXUisX5hnFpwjebIwmthzNy/jIgA3aoo+tYmiE28noBH3S4dtHoDXFtX/buIwF15E1kxsmA2LMPXy3wtiwN0wtDXptNbwX04Snn7onkDvcJB5EOBYm0LA==",
+                            "path": "/",
+                            "domain": "",
+                            "httpOnly": false,
+                            "secure": true,
+                            "sameSite": "None"
+                        }
+                    ],
+                    "headers": [
+                        {
+                            "name": "date",
+                            "value": "Tue, 26 Aug 2025 14:46:53 GMT"
+                        },
+                        {
+                            "name": "content-type",
+                            "value": "application/json; charset=utf-8"
+                        },
+                        {
+                            "name": "set-cookie",
+                            "value": "AWSALB=tsn1skg6fnLjjFaOvKP9VpM26h0TXPzQ/sYih1B4XVq+dHdESJYLVqUSjmiO78Zv5//BVaMlkSXUisX5hnFpwjebIwmthzNy/jIgA3aoo+tYmiE28noBH3S4dtHoDXFtX/buIwF15E1kxsmA2LMPXy3wtiwN0wtDXptNbwX04Snn7onkDvcJB5EOBYm0LA==; Expires=Tue, 02 Sep 2025 14:46:53 GMT; Path=/"
+                        },
+                        {
+                            "name": "set-cookie",
+                            "value": "AWSALBCORS=tsn1skg6fnLjjFaOvKP9VpM26h0TXPzQ/sYih1B4XVq+dHdESJYLVqUSjmiO78Zv5//BVaMlkSXUisX5hnFpwjebIwmthzNy/jIgA3aoo+tYmiE28noBH3S4dtHoDXFtX/buIwF15E1kxsmA2LMPXy3wtiwN0wtDXptNbwX04Snn7onkDvcJB5EOBYm0LA==; Expires=Tue, 02 Sep 2025 14:46:53 GMT; Path=/; SameSite=None; Secure"
+                        },
+                        {
+                            "name": "server",
+                            "value": "Kestrel"
+                        },
+                        {
+                            "name": "content-encoding",
+                            "value": "gzip"
+                        },
+                        {
+                            "name": "vary",
+                            "value": "Accept-Encoding"
+                        },
+                        {
+                            "name": "strict-transport-security",
+                            "value": "max-age=2592000"
+                        }
+                    ],
+                    "content": {
+                        "size": 109,
+                        "compression": -15,
+                        "mimeType": "application/json; charset=utf-8",
+                        "text": "{\"protocol\":\"Mail_List\",\"packet\":\"{\\\"Protocol\\\":7000,\\\"ServerTimeTicks\\\":638918488130000000}\"}"
+                    },
+                    "redirectURL": "",
+                    "headersSize": 810,
+                    "bodySize": 109
+                },
+                "cache": {},
+                "timings": {
+                    "connect": -1.0,
+                    "ssl": -1.0,
+                    "send": 9.325981140136719,
+                    "receive": 7.068157196044922,
+                    "wait": 68.30453872680664
+                },
+                "serverIPAddress": "52.59.87.26"
+            },
+            {
+                "startedDateTime": "2025-08-26T14:47:22.460113+00:00",
+                "time": 158.74528884887695,
+                "request": {
+                    "method": "POST",
+                    "url": "https://nxm-eu-bagl.nexon.com:5000/api/gateway",
+                    "httpVersion": "HTTP/2.0",
+                    "cookies": [
+                        {
+                            "name": "AWSALB",
+                            "value": "tsn1skg6fnLjjFaOvKP9VpM26h0TXPzQ/sYih1B4XVq+dHdESJYLVqUSjmiO78Zv5//BVaMlkSXUisX5hnFpwjebIwmthzNy/jIgA3aoo+tYmiE28noBH3S4dtHoDXFtX/buIwF15E1kxsmA2LMPXy3wtiwN0wtDXptNbwX04Snn7onkDvcJB5EOBYm0LA=="
+                        },
+                        {
+                            "name": "AWSALBCORS",
+                            "value": "tsn1skg6fnLjjFaOvKP9VpM26h0TXPzQ/sYih1B4XVq+dHdESJYLVqUSjmiO78Zv5//BVaMlkSXUisX5hnFpwjebIwmthzNy/jIgA3aoo+tYmiE28noBH3S4dtHoDXFtX/buIwF15E1kxsmA2LMPXy3wtiwN0wtDXptNbwX04Snn7onkDvcJB5EOBYm0LA=="
+                        },
+                        {
+                            "name": "uuid",
+                            "value": "aabc133d-69bd-4b78-811f-95508e4235e7"
+                        }
+                    ],
+                    "headers": [
+                        {
+                            "name": "mx",
+                            "value": "1"
+                        },
+                        {
+                            "name": "accept-encoding",
+                            "value": "gzip"
+                        },
+                        {
+                            "name": "bundle-version",
+                            "value": "370197|370197|370197"
+                        },
+                        {
+                            "name": "user-agent",
+                            "value": "BestHTTP/2 v2.4.0"
+                        },
+                        {
+                            "name": "content-type",
+                            "value": "multipart/form-data; boundary=BestHTTP_HTTPMultiPartForm_7C07EDF0"
+                        },
+                        {
+                            "name": "content-length",
+                            "value": "408"
+                        },
+                        {
+                            "name": "cookie",
+                            "value": "AWSALB=tsn1skg6fnLjjFaOvKP9VpM26h0TXPzQ/sYih1B4XVq+dHdESJYLVqUSjmiO78Zv5//BVaMlkSXUisX5hnFpwjebIwmthzNy/jIgA3aoo+tYmiE28noBH3S4dtHoDXFtX/buIwF15E1kxsmA2LMPXy3wtiwN0wtDXptNbwX04Snn7onkDvcJB5EOBYm0LA==; AWSALBCORS=tsn1skg6fnLjjFaOvKP9VpM26h0TXPzQ/sYih1B4XVq+dHdESJYLVqUSjmiO78Zv5//BVaMlkSXUisX5hnFpwjebIwmthzNy/jIgA3aoo+tYmiE28noBH3S4dtHoDXFtX/buIwF15E1kxsmA2LMPXy3wtiwN0wtDXptNbwX04Snn7onkDvcJB5EOBYm0LA==; uuid=aabc133d-69bd-4b78-811f-95508e4235e7"
+                        }
+                    ],
+                    "queryString": [],
+                    "headersSize": 721,
+                    "bodySize": 408,
+                    "postData": {
+                        "mimeType": "multipart/form-data; boundary=BestHTTP_HTTPMultiPartForm_7C07EDF0",
+                        "text": "--BestHTTP_HTTPMultiPartForm_7C07EDF0\r\nContent-Disposition: form-data; name=\"mx\"; filename=\"mx.dat\"\r\nContent-Type: application/octet-stream\r\nContent-Length: 201\r\n\r\n\u00f0\u00e8D\u000b=b}b\u0013\u00d9\u00d9\u00d9\u00c6R\u00d1\u00d9\u00d3\u000et\u00b1\u00d9&\u0094T\u0094\u00d2[\u0099\u00cd\u00d9&\u0012bo\u0089\u00a7it\u00d2\u00c4\u009bp}[\u0091\u009a\u00e3w#\u009b\u0010/\\b\u009f\u00ff'.e\u00dd\u00c4\u00de_@\u00d8\u0097\u00f4\u0080\u00f3q\u00d80\u00e8\u00d1B\u00c3ld\u00e5\n#X\u00f9\u0084\u00189U\u00df\u00acp+\u00bf\u00bb\u0002\u00af\u0011\u00b9~\u0095\u00dc\u000b\u00a8\\)Z\\\u00ca)\u0090S\u0094S\u001f[ep\u001f\u0095\u009f[\u001f\r}.\u0001Z\u00c5\u00b9\u0084\u00cd\r\u00b0B\u00b9\"\u001b\u00ef\u00f7~V2\u00d17b\u00d5W6M7q\u0098\u009b}s$\u00b7*\u0017v2\u00b2\u0087\u00a8\u00a79*\u0000{rz\u00eb!\u0015\u0011z\u008eL\u00f4n\u00a4\u0095\u00e5\u0015\u00ebh[H$C\u00a6l(\u00d2C2Wg\u0013\u00d9\u00d9\u00d9\r\n--BestHTTP_HTTPMultiPartForm_7C07EDF0--\r\n",
+                        "params": []
+                    }
+                },
+                "response": {
+                    "status": 200,
+                    "statusText": "",
+                    "httpVersion": "HTTP/2.0",
+                    "cookies": [
+                        {
+                            "name": "AWSALB",
+                            "value": "Ga/Ef9rlQF1Cjx5c/8q49k4/sOzKebZdj5m3T6MxY6S5LTXUPOeORizBH0NpK5yUN/mI7Unsbboph9eDOU2kOYtBQVKxtfkxrCJuw+uPuUbqpBOXGWF9PAsWKd5OdPufBBU1b9CVHH5gOelk1Cj2wjyzpfwfv8g+YI6/1GAgsRkxResfIeJ+AfoaDCCFbw==",
+                            "path": "/",
+                            "domain": "",
+                            "httpOnly": false,
+                            "secure": false
+                        },
+                        {
+                            "name": "AWSALBCORS",
+                            "value": "Ga/Ef9rlQF1Cjx5c/8q49k4/sOzKebZdj5m3T6MxY6S5LTXUPOeORizBH0NpK5yUN/mI7Unsbboph9eDOU2kOYtBQVKxtfkxrCJuw+uPuUbqpBOXGWF9PAsWKd5OdPufBBU1b9CVHH5gOelk1Cj2wjyzpfwfv8g+YI6/1GAgsRkxResfIeJ+AfoaDCCFbw==",
+                            "path": "/",
+                            "domain": "",
+                            "httpOnly": false,
+                            "secure": true,
+                            "sameSite": "None"
+                        }
+                    ],
+                    "headers": [
+                        {
+                            "name": "date",
+                            "value": "Tue, 26 Aug 2025 14:47:22 GMT"
+                        },
+                        {
+                            "name": "content-type",
+                            "value": "application/json; charset=utf-8"
+                        },
+                        {
+                            "name": "set-cookie",
+                            "value": "AWSALB=Ga/Ef9rlQF1Cjx5c/8q49k4/sOzKebZdj5m3T6MxY6S5LTXUPOeORizBH0NpK5yUN/mI7Unsbboph9eDOU2kOYtBQVKxtfkxrCJuw+uPuUbqpBOXGWF9PAsWKd5OdPufBBU1b9CVHH5gOelk1Cj2wjyzpfwfv8g+YI6/1GAgsRkxResfIeJ+AfoaDCCFbw==; Expires=Tue, 02 Sep 2025 14:47:22 GMT; Path=/"
+                        },
+                        {
+                            "name": "set-cookie",
+                            "value": "AWSALBCORS=Ga/Ef9rlQF1Cjx5c/8q49k4/sOzKebZdj5m3T6MxY6S5LTXUPOeORizBH0NpK5yUN/mI7Unsbboph9eDOU2kOYtBQVKxtfkxrCJuw+uPuUbqpBOXGWF9PAsWKd5OdPufBBU1b9CVHH5gOelk1Cj2wjyzpfwfv8g+YI6/1GAgsRkxResfIeJ+AfoaDCCFbw==; Expires=Tue, 02 Sep 2025 14:47:22 GMT; Path=/; SameSite=None; Secure"
+                        },
+                        {
+                            "name": "server",
+                            "value": "Kestrel"
+                        },
+                        {
+                            "name": "content-encoding",
+                            "value": "gzip"
+                        },
+                        {
+                            "name": "vary",
+                            "value": "Accept-Encoding"
+                        },
+                        {
+                            "name": "strict-transport-security",
+                            "value": "max-age=2592000"
+                        }
+                    ],
+                    "content": {
+                        "size": 143,
+                        "compression": 26,
+                        "mimeType": "application/json; charset=utf-8",
+                        "text": "{\"protocol\":\"NetworkTime_Sync\",\"packet\":\"{\\\"Protocol\\\":3,\\\"ReceiveTick\\\":638918488420000000,\\\"EchoSendTick\\\":638918488424198791,\\\"ServerTimeTicks\\\":638918488420000000}\"}"
+                    },
+                    "redirectURL": "",
+                    "headersSize": 810,
+                    "bodySize": 143
+                },
+                "cache": {},
+                "timings": {
+                    "connect": -1.0,
+                    "ssl": -1.0,
+                    "send": 25.010108947753906,
+                    "receive": 14.059782028198242,
+                    "wait": 119.6753978729248
+                },
+                "serverIPAddress": "52.59.87.26"
+            },

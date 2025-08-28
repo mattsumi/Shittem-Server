@@ -1,5 +1,10 @@
 // BlueArchiveAPI/Admin/InMemoryAdminStore.cs
+using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Text.Json.Nodes;
 using BlueArchiveAPI.Catalog;
 using BlueArchiveAPI.Gateway.Services;
@@ -9,12 +14,21 @@ namespace BlueArchiveAPI.Admin;
 public sealed class InMemoryAdminStore : IAdminStore
 {
     private readonly ConcurrentDictionary<long, AccountSnapshot> _accounts = new();
-    private readonly EntityCatalog _catalog;
+    private readonly IEntityCatalog _catalog;
+
+    // Mail outbox (runtime)
+    private readonly ConcurrentBag<QueuedMail> _mailOutbox = new();
+    private volatile bool _outboxPersistent = false;
+
+    public bool IsOutboxPersistent => _outboxPersistent;
 
     // You can swap this for a real DB later
-    public InMemoryAdminStore(EntityCatalog catalog) => _catalog = catalog;
+    public InMemoryAdminStore(IEntityCatalog catalog) => _catalog = catalog;
 
-    // New IAdminStore contract
+    // ---------------------------
+    // IAdminStore: snapshots
+    // ---------------------------
+
     public Task<AccountSnapshot?> GetAsync(long accountId, CancellationToken ct = default)
         => Task.FromResult(_accounts.TryGetValue(accountId, out var snap) ? snap : null);
 
@@ -59,5 +73,45 @@ public sealed class InMemoryAdminStore : IAdminStore
         var snap = _accounts.GetOrAdd(accountId, id => new AccountSnapshot(id, new JsonObject()));
         snap.Data["nextGachaStudentIds"] = new JsonArray(studentIds.Select(i => (JsonNode)i).ToArray());
         return Task.CompletedTask;
+    }
+
+    // ---------------------------
+    // IAdminStore: mail outbox
+    // ---------------------------
+
+    public void EnqueueMail(QueuedMail mail, bool persistent)
+    {
+        if (mail.SendDateUtc == null) mail.SendDateUtc = System.DateTime.UtcNow;
+        if (mail.ExpireDateUtc == null) mail.ExpireDateUtc = System.DateTime.UtcNow.AddDays(7);
+        _mailOutbox.Add(mail);
+        _outboxPersistent = persistent;
+    }
+
+    public MailOutboxResponse PeekOutbox(long? accountServerId)
+    {
+        var all = _mailOutbox.ToArray();
+        List<QueuedMail> filtered = accountServerId is > 0
+            ? all.Where(m => m.AccountServerId == null || m.AccountServerId == accountServerId).ToList()
+            : all.ToList();
+
+        return new MailOutboxResponse { Mails = filtered, Persistent = _outboxPersistent };
+    }
+
+    public void ClearOutbox(long? accountServerId)
+    {
+        if (accountServerId is not > 0)
+        {
+            while (_mailOutbox.TryTake(out _)) { }
+            _outboxPersistent = false;
+            return;
+        }
+
+        var keep = new List<QueuedMail>();
+        while (_mailOutbox.TryTake(out var m))
+        {
+            if (m.AccountServerId != null && m.AccountServerId != accountServerId)
+                keep.Add(m);
+        }
+        foreach (var m in keep) _mailOutbox.Add(m);
     }
 }

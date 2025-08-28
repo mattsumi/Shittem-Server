@@ -1,206 +1,296 @@
-using Microsoft.Data.Sqlite;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Nodes;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
+using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
+using Serilog;
 
-namespace BlueArchiveAPI.Catalog;
-
-public sealed class EntityCatalog : IEntityCatalog
+namespace BlueArchiveAPI.Catalog
 {
-    private readonly Dictionary<(EntityType, int), Entity> _byId = new();
-    private readonly Dictionary<(EntityType, string), Entity> _bySlug = new();
-    private readonly Dictionary<EntityType, List<Entity>> _byType = new();
-
-    /// <summary>
-    /// Empty ctor kept private to ensure we always load via a path or connection.
-    /// </summary>
-    private EntityCatalog() { }
-
-    /// <summary>
-    /// NEW: Construct a catalog directly from a SQLite file path.
-    /// </summary>
-    public EntityCatalog(string sqlitePath)
+    public sealed class EntityCatalog : IEntityCatalog
     {
-        if (!File.Exists(sqlitePath))
-            throw new FileNotFoundException($"catalog.sqlite not found at {sqlitePath}");
+        private readonly string _dataDir;
+        private readonly string _lang;
+        private readonly Dictionary<string, List<EntityDto>> _byType = new(StringComparer.OrdinalIgnoreCase);
+        private readonly HashSet<string> _types = new(StringComparer.OrdinalIgnoreCase);
+        private readonly FileSystemWatcher? _watcher;
 
-        // Open read-only with shared cache so multiple readers can coexist.
-        var csb = new SqliteConnectionStringBuilder
+        public EntityCatalog(string dataDir, string lang = "en")
         {
-            DataSource = sqlitePath,
-            Mode = SqliteOpenMode.ReadOnly,
-            Cache = SqliteCacheMode.Shared
-        };
+            _dataDir = dataDir;
+            _lang = lang;
+            LoadAll();
 
-        using var cn = new SqliteConnection(csb.ToString());
-        cn.Open();
-        LoadCore(cn);
-    }
-
-    /// <summary>
-    /// NEW: Construct a catalog from an already-open SqliteConnection.
-    /// The connection is not disposed by this class.
-    /// </summary>
-    public EntityCatalog(SqliteConnection connection)
-    {
-        if (connection.State != System.Data.ConnectionState.Open)
-            connection.Open();
-        LoadCore(connection);
-    }
-
-    /// <summary>
-    /// Back-compat helper: load from path (now just calls the new ctor).
-    /// </summary>
-    public static EntityCatalog LoadFrom(string sqlitePath) => new EntityCatalog(sqlitePath);
-
-    /// <summary>
-    /// Core loader that fills in-memory indices from the provided open connection.
-    /// </summary>
-    private void LoadCore(SqliteConnection cn)
-    {
-        // Load entities
-        using (var cmd = cn.CreateCommand())
-        {
-            cmd.CommandText = @"SELECT entity_type, entity_id, canonical_name, dev_name, rarity, meta_json FROM entity";
-            using var r = cmd.ExecuteReader();
-            while (r.Read())
+            if (Directory.Exists(Path.Combine(_dataDir, _lang)))
             {
-                var type = (EntityType)r.GetInt32(0);
-                var id = r.GetInt32(1);
-                var name = r.GetString(2);
-                var dev = r.IsDBNull(3) ? null : r.GetString(3);
-                int? rarity = r.IsDBNull(4) ? null : r.GetInt32(4);
-                var metaRaw = r.IsDBNull(5) ? "{}" : r.GetString(5);
-                var meta = JsonNode.Parse(metaRaw)?.AsObject() ?? new JsonObject();
-
-                var e = new Entity
+                _watcher = new FileSystemWatcher(Path.Combine(_dataDir, _lang), "*.json")
                 {
-                    Type = type,
-                    Id = id,
-                    CanonicalName = name,
-                    DevName = dev,
-                    Rarity = rarity,
-                    Meta = meta
+                    NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName
                 };
-
-                _byId[(type, id)] = e;
-                if (!_byType.TryGetValue(type, out var list))
-                    _byType[type] = list = new List<Entity>();
-                list.Add(e);
-
-                _bySlug[(type, Slug(name))] = e;
-                if (!string.IsNullOrWhiteSpace(dev))
-                    _bySlug[(type, Slug(dev!))] = e;
+                _watcher.Changed += OnChanged;
+                _watcher.Created += OnChanged;
+                _watcher.Deleted += OnChanged;
+                _watcher.Renamed += OnRenamed;
+                _watcher.EnableRaisingEvents = true;
             }
         }
 
-        // Load aliases
-        using (var cmd = cn.CreateCommand())
+        private void OnRenamed(object sender, RenamedEventArgs e)
         {
-            cmd.CommandText = @"SELECT entity_type, entity_id, alias_slug FROM entity_alias";
-            using var r = cmd.ExecuteReader();
-            while (r.Read())
-            {
-                var type = (EntityType)r.GetInt32(0);
-                var id = r.GetInt32(1);
-                var slug = r.GetString(2);
+            Log.Information("[CATALOG] reload due to file rename: {File}", e.FullPath);
+            LoadAll();
+        }
 
-                if (_byId.TryGetValue((type, id), out var e))
+        private void OnChanged(object sender, FileSystemEventArgs e)
+        {
+            Log.Information("[CATALOG] reload due to file change: {File}", e.FullPath);
+            LoadAll();
+        }
+
+        private void LoadAll()
+        {
+            lock (this)
+            {
+                var loadedCounts = new Dictionary<string, int>();
+
+                LoadStudents("Student", Path.Combine(_dataDir, _lang, "students.json"), loadedCounts);
+                LoadItems("Item", Path.Combine(_dataDir, _lang, "items.json"), loadedCounts);
+                LoadCurrency("Currency", Path.Combine(_dataDir, _lang, "currency.json"), loadedCounts);
+                LoadGeneric("Weapon", Path.Combine(_dataDir, _lang, "weapons.json"), loadedCounts);
+                LoadGeneric("Gear", Path.Combine(_dataDir, _lang, "equipment.json"), loadedCounts);
+
+                _types.Clear();
+                foreach (var key in _byType.Keys)
                 {
-                    var key = (type, slug);
-                    if (!_bySlug.ContainsKey(key))
-                        _bySlug[key] = e;
+                    if (_byType.TryGetValue(key, out var list) && list.Count > 0)
+                        _types.Add(key);
+                }
+
+                var counts = string.Join(", ", loadedCounts.Select(kvp => $"{kvp.Key}={kvp.Value}"));
+                Log.Information("[CATALOG] loaded: " + counts);
+            }
+        }
+
+        private void LoadCurrency(string type, string path, Dictionary<string, int> loadedCounts)
+        {
+            var list = new List<EntityDto>();
+            if (!File.Exists(path))
+            {
+                Log.Warning("[CATALOG] {Type} file not found or empty: {Path}", type, path);
+                loadedCounts[type] = 0;
+                _byType[type] = list;
+                return;
+            }
+
+            try
+            {
+                var json = File.ReadAllText(path);
+                var entities = JsonSerializer.Deserialize<JsonElement[]>(json);
+
+                if (entities != null)
+                {
+                    foreach (var entity in entities)
+                    {
+                        if (entity.TryGetProperty("Id", out var idElement) && idElement.ValueKind == JsonValueKind.Number)
+                        {
+                            var id = idElement.GetInt64().ToString();
+                            string name = (entity.TryGetProperty("Name", out var nameElement) && nameElement.ValueKind == JsonValueKind.String ? nameElement.GetString() : null)
+                                ?? (entity.TryGetProperty("DisplayName", out var dnElement) && dnElement.ValueKind == JsonValueKind.String ? dnElement.GetString() : null)
+                                ?? (entity.TryGetProperty("EnglishName", out var enElement) && enElement.ValueKind == JsonValueKind.String ? enElement.GetString() : null)
+                                ?? $"Currency #{id}";
+
+                            list.Add(new EntityDto { Id = id, Name = name });
+                        }
+                    }
                 }
             }
-        }
-    }
-
-    public bool TryGetById(EntityType type, int id, out Entity entity)
-        => _byId.TryGetValue((type, id), out entity!);
-
-    public bool TryGetIdByName(EntityType type, string nameOrAlias, out int id)
-    {
-        var slug = Slug(nameOrAlias);
-        if (_bySlug.TryGetValue((type, slug), out var e))
-        {
-            id = e.Id;
-            return true;
-        }
-        id = 0;
-        return false;
-    }
-
-    public IEnumerable<Entity> Search(EntityType type, string query, int limit = 20)
-    {
-        query = (query ?? "").Trim();
-        if (string.IsNullOrEmpty(query)) return Array.Empty<Entity>();
-        var q = Slug(query);
-
-        if (!_byType.TryGetValue(type, out var list))
-            return Array.Empty<Entity>();
-
-        // naive slug/substring match over canonical + dev
-        return list
-            .Select(e => new
+            catch (Exception ex)
             {
-                E = e,
-                Score =
-                    (Slug(e.CanonicalName).Contains(q) ? 2 : 0) +
-                    (!string.IsNullOrWhiteSpace(e.DevName) && Slug(e.DevName!).Contains(q) ? 1 : 0)
-            })
-            .Where(x => x.Score > 0)
-            .OrderByDescending(x => x.Score)
-            .ThenBy(x => x.E.CanonicalName)
-            .Take(limit)
-            .Select(x => x.E);
-    }
+                Log.Error(ex, "[CATALOG] Failed to load {Type} from {Path}", type, path);
+            }
 
-    private static string Slug(string s)
-    {
-        // Remove diacritics
-        var norm = s.Normalize(NormalizationForm.FormD);
-        var sb = new StringBuilder(norm.Length);
-        foreach (var ch in norm)
-        {
-            var uc = System.Globalization.CharUnicodeInfo.GetUnicodeCategory(ch);
-            if (uc != System.Globalization.UnicodeCategory.NonSpacingMark)
-                sb.Append(ch);
+            _byType[type] = list.OrderBy(e => e.Name, StringComparer.OrdinalIgnoreCase).ToList();
+            loadedCounts[type] = list.Count;
         }
-        var ascii = sb.ToString().Normalize(NormalizationForm.FormC).ToLowerInvariant();
 
-        // Replace non-alnum runs with single '-'
-        var outSb = new StringBuilder(ascii.Length);
-        bool lastDash = false;
-        foreach (var ch in ascii)
+        private void LoadStudents(string type, string path, Dictionary<string, int> loadedCounts)
         {
-            if (char.IsLetterOrDigit(ch)) { outSb.Append(ch); lastDash = false; }
-            else { if (!lastDash) { outSb.Append('-'); lastDash = true; } }
+            var list = new List<EntityDto>();
+            if (!File.Exists(path))
+            {
+                Log.Warning("[CATALOG] {Type} file not found or empty: {Path}", type, path);
+                loadedCounts[type] = 0;
+                _byType[type] = list;
+                return;
+            }
+
+            try
+            {
+                var json = File.ReadAllText(path);
+                var entities = JsonSerializer.Deserialize<JsonElement[]>(json);
+
+                if (entities != null)
+                {
+                    foreach (var entity in entities)
+                    {
+                        if (entity.TryGetProperty("Id", out var idElement) && idElement.ValueKind == JsonValueKind.Number)
+                        {
+                            var id = idElement.GetInt64().ToString();
+                            string name = (entity.TryGetProperty("Name", out var nameElement) ? nameElement.GetString() : null)
+                                ?? (entity.TryGetProperty("NameEN", out var nameEnElement) ? nameEnElement.GetString() : null)
+                                ?? (entity.TryGetProperty("NameEn", out var nameEn2Element) ? nameEn2Element.GetString() : null)
+                                ?? $"Student #{id}";
+
+                            list.Add(new EntityDto { Id = id, Name = name });
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "[CATALOG] Failed to load {Type} from {Path}", type, path);
+            }
+
+            _byType[type] = list.OrderBy(e => e.Name, StringComparer.OrdinalIgnoreCase).ToList();
+            loadedCounts[type] = list.Count;
         }
-        var slug = outSb.ToString().Trim('-');
-        while (slug.Contains("--")) slug = slug.Replace("--", "-");
-        return slug;
-    }
 
-    // --- Added for admin catalog routes ---
+        private void LoadItems(string type, string path, Dictionary<string, int> loadedCounts)
+        {
+            var items = new List<EntityDto>();
 
-    public IReadOnlyList<string> GetTypes()
-    {
-        // Return distinct, sorted type names that exist in the catalog
-        return _byType.Keys
-            .Select(t => t.ToString())
-            .OrderBy(s => s, StringComparer.OrdinalIgnoreCase)
-            .ToList();
-    }
+            if (!File.Exists(path))
+            {
+                Log.Warning("[CATALOG] {Type} file not found or empty: {Path}", type, path);
+                loadedCounts[type] = 0;
+                _byType[type] = items;
+                return;
+            }
 
-    public IReadOnlyList<Entity> GetEntities(EntityType type)
-    {
-        if (!_byType.TryGetValue(type, out var list) || list is null || list.Count == 0)
+            try
+            {
+                var json = File.ReadAllText(path);
+                var entities = JsonSerializer.Deserialize<JsonElement[]>(json);
+
+                if (entities != null)
+                {
+                    foreach (var entity in entities)
+                    {
+                        if (entity.TryGetProperty("IsCurrency", out var isCurrencyElement) && isCurrencyElement.ValueKind == JsonValueKind.True)
+                        {
+                            continue;
+                        }
+                        
+                        if (entity.TryGetProperty("Id", out var idElement) && idElement.ValueKind == JsonValueKind.Number)
+                        {
+                            var id = idElement.GetInt64().ToString();
+                            string name = (entity.TryGetProperty("Name", out var nameElement) ? nameElement.GetString() : null)
+                                ?? (entity.TryGetProperty("NameEN", out var nameEnElement) ? nameEnElement.GetString() : null)
+                                ?? $"Entity #{id}";
+
+                            var dto = new EntityDto { Id = id, Name = name };
+                            items.Add(dto);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "[CATALOG] Failed to load {Type} from {Path}", type, path);
+            }
+
+            _byType[type] = items.OrderBy(e => e.Name, StringComparer.OrdinalIgnoreCase).ToList();
+            loadedCounts[type] = items.Count;
+        }
+
+        private void LoadGeneric(string type, string path, Dictionary<string, int> loadedCounts)
+        {
+            var list = new List<EntityDto>();
+            if (!File.Exists(path))
+            {
+                Log.Warning("[CATALOG] {Type} file not found or empty: {Path}", type, path);
+                loadedCounts[type] = 0;
+                _byType[type] = list;
+                return;
+            }
+
+            try
+            {
+                var json = File.ReadAllText(path);
+                var entities = JsonSerializer.Deserialize<JsonElement[]>(json);
+
+                if (entities != null)
+                {
+                    foreach (var entity in entities)
+                    {
+                        if (entity.TryGetProperty("Id", out var idElement) && idElement.ValueKind == JsonValueKind.Number)
+                        {
+                            var id = idElement.GetInt64().ToString();
+                            string name = (entity.TryGetProperty("Name", out var nameElement) ? nameElement.GetString() : null)
+                                ?? $"{type} #{id}";
+
+                            list.Add(new EntityDto { Id = id, Name = name });
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "[CATALOG] Failed to load {Type} from {Path}", type, path);
+            }
+
+            _byType[type] = list.OrderBy(e => e.Name, StringComparer.OrdinalIgnoreCase).ToList();
+            loadedCounts[type] = list.Count;
+        }
+
+        public IReadOnlyList<string> GetTypes()
+        {
+            return _types.OrderBy(t => t, StringComparer.OrdinalIgnoreCase).ToList();
+        }
+
+        public Task<IReadOnlyList<EntityDto>> GetEntitiesAsync(string type, CancellationToken ct = default)
+        {
+            var canonical = CanonicalizeType(type);
+            if (_byType.TryGetValue(canonical, out var entities))
+            {
+                return Task.FromResult<IReadOnlyList<EntityDto>>(new List<EntityDto>(entities));
+            }
+            return Task.FromResult<IReadOnlyList<EntityDto>>(Array.Empty<EntityDto>());
+        }
+
+        public bool TryGetById(EntityType type, int id, [NotNullWhen(true)] out Entity? entity)
+        {
+            entity = null;
+            return false;
+        }
+
+        public bool TryGetIdByName(EntityType type, string nameOrAlias, out int id)
+        {
+            id = 0;
+            return false;
+        }
+
+        public IEnumerable<Entity> Search(EntityType type, string query, int limit = 20)
+        {
             return Array.Empty<Entity>();
-        // Return a sorted copy (by name then id) to keep API output stable
-        return list
-            .OrderBy(e => e.CanonicalName, StringComparer.OrdinalIgnoreCase)
-            .ThenBy(e => e.Id)
-            .ToList();
+        }
+
+        private static string CanonicalizeType(string input)
+        {
+            var key = (input ?? "").Trim().ToLowerInvariant();
+            return key switch
+            {
+                "student" or "students" or "character" or "characters" or "unit" or "units" => "Student",
+                "item" or "items" => "Item",
+                "currency" or "currencies" => "Currency",
+                "weapon" or "weapons" => "Weapon",
+                "gear" or "gears" => "Gear",
+                "gachagroup" or "gacha group" or "gacha-group" or "gacha_groups" or "gacha-groups" or "gachagroups" => "GachaGroup",
+                _ => input?.Trim() ?? ""
+            };
+        }
     }
 }

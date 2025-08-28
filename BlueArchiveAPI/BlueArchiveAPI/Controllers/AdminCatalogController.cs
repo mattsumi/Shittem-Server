@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -22,7 +21,7 @@ namespace BlueArchiveAPI.Controllers
             _logger = logger;
         }
 
-        // Combined handler to avoid route ambiguity and support legacy shims:
+        // Support both modern and legacy routes via shims:
         // - GET /admin/catalog/types
         // - GET /admin/catalog            (no params) => types
         // - GET /admin/catalog?type=Item  (query)     => entities
@@ -32,81 +31,80 @@ namespace BlueArchiveAPI.Controllers
         [HttpGet("types")]
         [HttpGet("~/admin/items")]
         [HttpGet("~/admin/items/types")]
-        public ActionResult<IEnumerable<object>> Get([FromQuery] string? type, CancellationToken ct)
+        public async Task<IActionResult> Get([FromQuery] string? type, CancellationToken ct)
         {
-            if (string.IsNullOrWhiteSpace(type))
+            try
             {
-                var types = _catalog.GetTypes() ?? Array.Empty<string>();
-                _logger.LogInformation("[ADMIN][CATALOG] types={Count}", types.Count);
-                return Ok(types);
-            }
+                if (string.IsNullOrWhiteSpace(type))
+                {
+                    var types = _catalog.GetTypes() ?? Array.Empty<string>();
+                    _logger.LogInformation("[ADMIN][CATALOG] types={Count}", types.Count);
+                    return Ok(types);
+                }
 
-            if (!TryResolveType(type!, out var et))
+                var canonical = CanonicalizeType(type!);
+                if (string.IsNullOrWhiteSpace(canonical))
+                {
+                    _logger.LogInformation("[ADMIN][CATALOG] unknown type '{Type}', returning empty", type);
+                    return Ok(Array.Empty<EntityDto>());
+                }
+
+                var list = await _catalog.GetEntitiesAsync(canonical, ct).ConfigureAwait(false);
+                _logger.LogInformation("[ADMIN][CATALOG] {Type} entities={Count}", canonical, list.Count);
+                return Ok(list ?? Array.Empty<EntityDto>());
+            }
+            catch (Exception ex)
             {
-                _logger.LogInformation("[ADMIN][CATALOG] unknown type '{Type}', returning empty", type);
+                _logger.LogWarning(ex, "[ADMIN][CATALOG] error in Get: {Message}", ex.Message);
                 return Ok(Array.Empty<object>());
             }
-
-            var list = _catalog.GetEntities(et) ?? Array.Empty<Entity>();
-            _logger.LogInformation("[ADMIN][CATALOG] {Type} entities={Count}", et, list.Count);
-            var dtos = list.Select(e => new { id = e.Id, name = e.CanonicalName });
-            return Ok(dtos);
         }
 
         // GET /admin/catalog/{type}
         [HttpGet("{type}")]
-        public ActionResult<IEnumerable<object>> GetByPath([FromRoute] string type, CancellationToken ct)
+        public async Task<IActionResult> GetByPath([FromRoute] string type, CancellationToken ct)
         {
-            if (!TryResolveType(type, out var et))
+            try
             {
-                _logger.LogInformation("[ADMIN][CATALOG] unknown type '{Type}', returning empty", type);
+                var canonical = CanonicalizeType(type);
+                if (string.IsNullOrWhiteSpace(canonical))
+                {
+                    _logger.LogInformation("[ADMIN][CATALOG] unknown type '{Type}', returning empty", type);
+                    return Ok(Array.Empty<EntityDto>());
+                }
+
+                var list = await _catalog.GetEntitiesAsync(canonical, ct).ConfigureAwait(false);
+                _logger.LogInformation("[ADMIN][CATALOG] {Type} entities={Count}", canonical, list.Count);
+                return Ok(list ?? Array.Empty<EntityDto>());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "[ADMIN][CATALOG] error in GetByPath: {Message}", ex.Message);
                 return Ok(Array.Empty<object>());
             }
-
-            var list = _catalog.GetEntities(et) ?? Array.Empty<Entity>();
-            _logger.LogInformation("[ADMIN][CATALOG] {Type} entities={Count}", et, list.Count);
-            var dtos = list.Select(e => new { id = e.Id, name = e.CanonicalName });
-            return Ok(dtos);
         }
 
-        private static bool TryResolveType(string input, out EntityType type)
+        // POST /admin/catalog/rebuild
+        [HttpPost("rebuild")]
+        public IActionResult Rebuild()
+        {
+            _logger.LogInformation("[ADMIN][CATALOG] Rebuild endpoint is obsolete and does nothing.");
+            return Ok(new { rebuilt = 0, message = "This endpoint is obsolete and no longer functional." });
+        }
+
+        private static string CanonicalizeType(string input)
         {
             var key = (input ?? "").Trim().ToLowerInvariant();
-            switch (key)
+            return key switch
             {
-                case "student":
-                case "students":
-                case "character":
-                case "characters":
-                case "unit":
-                case "units":
-                    type = EntityType.Student; return true;
-                case "item":
-                case "items":
-                    type = EntityType.Item; return true;
-                case "currency":
-                case "currencies":
-                    type = EntityType.Currency; return true;
-                case "weapon":
-                case "weapons":
-                    type = EntityType.Weapon; return true;
-                case "gear":
-                case "gears":
-                    type = EntityType.Gear; return true;
-                case "gachagroup":
-                case "gacha group":
-                case "gacha-group":
-                case "gacha_groups":
-                case "gacha-groups":
-                case "gachagroups":
-                    type = EntityType.GachaGroup; return true;
-                default:
-                    if (Enum.TryParse<EntityType>(input, true, out var parsed))
-                    {
-                        type = parsed; return true;
-                    }
-                    type = default; return false;
-            }
+                "student" or "students" or "character" or "characters" or "unit" or "units" => "Student",
+                "item" or "items" => "Item",
+                "currency" or "currencies" => "Currency",
+                "weapon" or "weapons" => "Weapon",
+                "gear" or "gears" => "Gear",
+                "gachagroup" or "gacha group" or "gacha-group" or "gacha_groups" or "gacha-groups" or "gachagroups" => "GachaGroup",
+                _ => input?.Trim() ?? ""
+            };
         }
     }
 }

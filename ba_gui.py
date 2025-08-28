@@ -1,26 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Blue Archive – Local Admin GUI
-
-• Starts/stops mitmdump with blue_archive_addon.py
-• Flip/unflip traffic via the addon's control server
-• Send in-game mail, post notices, and edit account data against the private C# API
-• Live logs for both mitmdump and the C# API (if you choose to launch it from here)
-
-This file is a standalone launcher. Run it directly:
-
-    python ba_admin_gui.py
-
-Requirements: PySide6 (pip install pyside6)
-
-Notes
------
-- Admin endpoints are addressed at the private server (default http://127.0.0.1:7000).
-  If your server uses different routes, adjust AdminClient below.
-- Flip/unflip hits the mitm addon's control server (default http://127.0.0.1:9080).
-- All network calls time out quickly and report errors inline.
-"""
 
 from __future__ import annotations
 import sys
@@ -38,9 +17,6 @@ from pathlib import Path
 
 from PySide6 import QtCore, QtGui, QtWidgets
 
-# -----------------------------
-# HTTP Helper
-# -----------------------------
 
 class HttpError(RuntimeError):
     pass
@@ -90,9 +66,6 @@ class Http:
         except Exception as e:
             raise HttpError(f"POST {url} failed: {e}")
 
-# -----------------------------
-# Background worker
-# -----------------------------
 
 class FuncWorker(QtCore.QThread):
     """
@@ -114,9 +87,6 @@ class FuncWorker(QtCore.QThread):
         except Exception as e:
             self.error.emit(str(e))
 
-# -----------------------------
-# Admin Client (adjust routes here to fit your server)
-# -----------------------------
 
 @dataclass
 class AdminConfig:
@@ -129,9 +99,7 @@ class AdminClient:
         self.http_private = Http(cfg.private_base)
         self.http_control = Http(cfg.control_base)
 
-    # ---- MITM controls ----
     def flip(self) -> str:
-        # blue_archive_addon.py exposes /_proxy/flip and /_proxy/unflip
         try:
             return self.http_control.get_json("/_proxy/flip") or "OK"
         except HttpError as e:
@@ -143,9 +111,6 @@ class AdminClient:
         except HttpError as e:
             return str(e)
 
-    # ---- Admin operations on private API ----
-    # If your server uses different endpoints, update these paths.
-
     def send_mail(self, account_id: int, subject: str, body: str,
                   attachments: list[dict[str, t.Any]] | None = None) -> t.Any:
         payload = {
@@ -155,6 +120,11 @@ class AdminClient:
             "attachments": attachments or [],
         }
         return self.http_private.post_json("/admin/mail", payload)
+    
+    def queue_mail(self, mail, persistent=False):
+        # mail: dict matching QueuedMail DTO; types are numeric (2/4), ids/amounts are ints
+        body = {"mail": mail, "persistent": bool(persistent)}
+        return self.http.post_json(self.base_url + "/admin/mail/queue", body)
 
     def post_notice(self, title: str, text: str,
                     starts_at: str | None = None, ends_at: str | None = None,
@@ -174,7 +144,6 @@ class AdminClient:
     def patch_account(self, account_id: int, patch: dict[str, t.Any]) -> t.Any:
         return self.http_private.post_json(f"/admin/account/{account_id}", patch)
 
-    # ---- Catalog probing helpers (non-breaking) ----
     def list_types(self) -> t.Any:
         """
         Probe for catalog types. Returns whatever the server provides (list/dict).
@@ -203,7 +172,6 @@ class AdminClient:
                 errors.append(str(e))
         raise HttpError(f"All entity routes for '{tname}' failed: " + " | ".join(errors))
 
-    # ---- Gacha override helpers (non-breaking) ----
     def set_gacha_override(self, account_id: int, ids: list[int]) -> t.Any:
         """
         Attempt to set upcoming pull override. Tries likely endpoints and key names.
@@ -242,9 +210,6 @@ class AdminClient:
                 errors.append(str(e))
         raise HttpError("All gacha clear attempts failed: " + " | ".join(errors))
 
-# -----------------------------
-# Process Runner (mitmdump / dotnet)
-# -----------------------------
 
 def build_mitmdump_cmd(executable_text: str, args: list[str]) -> list[str] | str:
     """
@@ -258,18 +223,13 @@ def build_mitmdump_cmd(executable_text: str, args: list[str]) -> list[str] | str
     lower = path.lower()
     if os.name == "nt":
         if lower.endswith((".bat", ".cmd")):
-            # Batch files require the shell. Build a single string.
             return " ".join([f'"{path}"', *[shlex.quote(a) for a in args]])
         if lower.endswith((".exe", ".com")):
             return [path, *args]
-        # If we can't be sure it's runnable directly, use the Python module entry.
         py = sys.executable
         return " ".join([f'"{py}"', "-m", "mitmproxy.tools.main", "mitmdump", *[shlex.quote(a) for a in args]])
-    # POSIX: argv is fine
     return [path, *args]
 
-
-# ---- Auto-detection helpers (non-blocking, small fixed search set) ----
 
 def _is_valid_mitmdump_text(text: str) -> bool:
     """
@@ -279,20 +239,12 @@ def _is_valid_mitmdump_text(text: str) -> bool:
     if not text:
         return False
     p = Path(text)
-    # Absolute or contains a path separator => must exist as a file
     if p.is_absolute() or any((sep and sep in text) for sep in (os.sep, os.altsep)):
         return p.is_file()
-    # Bare command name => check PATH
     return shutil.which(text) is not None
 
 
 def detect_addon_path() -> str | None:
-    """
-    Look only in:
-    - repo/mitm/blue_archive_addon.py via Path(__file__).resolve().parents[1]
-    - CWD/mitm/blue_archive_addon.py
-    Return absolute path string or None.
-    """
     try:
         repo_candidate = Path(__file__).resolve().parents[1] / "mitm" / "blue_archive_addon.py"
         if repo_candidate.is_file():
@@ -306,16 +258,6 @@ def detect_addon_path() -> str | None:
 
 
 def detect_mitmdump_path() -> str | None:
-    """
-    Prefer shutil.which('mitmdump'). If not found, check only a small set of known locations:
-    - <sys.executable>/../Scripts|bin/mitmdump(.exe)
-    - <sys.base_prefix>/Scripts|bin/mitmdump(.exe)
-    - On Windows, %PYTHONHOME%\\Scripts\\mitmdump.exe (if PYTHONHOME set)
-    - On Windows user installs (non-recursive immediate children):
-        %USERPROFILE%\\AppData\\Local\\Programs\\Python\\Python3*\\Scripts\\mitmdump.exe
-        %USERPROFILE%\\AppData\\Roaming\\Python\\Python3*\\Scripts\\mitmdump.exe
-    Return absolute path string or None.
-    """
     windows = os.name == "nt"
     exe_name = "mitmdump.exe" if windows else "mitmdump"
 
@@ -360,7 +302,6 @@ def detect_mitmdump_path() -> str | None:
                 except Exception:
                     pass
 
-    # Return first existing candidate
     for c in candidates:
         try:
             if c.is_file():
@@ -397,7 +338,7 @@ class ProcessRunner(QtCore.QObject):
             text=True,
             bufsize=1,
             universal_newlines=True,
-            shell=isinstance(self.cmd, str),  # string => likely needs shell (e.g., .bat/.cmd)
+            shell=isinstance(self.cmd, str),
             creationflags=creationflags,
         )
         self._stop.clear()
@@ -421,9 +362,6 @@ class ProcessRunner(QtCore.QObject):
             except Exception:
                 pass
 
-# -----------------------------
-# UI Widgets
-# -----------------------------
 
 class LabeledLine(QtWidgets.QWidget):
     def __init__(self, label: str, placeholder: str = "", parent=None):
@@ -450,9 +388,6 @@ class PrettyButton(QtWidgets.QPushButton):
         self.setMinimumHeight(36)
         self.setCursor(QtCore.Qt.PointingHandCursor)
 
-# -----------------------------
-# Catalog Model (types/entities cache + async fetch)
-# -----------------------------
 
 class CatalogModel(QtCore.QObject):
     def __init__(self, admin: AdminClient, parent: QtCore.QObject | None = None):
@@ -463,7 +398,6 @@ class CatalogModel(QtCore.QObject):
         self._lock = threading.RLock()
         self._local_catalog = (Path(__file__).parent / "game_catalog.json")
 
-    # cache control
     def invalidate_type(self, type_name: str):
         with self._lock:
             self._entities.pop(type_name, None)
@@ -473,7 +407,6 @@ class CatalogModel(QtCore.QObject):
             self._types = None
             self._entities.clear()
 
-    # async API
     def fetch_types(self, parent: QtCore.QObject, on_done: t.Callable[[list[str]], None], on_error: t.Callable[[str], None]):
         worker = FuncWorker(self._load_types, parent=parent)
         worker.result.connect(lambda data: on_done(t.cast(list[str], data)))
@@ -488,12 +421,10 @@ class CatalogModel(QtCore.QObject):
         worker.finished.connect(worker.deleteLater)
         worker.start()
 
-    # internal loaders (run in worker thread)
     def _load_types(self) -> list[str]:
         with self._lock:
             if self._types is not None:
                 return list(self._types)
-        # try remote
         try:
             raw = self._admin.list_types()
             types = self._normalize_types(raw)
@@ -505,10 +436,6 @@ class CatalogModel(QtCore.QObject):
         except Exception as e:
             print(f"[CATALOG] types remote load failed: {e}")
             pass
-        # try local file
-        # Backend SQL is authoritative; no local fallback
-        pass
-        # final fallback
         print(f"[CATALOG] no types available from backend.")
         with self._lock:
             self._types = []
@@ -519,7 +446,6 @@ class CatalogModel(QtCore.QObject):
             cached = self._entities.get(type_name)
             if cached is not None:
                 return list(cached)
-        # try remote
         try:
             raw = self._admin.list_entities(type_name)
             entities = self._normalize_entities(raw, type_name)
@@ -530,10 +456,6 @@ class CatalogModel(QtCore.QObject):
         except Exception as e:
             print(f"[CATALOG] entity remote load failed for {type_name}: {e}")
             pass
-        # try local file
-        # Backend SQL is authoritative; no local fallback
-        pass
-        # empty but cache to avoid repeat storms
         print(f"[CATALOG] no entities found for type {type_name}; caching empty list")
         with self._lock:
             self._entities[type_name] = []
@@ -628,7 +550,6 @@ class CatalogModel(QtCore.QObject):
         out.sort(key=lambda x: (x["name"].lower(), x["id"]))
         return out
 
-# ---- Mail Tab ----
 
 class MailTab(QtWidgets.QWidget):
     def __init__(self, admin: AdminClient, catalog: CatalogModel, parent=None):
@@ -713,28 +634,32 @@ class MailTab(QtWidgets.QWidget):
         # Load types async and restore settings
         QtCore.QTimer.singleShot(0, self._init_types_and_settings)
 
-    # settings helpers
     def _settings(self) -> QtCore.QSettings:
         return QtCore.QSettings("ShittimServer", "AdminGUI")
 
     def _init_types_and_settings(self):
-        # Load types and then restore last selections
         self._set_picker_busy(True)
         def on_done(types: list[str]):
             self.type_combo.clear()
             # Only allow item-like types for attachments; exclude characters/units/students
             allowed = [t for t in types if not any(w in t.lower() for w in ("character", "characters", "unit", "units", "student", "students"))]
-            if not allowed:
-                # Prefer explicit item/consumable/currency-like names
-                allowed = [t for t in types if ("item" in t.lower() or "consum" in t.lower() or "currency" in t.lower())]
-            if not allowed:
+            
+            preferred_order = ["Currency", "Item", "Gear", "Weapon", "GachaGroup"]
+            
+            ordered_types = sorted(allowed, key=lambda t: (preferred_order.index(t) if t in preferred_order else len(preferred_order), t))
+
+            if not ordered_types and types:
+                # Fallback if preferred types are not present, but still exclude characters
+                ordered_types = sorted(allowed)
+
+            if not ordered_types:
                 self._show_status("No mail-eligible types available from backend.")
                 self.type_combo.setEnabled(False)
                 self.entity_combo.setEnabled(False)
                 self.picker_add.setEnabled(False)
                 self._set_picker_busy(False)
                 return
-            for tname in allowed:
+            for tname in ordered_types:
                 self.type_combo.addItem(tname)
             self.type_combo.setEnabled(True)
             # restore last values
@@ -933,7 +858,6 @@ class MailTab(QtWidgets.QWidget):
         except Exception as e:
             QtWidgets.QMessageBox.critical(self, "Mail failed", str(e))
 
-# ---- Notice Tab ----
 
 class NoticeTab(QtWidgets.QWidget):
     def __init__(self, admin: AdminClient, parent=None):
@@ -974,7 +898,6 @@ class NoticeTab(QtWidgets.QWidget):
         except Exception as e:
             QtWidgets.QMessageBox.critical(self, "Publish failed", str(e))
 
-# ---- Account Tab ----
 
 class AccountTab(QtWidgets.QWidget):
     def __init__(self, admin: AdminClient, parent=None):
@@ -1047,7 +970,6 @@ class AccountTab(QtWidgets.QWidget):
         except Exception as e:
             QtWidgets.QMessageBox.critical(self, "Patch failed", str(e))
 
-# ---- Gacha Tab ----
 
 class GachaTab(QtWidgets.QWidget):
     def __init__(self, admin: AdminClient, catalog: CatalogModel, parent=None):
@@ -1337,7 +1259,6 @@ class GachaTab(QtWidgets.QWidget):
         def err(msg: str):
             self._set_controls_enabled(True)
             self._show_status("")
-            # if backend does not advertise endpoints => disable tab controls
             if "-> 404" in msg or "-> 501" in msg:
                 self._set_controls_enabled(False)
                 self._show_status("Backend does not advertise gacha override endpoints. Controls disabled.")
@@ -1373,7 +1294,6 @@ class GachaTab(QtWidgets.QWidget):
         worker.finished.connect(worker.deleteLater)
         worker.start()
 
-# ---- Server / MITM Tab ----
 
 class ServerTab(QtWidgets.QWidget):
     def __init__(self, admin: AdminClient, parent=None):
@@ -1485,7 +1405,6 @@ class ServerTab(QtWidgets.QWidget):
             self.dotnet_runner.terminate()
             self._append("[dotnet] terminating…")
 
-    # settings
     def _settings(self) -> QtCore.QSettings:
         return QtCore.QSettings("ShittimServer", "AdminGUI")
 
@@ -1522,7 +1441,6 @@ class ServerTab(QtWidgets.QWidget):
             else:
                 print("[AUTO] addon not found")
 
-        # wire
         self.private_url.textChanged.connect(lambda v: s.setValue("server/private_base", v))
         self.control_url.textChanged.connect(lambda v: s.setValue("server/control_base", v))
         self.mitmdump.textChanged.connect(lambda v: s.setValue("server/mitmdump", v))
@@ -1531,7 +1449,6 @@ class ServerTab(QtWidgets.QWidget):
         self.listen_port.textChanged.connect(lambda v: s.setValue("server/listen_port", v))
         self.dotnet_dir.textChanged.connect(lambda v: s.setValue("server/dotnet_dir", v))
 
-# ---- Logs-only Tab ----
 
 class LogsTab(QtWidgets.QWidget):
     def __init__(self, parent=None):
@@ -1544,9 +1461,6 @@ class LogsTab(QtWidgets.QWidget):
     def append(self, line: str):
         self.view.appendPlainText(line)
 
-# -----------------------------
-# Main Window
-# -----------------------------
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -1601,7 +1515,6 @@ class MainWindow(QtWidgets.QMainWindow):
         pal.setColor(QtGui.QPalette.HighlightedText, QtCore.Qt.black)
         self.setPalette(pal)
 
-        # Removed unsupported CSS 'filter' to avoid "Unknown property filter" warnings.
         self.setStyleSheet(
             """
             QTabWidget::pane { border: 1px solid #444; }
@@ -1617,9 +1530,6 @@ class MainWindow(QtWidgets.QMainWindow):
             """
         )
 
-# -----------------------------
-# Entry point
-# -----------------------------
 
 def main():
     app = QtWidgets.QApplication(sys.argv)

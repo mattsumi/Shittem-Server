@@ -1,13 +1,13 @@
-using System.Text.Json;
-using System.Text.Json.Nodes;
+using BlueArchiveAPI.Admin;
+using BlueArchiveAPI.Gateway.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
-using BlueArchiveAPI.Admin;
-using BlueArchiveAPI.Gateway.Services;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 
-namespace ShittimServer.Admin;
+namespace BlueArchiveAPI.Admin;
 
 public static class AdminModule
 {

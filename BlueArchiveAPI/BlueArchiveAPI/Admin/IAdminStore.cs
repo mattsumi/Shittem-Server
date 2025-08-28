@@ -8,7 +8,7 @@ using BlueArchiveAPI.Gateway.Services;
 namespace BlueArchiveAPI.Admin
 {
     /// <summary>
-    /// Persistence contract for Admin account snapshots.
+    /// Persistence contract for Admin account snapshots and admin runtime queues.
     /// Implementations should be thread-safe.
     /// </summary>
     public interface IAdminStore
@@ -27,5 +27,30 @@ namespace BlueArchiveAPI.Admin
         /// and persist the result atomically.
         /// </summary>
         Task PatchAsync(long accountId, Action<AccountSnapshot> patch, CancellationToken ct = default);
+
+        // ---------------------------
+        // Admin Mail Outbox (runtime)
+        // ---------------------------
+
+        /// <summary>
+        /// Enqueue a mail to be injected into the next Mail_List response.
+        /// If <paramref name="persistent"/> is true, items remain after injection until cleared.
+        /// </summary>
+        void EnqueueMail(QueuedMail mail, bool persistent);
+
+        /// <summary>
+        /// Peek the current outbox, optionally filtered to an account id.
+        /// </summary>
+        MailOutboxResponse PeekOutbox(long? accountServerId);
+
+        /// <summary>
+        /// Clear the outbox for a specific account or, if null, clear all.
+        /// </summary>
+        void ClearOutbox(long? accountServerId);
+
+        /// <summary>
+        /// True if the outbox is marked persistent (will not auto-clear on use).
+        /// </summary>
+        bool IsOutboxPersistent { get; }
     }
 }

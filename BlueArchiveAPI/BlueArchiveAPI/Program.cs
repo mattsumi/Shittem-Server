@@ -1,19 +1,10 @@
-using BlueArchiveAPI;
-using BlueArchiveAPI.Controllers;
-using BlueArchiveAPI.Handlers;
-using BlueArchiveAPI.Models;
-using BlueArchiveAPI.NetworkModels;
-using BlueArchiveAPI.Gateway.Services;
-using BlueArchiveAPI.Gateway.Crypto;
-using BlueArchiveAPI.Gateway.Compression;
-using BlueArchiveAPI.Gateway.Interfaces;
-using ShittimServer.Admin;
 using BlueArchiveAPI.Admin;
-using Newtonsoft.Json;
 using BlueArchiveAPI.Catalog;
-using Newtonsoft.Json.Linq;
-using System.Security.Cryptography;
-using System.Text;
+using BlueArchiveAPI.Gateway.Compression;
+using BlueArchiveAPI.Gateway.Crypto;
+using BlueArchiveAPI.Gateway.Interfaces;
+using BlueArchiveAPI.Gateway.Services;
+using BlueArchiveAPI.Handlers;
 using Serilog;
 
 // Configure Serilog
@@ -59,8 +50,14 @@ builder.Services.AddSingleton<ProtocolRouter>();
 builder.Services.AddSingleton<IEntityCatalog>(sp =>
 {
     var env = sp.GetRequiredService<IHostEnvironment>();
-    var dbPath = Path.Combine(env.ContentRootPath, "data", "catalog.sqlite");
-    return new EntityCatalog(dbPath);
+    var primary = Path.Combine(env.ContentRootPath, "data");
+    var fallback = Path.GetFullPath(Path.Combine(env.ContentRootPath, "..", "..", "data"));
+    var fromEnv = Environment.GetEnvironmentVariable("CATALOG_DATA_DIR");
+    var dataDir = Directory.Exists(primary) ? primary :
+                  (!string.IsNullOrEmpty(fromEnv) && Directory.Exists(fromEnv) ? fromEnv :
+                  (Directory.Exists(fallback) ? fallback : primary));
+    Log.Information("[CATALOG] json data dir={DataDir}", dataDir);
+    return new EntityCatalog(dataDir, "en");
 });
 
 // Register crypto adapters
@@ -72,12 +69,8 @@ builder.Services.AddSingleton<ICompressionAdapter, DeflateAdapter>();
 
 // Register Admin services
 builder.Services.AddAdminModule();
-builder.Services.AddSingleton(_ => EntityCatalog.LoadFrom(Path.Combine(AppContext.BaseDirectory, "catalog.sqlite")));
 builder.Services.AddControllers();
-
-// Ensure data directory exists before building the app
-Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "data"));
-var catalogPath = Path.Combine(AppContext.BaseDirectory, "data", "catalog.sqlite");
+builder.Services.AddSingleton<IAdminStore, InMemoryAdminStore>();
 
 var app = builder.Build();
 

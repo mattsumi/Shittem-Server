@@ -1,7 +1,7 @@
-// AdminContracts.cs
+// namespace BlueArchiveAPI.Admin;dminContracts.cs
 using System.Text.Json.Serialization;
 
-namespace ShittimServer.Admin
+namespace BlueArchiveAPI.Admin
 {
     // Generic wrapper so the Admin GUI can show messages
     public sealed class ApiResult<T>
