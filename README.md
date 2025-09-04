@@ -2,6 +2,8 @@
 
 A local/private Blue Archive backend stack with a MITM redirector and an Admin GUI for live testing and account tooling.
 
+
+# Note: This Server is currently not fully functional. I would greatly appriciate any and all help :)
 ---
 
 ## Vision
