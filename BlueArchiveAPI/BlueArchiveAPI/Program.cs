@@ -63,6 +63,7 @@ builder.Services.AddSingleton<IEntityCatalog>(sp =>
 // Register crypto adapters
 builder.Services.AddSingleton<ICryptoAdapter, Aes256GcmAdapter>();
 builder.Services.AddSingleton<ICryptoAdapter, ChaCha20Poly1305Adapter>();
+builder.Services.AddSingleton<ICryptoAdapter, BlueArchiveMxDataAdapter>();
 
 // Register compression adapters
 builder.Services.AddSingleton<ICompressionAdapter, DeflateAdapter>();

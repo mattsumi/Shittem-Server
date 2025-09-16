@@ -1,4 +1,6 @@
 using System.Text;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Net.Http.Headers;
 
 namespace BlueArchiveAPI.Gateway.Services;
 
@@ -62,10 +64,34 @@ public class MultipartParser
 
         try
         {
-            using var reader = new StreamReader(body, Encoding.UTF8, leaveOpen: true);
-            var content = await reader.ReadToEndAsync();
+            // Use ASP.NET Core's built-in multipart reader for proper binary handling
+            var reader = new Microsoft.AspNetCore.WebUtilities.MultipartReader(boundary, body);
+            var section = await reader.ReadNextSectionAsync();
             
-            return ParseMultipartContent(content, boundary, requestId);
+            while (section != null)
+            {
+                var contentDisposition = ContentDispositionHeaderValue.Parse(section.ContentDisposition);
+                
+                if (contentDisposition.Name.HasValue && 
+                    (contentDisposition.Name.Value?.Trim('"') == "mx.dat" || 
+                     contentDisposition.Name.Value?.Trim('"') == "mx"))
+                {
+                    _logger.LogInformation("Found mx.dat section in request {RequestId}", requestId);
+                    
+                    using var memoryStream = new MemoryStream();
+                    await section.Body.CopyToAsync(memoryStream);
+                    var mxData = memoryStream.ToArray();
+                    
+                    _logger.LogInformation("Successfully extracted mx.dat: {ByteCount} bytes for request {RequestId}", 
+                        mxData.Length, requestId);
+                    
+                    return mxData;
+                }
+                
+                section = await reader.ReadNextSectionAsync();
+            }
+            
+            throw new InvalidOperationException($"No mx.dat field found in multipart request {requestId}");
         }
         catch (Exception ex)
         {

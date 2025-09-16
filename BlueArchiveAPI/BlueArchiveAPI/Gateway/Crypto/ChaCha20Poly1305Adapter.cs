@@ -130,7 +130,7 @@ public class ChaCha20Poly1305Adapter : ICryptoAdapter
             var encryptedData = ciphertext.AsSpan(offset).ToArray();
             
             // Decrypt the data
-            var plaintext = Algorithm.Decrypt(_key, nonce, null, encryptedData);
+            var plaintext = Algorithm.Decrypt(_key!, nonce, null, encryptedData);
             
             _logger.LogDebug("ChaCha20-Poly1305 decryption completed: {CiphertextLength} -> {PlaintextLength} bytes",
                 ciphertext.Length, plaintext.Length);

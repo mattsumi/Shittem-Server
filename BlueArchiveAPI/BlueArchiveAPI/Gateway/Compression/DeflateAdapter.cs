@@ -22,8 +22,12 @@ public class DeflateAdapter : ICompressionAdapter
         _logger = logger;
         
         var compressionConfig = configuration.GetSection("GameGateway:Codec:Compression");
-        _isEnabled = compressionConfig.GetValue<bool>("Enabled") && 
-                    compressionConfig.GetValue<string>("Type") == "Deflate";
+        var enabled = compressionConfig.GetValue<bool>("Enabled");
+        var type = compressionConfig.GetValue<string>("Type");
+        
+        _logger.LogInformation("Deflate adapter config check: Enabled={Enabled}, Type='{Type}'", enabled, type);
+        
+        _isEnabled = enabled && type == "Deflate";
         
         _logger.LogInformation("Deflate adapter initialized: Enabled={IsEnabled}", _isEnabled);
     }

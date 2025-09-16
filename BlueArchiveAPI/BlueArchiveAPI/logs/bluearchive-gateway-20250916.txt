@@ -1,0 +1,242 @@
+2025-09-16 23:27:07.831 +00:00 [INF] Starting BlueArchiveAPI Gateway server
+2025-09-16 23:27:07.870 +00:00 [INF] Admin API enabled at http://0.0.0.0:7000/admin
+2025-09-16 23:27:08.160 +00:00 [INF] Now listening on: http://0.0.0.0:7000
+2025-09-16 23:27:08.162 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-09-16 23:27:08.163 +00:00 [INF] Hosting environment: Development
+2025-09-16 23:27:08.163 +00:00 [INF] Content root path: /home/runner/work/Shittem-Server/Shittem-Server/BlueArchiveAPI/BlueArchiveAPI
+2025-09-16 23:27:34.981 +00:00 [INF] Request starting HTTP/1.1 POST http://localhost:7000/api/gateway - multipart/form-data; boundary=28241f279d5436b4ec1009b351c79030 289
+2025-09-16 23:27:35.022 +00:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.GatewayController.HandleRequest (BlueArchiveAPI)'
+2025-09-16 23:27:35.032 +00:00 [INF] Route matched with {action = "HandleRequest", controller = "Gateway"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] HandleRequest() on controller BlueArchiveAPI.Controllers.GatewayController (BlueArchiveAPI).
+2025-09-16 23:27:35.034 +00:00 [INF] AES-256-GCM adapter initialized: Enabled=false
+2025-09-16 23:27:35.035 +00:00 [INF] ChaCha20-Poly1305 adapter initialized: Enabled=false
+2025-09-16 23:27:35.039 +00:00 [INF] Blue Archive mx.dat adapter initialized with provided key
+2025-09-16 23:27:35.039 +00:00 [INF] Blue Archive mx.dat adapter initialized: Enabled=true
+2025-09-16 23:27:35.039 +00:00 [INF] Deflate adapter initialized: Enabled=false
+2025-09-16 23:27:35.041 +00:00 [INF] SessionManager initialized with cookie name: uuid, path: /
+2025-09-16 23:27:35.045 +00:00 [INF] Gateway request 9f101ecb started from 127.0.0.1
+2025-09-16 23:27:35.046 +00:00 [INF] Parsing multipart request 9f101ecb with boundary: 28241f279d5436b4ec1009b351c79030
+2025-09-16 23:27:35.050 +00:00 [INF] Parsing content with boundary marker: '--28241f279d5436b4ec1009b351c79030' for request 9f101ecb
+2025-09-16 23:27:35.050 +00:00 [INF] Raw content preview (first 500 chars): '--28241f279d5436b4ec1009b351c79030
+Content-Disposition: form-data; name="mx.dat"; filename="mx.dat"
+Content-Type: application/octet-stream
+
+	
+j��ЬVqM����D.X�����xQ�.�r{�A{4���S��4ٷwΉ��38e�5=YB�i��R�y8n���99�T^��\g:����t��
+--28241f279d5436b4ec1009b351c79030--
+' for request 9f101ecb
+2025-09-16 23:27:35.050 +00:00 [INF] Found 2 parts in multipart request 9f101ecb
+2025-09-16 23:27:35.051 +00:00 [INF] Raw part 0: '
+Content-Disposition: form-data; name="mx.dat"; filename="mx.dat"
+Content-Type: application/octet-stream
+
+	
+j��ЬVqM����D.X�����xQ�.�r{�A{4���S��4ٷwΉ��38e�5=YB�i��R�y8n���99�T^��\g...' for request 9f101ecb
+2025-09-16 23:27:35.051 +00:00 [INF] Processing part 0 with 7 lines in request 9f101ecb
+2025-09-16 23:27:35.051 +00:00 [INF] Part 0 Line 1: 'Content-Disposition: form-data; name="mx.dat"; filename="mx.dat"' in request 9f101ecb
+2025-09-16 23:27:35.052 +00:00 [INF] Found Content-Disposition: 'Content-Disposition: form-data; name="mx.dat"; filename="mx.dat"' in request 9f101ecb
+2025-09-16 23:27:35.052 +00:00 [INF] Found mx part in request 9f101ecb
+2025-09-16 23:27:35.057 +00:00 [INF] Part 0 Line 2: 'Content-Type: application/octet-stream' in request 9f101ecb
+2025-09-16 23:27:35.057 +00:00 [INF] Part 0 Line 3: '' in request 9f101ecb
+2025-09-16 23:27:35.059 +00:00 [INF] Successfully extracted mx.dat as raw bytes: 180 bytes for request 9f101ecb
+2025-09-16 23:27:35.063 +00:00 [ERR] Blue Archive mx.dat decryption failed: Object reference not set to an instance of an object.
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at BlueArchiveAPI.Gateway.Crypto.BlueArchiveMxDataAdapter.DecryptAsync(Byte[] ciphertext) in /home/runner/work/Shittem-Server/Shittem-Server/BlueArchiveAPI/BlueArchiveAPI/Gateway/Crypto/BlueArchiveMxDataAdapter.cs:line 131
+2025-09-16 23:27:35.101 +00:00 [ERR] Failed to decode request 9f101ecb through pipeline
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at BlueArchiveAPI.Gateway.Crypto.BlueArchiveMxDataAdapter.DecryptAsync(Byte[] ciphertext) in /home/runner/work/Shittem-Server/Shittem-Server/BlueArchiveAPI/BlueArchiveAPI/Gateway/Crypto/BlueArchiveMxDataAdapter.cs:line 131
+   at BlueArchiveAPI.Gateway.Services.CodecRegistry.DecodeAsync(Byte[] data, String requestId) in /home/runner/work/Shittem-Server/Shittem-Server/BlueArchiveAPI/BlueArchiveAPI/Gateway/Services/CodecRegistry.cs:line 61
+2025-09-16 23:27:35.102 +00:00 [ERR] Gateway request 9f101ecb failed after 58.5083ms
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at BlueArchiveAPI.Gateway.Crypto.BlueArchiveMxDataAdapter.DecryptAsync(Byte[] ciphertext) in /home/runner/work/Shittem-Server/Shittem-Server/BlueArchiveAPI/BlueArchiveAPI/Gateway/Crypto/BlueArchiveMxDataAdapter.cs:line 131
+   at BlueArchiveAPI.Gateway.Services.CodecRegistry.DecodeAsync(Byte[] data, String requestId) in /home/runner/work/Shittem-Server/Shittem-Server/BlueArchiveAPI/BlueArchiveAPI/Gateway/Services/CodecRegistry.cs:line 61
+   at BlueArchiveAPI.Controllers.GatewayController.HandleRequest() in /home/runner/work/Shittem-Server/Shittem-Server/BlueArchiveAPI/BlueArchiveAPI/Controllers/GatewayController.cs:line 67
+2025-09-16 23:27:35.184 +00:00 [INF] Executing FileContentResult, sending file with download name '' ...
+2025-09-16 23:27:35.219 +00:00 [INF] Executed action BlueArchiveAPI.Controllers.GatewayController.HandleRequest (BlueArchiveAPI) in 184.0845ms
+2025-09-16 23:27:35.219 +00:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.GatewayController.HandleRequest (BlueArchiveAPI)'
+2025-09-16 23:27:35.223 +00:00 [INF] Request finished HTTP/1.1 POST http://localhost:7000/api/gateway - 200 null application/json 242.5575ms
+2025-09-16 23:30:10.261 +00:00 [INF] Starting BlueArchiveAPI Gateway server
+2025-09-16 23:30:10.299 +00:00 [INF] Admin API enabled at http://0.0.0.0:7000/admin
+2025-09-16 23:30:10.378 +00:00 [INF] Now listening on: http://0.0.0.0:7000
+2025-09-16 23:30:10.380 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-09-16 23:30:10.381 +00:00 [INF] Hosting environment: Development
+2025-09-16 23:30:10.381 +00:00 [INF] Content root path: /home/runner/work/Shittem-Server/Shittem-Server/BlueArchiveAPI/BlueArchiveAPI
+2025-09-16 23:30:29.138 +00:00 [INF] Request starting HTTP/1.1 POST http://localhost:7000/api/gateway - multipart/form-data; boundary=32f26704d05f65b84a85b21e40c99d57 289
+2025-09-16 23:30:29.178 +00:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.GatewayController.HandleRequest (BlueArchiveAPI)'
+2025-09-16 23:30:29.188 +00:00 [INF] Route matched with {action = "HandleRequest", controller = "Gateway"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] HandleRequest() on controller BlueArchiveAPI.Controllers.GatewayController (BlueArchiveAPI).
+2025-09-16 23:30:29.191 +00:00 [INF] AES-256-GCM adapter initialized: Enabled=false
+2025-09-16 23:30:29.192 +00:00 [INF] ChaCha20-Poly1305 adapter initialized: Enabled=false
+2025-09-16 23:30:29.195 +00:00 [INF] Blue Archive mx.dat adapter initialized with provided key
+2025-09-16 23:30:29.196 +00:00 [INF] Blue Archive mx.dat adapter initialized: Enabled=true
+2025-09-16 23:30:29.196 +00:00 [INF] Deflate adapter initialized: Enabled=false
+2025-09-16 23:30:29.197 +00:00 [INF] SessionManager initialized with cookie name: uuid, path: /
+2025-09-16 23:30:29.202 +00:00 [INF] Gateway request 9e1594dc started from 127.0.0.1
+2025-09-16 23:30:29.203 +00:00 [INF] Parsing multipart request 9e1594dc with boundary: 32f26704d05f65b84a85b21e40c99d57
+2025-09-16 23:30:29.210 +00:00 [INF] Found mx.dat section in request 9e1594dc
+2025-09-16 23:30:29.211 +00:00 [INF] Successfully extracted mx.dat: 105 bytes for request 9e1594dc
+2025-09-16 23:30:29.216 +00:00 [ERR] Failed to parse decoded JSON for request 9e1594dc
+System.Text.Json.JsonReaderException: 'x' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.
+   at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader& json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)
+   at System.Text.Json.Utf8JsonReader.ConsumeValue(Byte marker)
+   at System.Text.Json.Utf8JsonReader.ReadFirstToken(Byte first)
+   at System.Text.Json.Utf8JsonReader.ReadSingleSegment()
+   at System.Text.Json.Utf8JsonReader.Read()
+   at System.Text.Json.JsonDocument.Parse(ReadOnlySpan`1 utf8JsonSpan, JsonReaderOptions readerOptions, MetadataDb& database, StackRowStack& stack)
+   at System.Text.Json.JsonDocument.Parse(ReadOnlyMemory`1 utf8Json, JsonReaderOptions readerOptions, Byte[] extraRentedArrayPoolBytes, PooledByteBufferWriter extraPooledByteBufferWriter)
+   at System.Text.Json.JsonDocument.Parse(ReadOnlyMemory`1 json, JsonDocumentOptions options)
+   at BlueArchiveAPI.Gateway.Services.CodecRegistry.DecodeAsync(Byte[] data, String requestId) in /home/runner/work/Shittem-Server/Shittem-Server/BlueArchiveAPI/BlueArchiveAPI/Gateway/Services/CodecRegistry.cs:line 89
+2025-09-16 23:30:29.227 +00:00 [ERR] Failed to decode request 9e1594dc through pipeline
+System.InvalidOperationException: Decoded data is not valid JSON
+ ---> System.Text.Json.JsonReaderException: 'x' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.
+   at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader& json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)
+   at System.Text.Json.Utf8JsonReader.ConsumeValue(Byte marker)
+   at System.Text.Json.Utf8JsonReader.ReadFirstToken(Byte first)
+   at System.Text.Json.Utf8JsonReader.ReadSingleSegment()
+   at System.Text.Json.Utf8JsonReader.Read()
+   at System.Text.Json.JsonDocument.Parse(ReadOnlySpan`1 utf8JsonSpan, JsonReaderOptions readerOptions, MetadataDb& database, StackRowStack& stack)
+   at System.Text.Json.JsonDocument.Parse(ReadOnlyMemory`1 utf8Json, JsonReaderOptions readerOptions, Byte[] extraRentedArrayPoolBytes, PooledByteBufferWriter extraPooledByteBufferWriter)
+   at System.Text.Json.JsonDocument.Parse(ReadOnlyMemory`1 json, JsonDocumentOptions options)
+   at BlueArchiveAPI.Gateway.Services.CodecRegistry.DecodeAsync(Byte[] data, String requestId) in /home/runner/work/Shittem-Server/Shittem-Server/BlueArchiveAPI/BlueArchiveAPI/Gateway/Services/CodecRegistry.cs:line 89
+   --- End of inner exception stack trace ---
+   at BlueArchiveAPI.Gateway.Services.CodecRegistry.DecodeAsync(Byte[] data, String requestId) in /home/runner/work/Shittem-Server/Shittem-Server/BlueArchiveAPI/BlueArchiveAPI/Gateway/Services/CodecRegistry.cs:line 94
+2025-09-16 23:30:29.229 +00:00 [ERR] Gateway request 9e1594dc failed after 28.0484ms
+System.InvalidOperationException: Decoded data is not valid JSON
+ ---> System.Text.Json.JsonReaderException: 'x' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.
+   at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader& json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)
+   at System.Text.Json.Utf8JsonReader.ConsumeValue(Byte marker)
+   at System.Text.Json.Utf8JsonReader.ReadFirstToken(Byte first)
+   at System.Text.Json.Utf8JsonReader.ReadSingleSegment()
+   at System.Text.Json.Utf8JsonReader.Read()
+   at System.Text.Json.JsonDocument.Parse(ReadOnlySpan`1 utf8JsonSpan, JsonReaderOptions readerOptions, MetadataDb& database, StackRowStack& stack)
+   at System.Text.Json.JsonDocument.Parse(ReadOnlyMemory`1 utf8Json, JsonReaderOptions readerOptions, Byte[] extraRentedArrayPoolBytes, PooledByteBufferWriter extraPooledByteBufferWriter)
+   at System.Text.Json.JsonDocument.Parse(ReadOnlyMemory`1 json, JsonDocumentOptions options)
+   at BlueArchiveAPI.Gateway.Services.CodecRegistry.DecodeAsync(Byte[] data, String requestId) in /home/runner/work/Shittem-Server/Shittem-Server/BlueArchiveAPI/BlueArchiveAPI/Gateway/Services/CodecRegistry.cs:line 89
+   --- End of inner exception stack trace ---
+   at BlueArchiveAPI.Gateway.Services.CodecRegistry.DecodeAsync(Byte[] data, String requestId) in /home/runner/work/Shittem-Server/Shittem-Server/BlueArchiveAPI/BlueArchiveAPI/Gateway/Services/CodecRegistry.cs:line 94
+   at BlueArchiveAPI.Controllers.GatewayController.HandleRequest() in /home/runner/work/Shittem-Server/Shittem-Server/BlueArchiveAPI/BlueArchiveAPI/Controllers/GatewayController.cs:line 67
+2025-09-16 23:30:29.293 +00:00 [INF] Executing FileContentResult, sending file with download name '' ...
+2025-09-16 23:30:29.304 +00:00 [INF] Executed action BlueArchiveAPI.Controllers.GatewayController.HandleRequest (BlueArchiveAPI) in 111.8235ms
+2025-09-16 23:30:29.304 +00:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.GatewayController.HandleRequest (BlueArchiveAPI)'
+2025-09-16 23:30:29.307 +00:00 [INF] Request finished HTTP/1.1 POST http://localhost:7000/api/gateway - 200 null application/json 170.2306ms
+2025-09-16 23:31:18.611 +00:00 [INF] Starting BlueArchiveAPI Gateway server
+2025-09-16 23:31:18.649 +00:00 [INF] Admin API enabled at http://0.0.0.0:7000/admin
+2025-09-16 23:31:18.729 +00:00 [INF] Now listening on: http://0.0.0.0:7000
+2025-09-16 23:31:18.732 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-09-16 23:31:18.732 +00:00 [INF] Hosting environment: Development
+2025-09-16 23:31:18.732 +00:00 [INF] Content root path: /home/runner/work/Shittem-Server/Shittem-Server/BlueArchiveAPI/BlueArchiveAPI
+2025-09-16 23:32:04.638 +00:00 [INF] Starting BlueArchiveAPI Gateway server
+2025-09-16 23:32:04.676 +00:00 [INF] Admin API enabled at http://0.0.0.0:7000/admin
+2025-09-16 23:32:04.757 +00:00 [INF] Now listening on: http://0.0.0.0:7000
+2025-09-16 23:32:04.760 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-09-16 23:32:04.760 +00:00 [INF] Hosting environment: Development
+2025-09-16 23:32:04.761 +00:00 [INF] Content root path: /home/runner/work/Shittem-Server/Shittem-Server/BlueArchiveAPI/BlueArchiveAPI
+2025-09-16 23:32:12.424 +00:00 [INF] Request starting HTTP/1.1 POST http://localhost:7000/api/gateway - multipart/form-data; boundary=f43314428ff8133a98bfbb87b2a44cc8 289
+2025-09-16 23:32:12.464 +00:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.GatewayController.HandleRequest (BlueArchiveAPI)'
+2025-09-16 23:32:12.475 +00:00 [INF] Route matched with {action = "HandleRequest", controller = "Gateway"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] HandleRequest() on controller BlueArchiveAPI.Controllers.GatewayController (BlueArchiveAPI).
+2025-09-16 23:32:12.477 +00:00 [INF] AES-256-GCM adapter initialized: Enabled=false
+2025-09-16 23:32:12.478 +00:00 [INF] ChaCha20-Poly1305 adapter initialized: Enabled=false
+2025-09-16 23:32:12.482 +00:00 [INF] Blue Archive mx.dat adapter initialized with provided key
+2025-09-16 23:32:12.482 +00:00 [INF] Blue Archive mx.dat adapter initialized: Enabled=true
+2025-09-16 23:32:12.482 +00:00 [INF] Deflate adapter config check: Enabled=false, Type='Deflate'
+2025-09-16 23:32:12.483 +00:00 [INF] Deflate adapter initialized: Enabled=false
+2025-09-16 23:32:12.484 +00:00 [INF] SessionManager initialized with cookie name: uuid, path: /
+2025-09-16 23:32:12.488 +00:00 [INF] Gateway request a25271b8 started from 127.0.0.1
+2025-09-16 23:32:12.489 +00:00 [INF] Parsing multipart request a25271b8 with boundary: f43314428ff8133a98bfbb87b2a44cc8
+2025-09-16 23:32:12.496 +00:00 [INF] Found mx.dat section in request a25271b8
+2025-09-16 23:32:12.496 +00:00 [INF] Successfully extracted mx.dat: 105 bytes for request a25271b8
+2025-09-16 23:32:12.502 +00:00 [ERR] Failed to parse decoded JSON for request a25271b8
+System.Text.Json.JsonReaderException: 'x' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.
+   at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader& json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)
+   at System.Text.Json.Utf8JsonReader.ConsumeValue(Byte marker)
+   at System.Text.Json.Utf8JsonReader.ReadFirstToken(Byte first)
+   at System.Text.Json.Utf8JsonReader.ReadSingleSegment()
+   at System.Text.Json.Utf8JsonReader.Read()
+   at System.Text.Json.JsonDocument.Parse(ReadOnlySpan`1 utf8JsonSpan, JsonReaderOptions readerOptions, MetadataDb& database, StackRowStack& stack)
+   at System.Text.Json.JsonDocument.Parse(ReadOnlyMemory`1 utf8Json, JsonReaderOptions readerOptions, Byte[] extraRentedArrayPoolBytes, PooledByteBufferWriter extraPooledByteBufferWriter)
+   at System.Text.Json.JsonDocument.Parse(ReadOnlyMemory`1 json, JsonDocumentOptions options)
+   at BlueArchiveAPI.Gateway.Services.CodecRegistry.DecodeAsync(Byte[] data, String requestId) in /home/runner/work/Shittem-Server/Shittem-Server/BlueArchiveAPI/BlueArchiveAPI/Gateway/Services/CodecRegistry.cs:line 89
+2025-09-16 23:32:12.512 +00:00 [ERR] Failed to decode request a25271b8 through pipeline
+System.InvalidOperationException: Decoded data is not valid JSON
+ ---> System.Text.Json.JsonReaderException: 'x' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.
+   at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader& json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)
+   at System.Text.Json.Utf8JsonReader.ConsumeValue(Byte marker)
+   at System.Text.Json.Utf8JsonReader.ReadFirstToken(Byte first)
+   at System.Text.Json.Utf8JsonReader.ReadSingleSegment()
+   at System.Text.Json.Utf8JsonReader.Read()
+   at System.Text.Json.JsonDocument.Parse(ReadOnlySpan`1 utf8JsonSpan, JsonReaderOptions readerOptions, MetadataDb& database, StackRowStack& stack)
+   at System.Text.Json.JsonDocument.Parse(ReadOnlyMemory`1 utf8Json, JsonReaderOptions readerOptions, Byte[] extraRentedArrayPoolBytes, PooledByteBufferWriter extraPooledByteBufferWriter)
+   at System.Text.Json.JsonDocument.Parse(ReadOnlyMemory`1 json, JsonDocumentOptions options)
+   at BlueArchiveAPI.Gateway.Services.CodecRegistry.DecodeAsync(Byte[] data, String requestId) in /home/runner/work/Shittem-Server/Shittem-Server/BlueArchiveAPI/BlueArchiveAPI/Gateway/Services/CodecRegistry.cs:line 89
+   --- End of inner exception stack trace ---
+   at BlueArchiveAPI.Gateway.Services.CodecRegistry.DecodeAsync(Byte[] data, String requestId) in /home/runner/work/Shittem-Server/Shittem-Server/BlueArchiveAPI/BlueArchiveAPI/Gateway/Services/CodecRegistry.cs:line 94
+2025-09-16 23:32:12.514 +00:00 [ERR] Gateway request a25271b8 failed after 27.4282ms
+System.InvalidOperationException: Decoded data is not valid JSON
+ ---> System.Text.Json.JsonReaderException: 'x' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.
+   at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader& json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)
+   at System.Text.Json.Utf8JsonReader.ConsumeValue(Byte marker)
+   at System.Text.Json.Utf8JsonReader.ReadFirstToken(Byte first)
+   at System.Text.Json.Utf8JsonReader.ReadSingleSegment()
+   at System.Text.Json.Utf8JsonReader.Read()
+   at System.Text.Json.JsonDocument.Parse(ReadOnlySpan`1 utf8JsonSpan, JsonReaderOptions readerOptions, MetadataDb& database, StackRowStack& stack)
+   at System.Text.Json.JsonDocument.Parse(ReadOnlyMemory`1 utf8Json, JsonReaderOptions readerOptions, Byte[] extraRentedArrayPoolBytes, PooledByteBufferWriter extraPooledByteBufferWriter)
+   at System.Text.Json.JsonDocument.Parse(ReadOnlyMemory`1 json, JsonDocumentOptions options)
+   at BlueArchiveAPI.Gateway.Services.CodecRegistry.DecodeAsync(Byte[] data, String requestId) in /home/runner/work/Shittem-Server/Shittem-Server/BlueArchiveAPI/BlueArchiveAPI/Gateway/Services/CodecRegistry.cs:line 89
+   --- End of inner exception stack trace ---
+   at BlueArchiveAPI.Gateway.Services.CodecRegistry.DecodeAsync(Byte[] data, String requestId) in /home/runner/work/Shittem-Server/Shittem-Server/BlueArchiveAPI/BlueArchiveAPI/Gateway/Services/CodecRegistry.cs:line 94
+   at BlueArchiveAPI.Controllers.GatewayController.HandleRequest() in /home/runner/work/Shittem-Server/Shittem-Server/BlueArchiveAPI/BlueArchiveAPI/Controllers/GatewayController.cs:line 67
+2025-09-16 23:32:12.579 +00:00 [INF] Executing FileContentResult, sending file with download name '' ...
+2025-09-16 23:32:12.589 +00:00 [INF] Executed action BlueArchiveAPI.Controllers.GatewayController.HandleRequest (BlueArchiveAPI) in 111.425ms
+2025-09-16 23:32:12.590 +00:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.GatewayController.HandleRequest (BlueArchiveAPI)'
+2025-09-16 23:32:12.592 +00:00 [INF] Request finished HTTP/1.1 POST http://localhost:7000/api/gateway - 200 null application/json 169.4654ms
+2025-09-16 23:32:56.347 +00:00 [INF] Starting BlueArchiveAPI Gateway server
+2025-09-16 23:32:56.386 +00:00 [INF] Admin API enabled at http://0.0.0.0:7000/admin
+2025-09-16 23:32:56.467 +00:00 [INF] Now listening on: http://0.0.0.0:7000
+2025-09-16 23:32:56.469 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-09-16 23:32:56.470 +00:00 [INF] Hosting environment: Development
+2025-09-16 23:32:56.470 +00:00 [INF] Content root path: /home/runner/work/Shittem-Server/Shittem-Server/BlueArchiveAPI/BlueArchiveAPI
+2025-09-16 23:33:03.964 +00:00 [INF] Request starting HTTP/1.1 POST http://localhost:7000/api/gateway - multipart/form-data; boundary=5a4472ae341ff7870533af5df69ba4ca 289
+2025-09-16 23:33:04.002 +00:00 [INF] Executing endpoint 'BlueArchiveAPI.Controllers.GatewayController.HandleRequest (BlueArchiveAPI)'
+2025-09-16 23:33:04.012 +00:00 [INF] Route matched with {action = "HandleRequest", controller = "Gateway"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] HandleRequest() on controller BlueArchiveAPI.Controllers.GatewayController (BlueArchiveAPI).
+2025-09-16 23:33:04.014 +00:00 [INF] AES-256-GCM adapter initialized: Enabled=false
+2025-09-16 23:33:04.015 +00:00 [INF] ChaCha20-Poly1305 adapter initialized: Enabled=false
+2025-09-16 23:33:04.019 +00:00 [INF] Blue Archive mx.dat adapter initialized with provided key
+2025-09-16 23:33:04.019 +00:00 [INF] Blue Archive mx.dat adapter initialized: Enabled=true
+2025-09-16 23:33:04.020 +00:00 [INF] Deflate adapter config check: Enabled=true, Type='Deflate'
+2025-09-16 23:33:04.020 +00:00 [INF] Deflate adapter initialized: Enabled=true
+2025-09-16 23:33:04.022 +00:00 [INF] SessionManager initialized with cookie name: uuid, path: /
+2025-09-16 23:33:04.026 +00:00 [INF] Gateway request 6b66717a started from 127.0.0.1
+2025-09-16 23:33:04.028 +00:00 [INF] Parsing multipart request 6b66717a with boundary: 5a4472ae341ff7870533af5df69ba4ca
+2025-09-16 23:33:04.035 +00:00 [INF] Found mx.dat section in request 6b66717a
+2025-09-16 23:33:04.035 +00:00 [INF] Successfully extracted mx.dat: 105 bytes for request 6b66717a
+2025-09-16 23:33:04.042 +00:00 [INF] Successfully decoded request 6b66717a using codec: decrypt:BlueArchiveMxData+decompress:Deflate
+2025-09-16 23:33:04.068 +00:00 [INF] Decoded request 6b66717a: Protocol=Account_Auth, Size=105 bytes
+2025-09-16 23:33:04.071 +00:00 [INF] Created new session 2a36377a-57f2-41b2-a667-d66b7a7d8b12 for request 6b66717a
+2025-09-16 23:33:04.241 +00:00 [INF] Handler Account_Auth completed request 6b66717a in 140.6104ms
+2025-09-16 23:33:04.246 +00:00 [ERR] Handler Account_Auth failed for request 6b66717a
+Newtonsoft.Json.JsonSerializationException: Unable to find a constructor to use for type BlueArchiveAPI.Models.ServerPacket. A class should either have a default constructor, one constructor with arguments or a constructor marked with the JsonConstructor attribute. Path 'protocol', line 1, position 12.
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.CreateNewObject(JsonReader reader, JsonObjectContract objectContract, JsonProperty containerMember, JsonProperty containerProperty, String id, Boolean& createdFromNonDefaultCreator)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.CreateObject(JsonReader reader, Type objectType, JsonContract contract, JsonProperty member, JsonContainerContract containerContract, JsonProperty containerMember, Object existingValue)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.CreateValueInternal(JsonReader reader, Type objectType, JsonContract contract, JsonProperty member, JsonContainerContract containerContract, JsonProperty containerMember, Object existingValue)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.Deserialize(JsonReader reader, Type objectType, Boolean checkAdditionalContent)
+   at Newtonsoft.Json.JsonSerializer.DeserializeInternal(JsonReader reader, Type objectType)
+   at Newtonsoft.Json.JsonSerializer.Deserialize(JsonReader reader, Type objectType)
+   at Newtonsoft.Json.JsonConvert.DeserializeObject(String value, Type type, JsonSerializerSettings settings)
+   at Newtonsoft.Json.JsonConvert.DeserializeObject[T](String value, JsonSerializerSettings settings)
+   at Newtonsoft.Json.JsonConvert.DeserializeObject[T](String value)
+   at BlueArchiveAPI.Gateway.Services.ProtocolRouter.RouteRequestAsync(GameRequest request, GameSession session, String requestId, CancellationToken cancellationToken) in /home/runner/work/Shittem-Server/Shittem-Server/BlueArchiveAPI/BlueArchiveAPI/Gateway/Services/ProtocolRouter.cs:line 109
+2025-09-16 23:33:04.257 +00:00 [ERR] Gateway request 6b66717a failed after 231.5784ms
+Newtonsoft.Json.JsonSerializationException: Unable to find a constructor to use for type BlueArchiveAPI.Models.ServerPacket. A class should either have a default constructor, one constructor with arguments or a constructor marked with the JsonConstructor attribute. Path 'protocol', line 1, position 12.
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.CreateNewObject(JsonReader reader, JsonObjectContract objectContract, JsonProperty containerMember, JsonProperty containerProperty, String id, Boolean& createdFromNonDefaultCreator)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.CreateObject(JsonReader reader, Type objectType, JsonContract contract, JsonProperty member, JsonContainerContract containerContract, JsonProperty containerMember, Object existingValue)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.CreateValueInternal(JsonReader reader, Type objectType, JsonContract contract, JsonProperty member, JsonContainerContract containerContract, JsonProperty containerMember, Object existingValue)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.Deserialize(JsonReader reader, Type objectType, Boolean checkAdditionalContent)
+   at Newtonsoft.Json.JsonSerializer.DeserializeInternal(JsonReader reader, Type objectType)
+   at Newtonsoft.Json.JsonSerializer.Deserialize(JsonReader reader, Type objectType)
+   at Newtonsoft.Json.JsonConvert.DeserializeObject(String value, Type type, JsonSerializerSettings settings)
+   at Newtonsoft.Json.JsonConvert.DeserializeObject[T](String value, JsonSerializerSettings settings)
+   at Newtonsoft.Json.JsonConvert.DeserializeObject[T](String value)
+   at BlueArchiveAPI.Gateway.Services.ProtocolRouter.RouteRequestAsync(GameRequest request, GameSession session, String requestId, CancellationToken cancellationToken) in /home/runner/work/Shittem-Server/Shittem-Server/BlueArchiveAPI/BlueArchiveAPI/Gateway/Services/ProtocolRouter.cs:line 109
+   at BlueArchiveAPI.Controllers.GatewayController.HandleRequest() in /home/runner/work/Shittem-Server/Shittem-Server/BlueArchiveAPI/BlueArchiveAPI/Controllers/GatewayController.cs:line 81
+2025-09-16 23:33:04.290 +00:00 [INF] Executing FileContentResult, sending file with download name '' ...
+2025-09-16 23:33:04.300 +00:00 [INF] Executed action BlueArchiveAPI.Controllers.GatewayController.HandleRequest (BlueArchiveAPI) in 284.8245ms
+2025-09-16 23:33:04.301 +00:00 [INF] Executed endpoint 'BlueArchiveAPI.Controllers.GatewayController.HandleRequest (BlueArchiveAPI)'
+2025-09-16 23:33:04.304 +00:00 [INF] Request finished HTTP/1.1 POST http://localhost:7000/api/gateway - 200 null application/json 340.9303ms

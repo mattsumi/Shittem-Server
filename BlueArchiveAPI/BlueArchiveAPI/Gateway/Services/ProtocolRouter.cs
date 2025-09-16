@@ -71,7 +71,7 @@ public class ProtocolRouter
                 if (Enum.IsDefined(typeof(Protocol), request.ProtocolCode.Value))
                 {
                     protocolEnum = (Protocol)request.ProtocolCode.Value;
-                    handlerName = protocolEnum.ToString();
+                    handlerName = protocolEnum?.ToString() ?? "Unknown";
                 }
             }
 
@@ -116,7 +116,7 @@ public class ProtocolRouter
             var responseObject = JsonConvert.DeserializeObject(serverPacket.Packet) ?? new object();
             
             // Capture dynamic session data from the response (best effort)
-            await CaptureSessionDataFromResponse(session, responseObject, handlerName, requestId);
+            await CaptureSessionDataFromResponse(session, responseObject, handlerName ?? "Unknown", requestId);
             
             // Return the response object
             return responseObject;
