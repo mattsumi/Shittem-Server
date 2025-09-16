@@ -87,11 +87,16 @@ namespace BlueArchiveAPI.Handlers
             protected override async Task<AccountLoginSyncResponse> Handle(AccountLoginSyncRequest request)
             {
                 var result = Utils.GetDataFromFile<AccountLoginSyncResponse>("Data/account.loginsync", false);
-
-                result.AccountCurrencySyncResponse.AccountCurrencyDB.CurrencyDict[CurrencyTypes.Gem] = 99999999;
-                result.AccountCurrencySyncResponse.AccountCurrencyDB.CurrencyDict[CurrencyTypes.GemBonus] = 99999999;
-
-                return result;
+                
+                if (result != null)
+                {
+                    result.AccountCurrencySyncResponse.AccountCurrencyDB.CurrencyDict[CurrencyTypes.Gem] = 99999999;
+                    result.AccountCurrencySyncResponse.AccountCurrencyDB.CurrencyDict[CurrencyTypes.GemBonus] = 99999999;
+                    return result;
+                }
+                
+                // Return default response if file doesn't exist
+                return new AccountLoginSyncResponse();
             }
         }
 
